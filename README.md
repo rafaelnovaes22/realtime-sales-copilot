@@ -96,14 +96,26 @@ realtime-sales-copilot/
 
 ## Roadmap
 
-| Fase | Steps | Semanas | Entrega |
-|---|---|---|---|
-| Fundação | 0-4 | 1-5 | Corpus pronto, evals criados, decisões travadas |
-| Produto | 5-6 | 6-10 | Backend + frontend MVP funcionando |
-| Validação | — | 10-12 | SHADOW com 3-5 closers, gate ≥70% úteis |
-| Pós-call | 7 | 12 | Resumo + follow-up automático ≤1h |
-| Aprendizado | 8-9 | 13-15 | Self-harness + eval contínuo rodando |
-| Produção | 10 | contínuo | AUTONOMOUS + coaching do gestor |
+### MVP — 2 semanas (foco: sugestão ao vivo)
+
+| Semana | O que é feito | Entrega |
+|---|---|---|
+| 1 | Corpus limpo + pipeline de sugestão + transcrição ao vivo | Motor funcionando end-to-end |
+| 2 | Frontend (painel do closer) + testes com closers reais | Demo pronta para a CEO |
+
+→ Detalhes: [docs/mvp-2-semanas.md](docs/mvp-2-semanas.md)
+→ Interface: [docs/interface-closer.md](docs/interface-closer.md)
+
+### Versão completa — +4 semanas após MVP aprovado
+
+| Fase | Semanas | Entrega |
+|---|---|---|
+| Infraestrutura (Recall.ai, diarização, auth, DB) | 3-4 | Produto pronto para produção |
+| Pós-call automático + CRM | 1 | Follow-up ≤1h após ligação |
+| Self-harness + aprendizado contínuo | 2-3 | Sistema que melhora sozinho |
+| AUTONOMOUS + coaching do gestor | contínuo | Produto governado em produção |
+
+→ Roadmap completo: [docs/roadmap.md](docs/roadmap.md)
 
 ## Decisões travadas
 
