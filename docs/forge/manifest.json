@@ -1,0 +1,54 @@
+{
+  "$schema": "https://acme.com.br/forge/manifest-v1.json",
+  "manifest_version": "0.21.0",
+  "framework": {
+    "name": "Acme Forge",
+    "framework_version_required": "0.21.0",
+    "constitution_version": "0.3.0",
+    "constitution_path": ".claude/CONSTITUTION.md",
+    "last_synced_at": "2026-05-19",
+    "canonical_repo": "https://github.com/acme-startup/agent-governance-framework"
+  },
+  "project": {
+    "name": "realtime-sales-copilot",
+    "type": "agentic_saas",
+    "ai_enabled": true,
+    "owner": "Acme",
+    "description": "Co-pilot de IA para closers de vendas consultivas em tempo real (captura → STT → detector → Sonnet 4.6 → guardian → card)."
+  },
+  "modules": [
+    {
+      "id": "live-suggestion-copilot",
+      "type": "agentic-skill",
+      "ai_enabled": true,
+      "lifecycle_state": "DRAFT",
+      "criticality": "critical"
+    }
+  ],
+  "integrations": {
+    "_doc": "Integrações declaradas explicitamente. Reviewer/Forge-Doctor usa essa lista para decidir checks aplicáveis (ex: hermes, langfuse, deepgram).",
+    "langfuse": {
+      "declared": true,
+      "implemented": false,
+      "note": "Débito C6 — Langfuse será integrado antes da promoção SHADOW."
+    },
+    "deepgram": {
+      "declared": true,
+      "implemented": true,
+      "models": ["nova-3", "nova-2"],
+      "language": "pt-BR"
+    },
+    "anthropic": {
+      "declared": true,
+      "implemented": true,
+      "models": ["claude-sonnet-4-6", "claude-haiku-4-5-20251001"]
+    }
+  },
+  "artifacts": {
+    "_doc": "Em consumer mode, este bloco é opcional. Reviewer DeepAgent não exige inventário completo de artefatos canônicos (eles vivem no Forge canônico). Listar apenas artefatos próprios do projeto."
+  },
+  "_meta": {
+    "created_at": "2026-05-19",
+    "last_updated": "2026-05-19"
+  }
+}

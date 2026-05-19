@@ -2,6 +2,8 @@ node_modules/
 .env
 .env.local
 .env.*.local
+.forge-mode
+.claude/settings.local.json
 dist/
 build/
 .next/
