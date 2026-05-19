@@ -16,7 +16,7 @@ Os 8 princípios são não-negociáveis e orientam toda decisão neste repositó
 3. **C3** — Custo ≤ 25% do preço (cost_per_outcome)
 4. **C4** — SHADOW → ASSISTED → AUTONOMOUS (janela mínima de 14 dias para módulos críticos)
 5. **C5** — Three-tier context (L0/L1/L2)
-6. **C6** — Telemetria obrigatória (Langfuse para chamadas LLM)
+6. **C6** — Telemetria obrigatória (LangSmith para chamadas LLM)
 7. **C7** — Portabilidade sobre lock-in (LLM/STT/infra em camadas isoladas)
 8. **C8** — Configuration over heroic customization
 
@@ -50,7 +50,7 @@ Três camadas anti-leakage: corpus sanitizado no ingest, system prompt com proib
 - **Runtime**: Node 20+, TypeScript 5.7, ESM, tsx
 - **LLM**: `@anthropic-ai/sdk` — Sonnet 4.6 (sugestões) + Haiku 4.5 (tag + guardian futuro)
 - **STT**: `@deepgram/sdk` — Nova-3 (PT-BR streaming, browser SDK)
-- **Observabilidade**: Langfuse (obrigatório para chamadas LLM em produção — C6)
+- **Observabilidade**: LangSmith (obrigatório para chamadas LLM em produção — C6)
 - **Frontend** (próximo): Next.js 14+ App Router + Tailwind + shadcn/ui
 - **Backend** (próximo): Hono + WebSocket
 - **DB** (próximo): Postgres + pgvector
@@ -131,7 +131,7 @@ reviewer/                    # contrato com DeepAgent externo
 
 ### Telemetria (C6)
 
-Toda chamada LLM em produção precisa estar instrumentada com Langfuse. O
+Toda chamada LLM em produção precisa estar instrumentada com LangSmith. O
 wrapper canônico vive em `src/observability/trace.ts`:
 
 ```ts
@@ -149,15 +149,15 @@ return observe(
 );
 ```
 
-Sem trace, **não conta como outcome auditável**. Hook `langfuse-trace-check`
-valida em PR. O wrapper `observe()` está integrado no Anthropic adapter — todas
-chamadas LLM já passam por ele.
+Sem trace, **não conta como outcome auditável**. O hook canônico do Forge
+`langfuse-trace-check.sh` (nome herdado do framework — opera sobre o
+wrapper `observe()`) valida em PR. O wrapper já está integrado no
+Anthropic adapter; toda chamada LLM passa por ele.
 
 > **Status atual**: instrumentação presente; ativação condicionada a
-> `LANGFUSE_PUBLIC_KEY` + `LANGFUSE_SECRET_KEY` em `.env`. Quando ausentes,
-> wrapper vira no-op silencioso. Antes da promoção SHADOW, criar conta
-> (cloud.langfuse.com ou self-hosted), preencher as vars e validar
-> `trace_coverage ≥ 99%` por 7 dias.
+> `LANGCHAIN_API_KEY` em `.env`. Quando ausente, wrapper vira no-op
+> silencioso. Antes da promoção SHADOW, criar conta em smith.langchain.com,
+> preencher as vars e validar `trace_coverage ≥ 99%` por 7 dias.
 
 ### Three-tier context (C5)
 
@@ -213,7 +213,7 @@ Auditoria mensal por **DeepAgent** (GPT-5.5) valida os 8 princípios + coerênci
 
 Para o reviewer funcionar:
 - Toda mudança no Forge atualiza `docs/forge/manifest.json` (futuro)
-- Toda LLM call tem trace Langfuse (futuro)
+- Toda LLM call tem trace LangSmith (gate de ativação antes de SHADOW)
 - Toda promoção de modo é registrada via `/acme:promote`
 
 ---
@@ -234,7 +234,7 @@ Operações reversíveis e locais (edição em `apps/api/src/`, criação de eva
 ## Memory file system
 
 Memória persistente em `C:\Users\Rafael\.claude\projects\c--Users-Rafael-Projetos-realtime-sales-copilot\memory\` — usar para:
-- Status de configuração externa (Deepgram, Anthropic, Langfuse)
+- Status de configuração externa (Deepgram, Anthropic, LangSmith)
 - Notas sobre o corpus (arquivos descartados, taxonomias)
 - Feedback do usuário sobre approach (corrigir vs validar)
 

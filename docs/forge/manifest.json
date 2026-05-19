@@ -28,24 +28,24 @@
       "diagnostic_gates_open": [
         "interview_2_3_seniors_closers",
         "analyze_10_call_recordings",
-        "langfuse_activation_real_account",
+        "langsmith_activation_real_account",
         "spec_via_acme_spec",
         "unit_economics_via_acme_unit_economics",
         "lgpd_text_legal_approval"
       ],
       "diagnostic_gates_closed": [
         "llm_abstraction_c7",
-        "langfuse_instrumentation_c6"
+        "langsmith_instrumentation_c6"
       ]
     }
   ],
   "integrations": {
-    "_doc": "Integrações declaradas explicitamente. Reviewer/Forge-Doctor usa essa lista para decidir checks aplicáveis (ex: hermes, langfuse, deepgram).",
-    "langfuse": {
+    "_doc": "Integrações declaradas explicitamente. Reviewer/Forge-Doctor usa essa lista para decidir checks aplicáveis (ex: hermes, langsmith, deepgram).",
+    "langsmith": {
       "declared": true,
       "implemented": true,
       "active_in_dev": false,
-      "note": "Wrapper observe() em src/observability/trace.ts integrado no Anthropic adapter. Ativação condicionada a LANGFUSE_PUBLIC_KEY+LANGFUSE_SECRET_KEY no .env — no-op silencioso quando ausentes. Antes de SHADOW, criar conta + ativar + validar trace_coverage >= 99% por 7 dias.",
+      "note": "Wrapper observe() em src/observability/trace.ts integrado no Anthropic adapter. Ativação condicionada a LANGCHAIN_API_KEY no .env — no-op silencioso quando ausente. Antes de SHADOW, criar conta em smith.langchain.com + ativar + validar trace_coverage >= 99% por 7 dias.",
       "instrumentation_points": [
         "src/llm/adapters/anthropic.ts via observe()"
       ]

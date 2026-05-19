@@ -1,18 +1,19 @@
 /**
  * Observability — C6 (telemetry by default).
  *
- * Wrapper de Langfuse com ativação opcional via env vars. Quando
- * `LANGFUSE_PUBLIC_KEY` ausente, vira no-op silencioso (não bloqueia
- * desenvolvimento sem conta). Quando presente, instrumenta cada
- * `observe()` com generation/trace correlato.
+ * Wrapper sobre LangSmith com ativação opcional via env vars. Quando
+ * `LANGCHAIN_API_KEY` (ou `LANGSMITH_API_KEY`) está ausente, vira no-op
+ * silencioso — não bloqueia desenvolvimento sem conta. Quando presente,
+ * cria um Run do tipo `llm` no LangSmith por chamada `observe()`, com
+ * input/output/usage anexados.
  *
  * Princípio C6 exige instrumentação no código — esta camada satisfaz
- * isso. Ativação em produção é gate de promoção SHADOW (declarado em
- * docs/clients/acme-internal/diagnostic-live-suggestion-copilot.md).
+ * isso. Ativação em produção (criar conta LangSmith, preencher env vars,
+ * validar `trace_coverage ≥ 99%` por 7 dias) é gate antes de SHADOW.
  *
  * Uso típico (dentro de um LLM adapter):
  *
- *   const traced = await observe(
+ *   return observe(
  *     { name: "live-suggestion-generator", tenantId, model: "claude-sonnet-4-6" },
  *     async (trace) => {
  *       trace.input({ system, user });
@@ -24,7 +25,7 @@
  *   );
  */
 
-import { Langfuse } from "langfuse";
+import { RunTree } from "langsmith";
 
 type ObserveOptions = {
   name: string;
@@ -41,36 +42,29 @@ export type TraceHandle = {
   error(err: unknown): void;
 };
 
-let cachedClient: Langfuse | null = null;
-let initialized = false;
+function getConfig() {
+  const apiKey = process.env.LANGCHAIN_API_KEY ?? process.env.LANGSMITH_API_KEY;
+  if (!apiKey || apiKey.startsWith("...") || apiKey.trim() === "") return null;
 
-function client(): Langfuse | null {
-  if (initialized) return cachedClient;
-  initialized = true;
+  const project =
+    process.env.LANGCHAIN_PROJECT ?? process.env.LANGSMITH_PROJECT ?? "realtime-sales-copilot";
 
-  const publicKey = process.env.LANGFUSE_PUBLIC_KEY;
-  const secretKey = process.env.LANGFUSE_SECRET_KEY;
+  const tracingEnabled =
+    process.env.LANGCHAIN_TRACING_V2 === "true" ||
+    process.env.LANGSMITH_TRACING === "true" ||
+    apiKey !== undefined; // se a key existe, tratamos como opt-in implícito
 
-  if (!publicKey || !secretKey || publicKey.startsWith("...")) {
-    return null;
-  }
+  if (!tracingEnabled) return null;
 
-  cachedClient = new Langfuse({
-    publicKey,
-    secretKey,
-    baseUrl: process.env.LANGFUSE_HOST ?? "https://cloud.langfuse.com",
-    flushAt: 1,
-  });
-
-  return cachedClient;
+  return { apiKey, project };
 }
 
 export function isObservabilityActive(): boolean {
-  return client() !== null;
+  return getConfig() !== null;
 }
 
 /**
- * Executa `fn` com instrumentação Langfuse. Se Langfuse não estiver
+ * Executa `fn` com instrumentação LangSmith. Se LangSmith não estiver
  * configurado, executa fn com handle no-op — comportamento idêntico do
  * ponto de vista do caller.
  *
@@ -80,9 +74,9 @@ export async function observe<T>(
   options: ObserveOptions,
   fn: (trace: TraceHandle) => Promise<T>,
 ): Promise<T> {
-  const lf = client();
+  const config = getConfig();
 
-  if (!lf) {
+  if (!config) {
     const noopHandle: TraceHandle = {
       input: () => {},
       output: () => {},
@@ -92,77 +86,86 @@ export async function observe<T>(
     return fn(noopHandle);
   }
 
-  const trace = lf.trace({
-    name: options.name,
-    userId: options.tenantId,
-    metadata: options.metadata,
-  });
-
-  const generation = trace.generation({
-    name: options.name,
-    model: options.model,
-    startTime: new Date(),
-  });
+  // Estado capturado pelos métodos do handle e usado no end()
+  let inputs: unknown = undefined;
+  let outputs: unknown = undefined;
+  let usage: { input_tokens?: number; output_tokens?: number; total_tokens?: number } | undefined;
+  let costBrl: number | undefined;
+  let errorMsg: string | undefined;
 
   const handle: TraceHandle = {
     input(payload) {
-      try {
-        generation.update({ input: payload });
-      } catch {
-        /* telemetria nunca derruba runtime */
-      }
+      inputs = payload;
     },
     output(payload) {
-      try {
-        generation.update({ output: payload });
-      } catch {
-        /* idem */
-      }
+      outputs = payload;
     },
     cost({ brl, inputTokens, outputTokens }) {
-      try {
-        const usd = brl / 5.5;
-        generation.update({
-          usage: {
-            input: inputTokens,
-            output: outputTokens,
-            total: (inputTokens ?? 0) + (outputTokens ?? 0),
-            unit: "TOKENS",
-            inputCost: undefined,
-            outputCost: undefined,
-            totalCost: usd,
-          },
-        });
-      } catch {
-        /* idem */
-      }
+      costBrl = brl;
+      usage = {
+        input_tokens: inputTokens,
+        output_tokens: outputTokens,
+        total_tokens: (inputTokens ?? 0) + (outputTokens ?? 0),
+      };
     },
     error(err) {
-      try {
-        generation.update({
-          level: "ERROR",
-          statusMessage: err instanceof Error ? err.message : String(err),
-        });
-      } catch {
-        /* idem */
-      }
+      errorMsg = err instanceof Error ? err.message : String(err);
     },
   };
 
+  const runTree = new RunTree({
+    name: options.name,
+    run_type: "llm",
+    project_name: config.project,
+    extra: {
+      metadata: {
+        ...options.metadata,
+        tenant_id: options.tenantId,
+        model: options.model,
+      },
+    },
+  });
+
+  try {
+    await runTree.postRun().catch(() => {
+      /* telemetria nunca derruba runtime */
+    });
+  } catch {
+    /* idem */
+  }
+
   try {
     const result = await fn(handle);
-    generation.end();
-    return result;
-  } catch (err) {
-    handle.error(err);
-    generation.end({ level: "ERROR" });
-    throw err;
-  } finally {
-    // flushAt: 1 já garante envio imediato; flushAsync por segurança em scripts curtos.
+
+    runTree.inputs = (inputs ?? {}) as Record<string, unknown>;
+    runTree.outputs = {
+      ...((outputs ?? {}) as Record<string, unknown>),
+      ...(usage ? { usage } : {}),
+      ...(costBrl !== undefined ? { cost_brl: costBrl } : {}),
+    };
+    runTree.end_time = Date.now();
+
     try {
-      await lf.flushAsync();
+      await runTree.patchRun();
     } catch {
       /* idem */
     }
+
+    return result;
+  } catch (err) {
+    handle.error(err);
+
+    runTree.inputs = (inputs ?? {}) as Record<string, unknown>;
+    runTree.outputs = (outputs ?? {}) as Record<string, unknown>;
+    runTree.error = errorMsg ?? (err instanceof Error ? err.message : String(err));
+    runTree.end_time = Date.now();
+
+    try {
+      await runTree.patchRun();
+    } catch {
+      /* idem */
+    }
+
+    throw err;
   }
 }
