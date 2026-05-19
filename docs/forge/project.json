@@ -86,9 +86,9 @@
       "ai_enabled": true,
       "lifecycle_state": "DRAFT",
       "criticality": "critical",
-      "linked_diagnostic": "docs/forge/diagnostic-live-suggestion-copilot.md",
+      "linked_diagnostic": "docs/clients/acme-internal/diagnostic-live-suggestion-copilot.md",
       "linked_spec": "docs/specs/live-suggestion-copilot.md",
-      "linked_economics": "docs/forge/delivery-economics-live-suggestion-copilot.md"
+      "linked_economics": "docs/clients/acme-internal/delivery-economics-live-suggestion-copilot.md"
     }
   ],
 

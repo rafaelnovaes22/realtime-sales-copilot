@@ -22,7 +22,18 @@
       "type": "agentic-skill",
       "ai_enabled": true,
       "lifecycle_state": "DRAFT",
-      "criticality": "critical"
+      "criticality": "critical",
+      "diagnostic_path": "docs/clients/acme-internal/diagnostic-live-suggestion-copilot.md",
+      "diagnostic_status": "retroactive_partial",
+      "diagnostic_gates_open": [
+        "interview_2_3_seniors_closers",
+        "analyze_10_call_recordings",
+        "langfuse_integration_c6",
+        "llm_abstraction_c7",
+        "spec_via_acme_spec",
+        "unit_economics_via_acme_unit_economics",
+        "lgpd_text_legal_approval"
+      ]
     }
   ],
   "integrations": {
