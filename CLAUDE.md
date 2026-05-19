@@ -131,22 +131,33 @@ reviewer/                    # contrato com DeepAgent externo
 
 ### Telemetria (C6)
 
-Toda chamada LLM em produção precisa estar instrumentada com Langfuse:
+Toda chamada LLM em produção precisa estar instrumentada com Langfuse. O
+wrapper canônico vive em `src/observability/trace.ts`:
 
 ```ts
-import { langfuseTrace } from "@/observability/langfuse";
+import { observe } from "src/observability/trace.js";
 
-const trace = langfuseTrace.observe({
-  name: "live-suggestion-generator",
-  input: { tenantId, gatilho, bufferTranscript },
-});
-const response = await anthropic.messages.create({ /* ... */ });
-trace.end({ output: response, costBrl: calculateCost(response.usage) });
+return observe(
+  { name: "live-suggestion-generator", tenantId, model: "claude-sonnet-4-6" },
+  async (trace) => {
+    trace.input({ system, user });
+    const resp = await sdk.messages.create({ /* ... */ });
+    trace.output({ text, usage: resp.usage });
+    trace.cost({ brl: estimateCost(resp.usage) });
+    return resp;
+  },
+);
 ```
 
-Sem trace, **não conta como outcome auditável**. Hook `langfuse-trace-check` valida em PR.
+Sem trace, **não conta como outcome auditável**. Hook `langfuse-trace-check`
+valida em PR. O wrapper `observe()` está integrado no Anthropic adapter — todas
+chamadas LLM já passam por ele.
 
-> Nota: o MVP atual ainda não tem Langfuse integrado. É um débito C6 a ser pago antes de promoção SHADOW.
+> **Status atual**: instrumentação presente; ativação condicionada a
+> `LANGFUSE_PUBLIC_KEY` + `LANGFUSE_SECRET_KEY` em `.env`. Quando ausentes,
+> wrapper vira no-op silencioso. Antes da promoção SHADOW, criar conta
+> (cloud.langfuse.com ou self-hosted), preencher as vars e validar
+> `trace_coverage ≥ 99%` por 7 dias.
 
 ### Three-tier context (C5)
 

@@ -7,6 +7,7 @@
 
 import Anthropic from "@anthropic-ai/sdk";
 
+import { observe } from "../../observability/trace.js";
 import type { LLMProvider, LLMRequest, LLMResponse } from "../index.js";
 
 const USD_TO_BRL = 5.5;
@@ -29,44 +30,67 @@ export class AnthropicProvider implements LLMProvider {
   }
 
   async complete(req: LLMRequest): Promise<LLMResponse> {
-    const systemBlocks = req.cacheSystem
-      ? ([
-          {
-            type: "text",
-            text: req.system,
-            cache_control: { type: "ephemeral" },
-          },
-        ] as unknown as Anthropic.MessageCreateParams["system"])
-      : req.system;
+    return observe(
+      {
+        name: req.traceName,
+        tenantId: req.tenantId,
+        model: this.modelId,
+        metadata: { provider: this.providerName, cache_system: req.cacheSystem === true },
+      },
+      async (trace) => {
+        const systemBlocks = req.cacheSystem
+          ? ([
+              {
+                type: "text",
+                text: req.system,
+                cache_control: { type: "ephemeral" },
+              },
+            ] as unknown as Anthropic.MessageCreateParams["system"])
+          : req.system;
 
-    const startedAt = Date.now();
+        trace.input({
+          system: req.system,
+          user: req.user,
+          max_tokens: req.maxTokens,
+        });
 
-    const resp = await this.client.messages.create({
-      model: this.modelId,
-      max_tokens: req.maxTokens,
-      system: systemBlocks,
-      messages: [{ role: "user", content: req.user }],
-      metadata: { user_id: req.tenantId },
-    });
+        const startedAt = Date.now();
 
-    const latencyMs = Date.now() - startedAt;
+        const resp = await this.client.messages.create({
+          model: this.modelId,
+          max_tokens: req.maxTokens,
+          system: systemBlocks,
+          messages: [{ role: "user", content: req.user }],
+          metadata: { user_id: req.tenantId },
+        });
 
-    const text = resp.content
-      .filter((b): b is Anthropic.TextBlock => b.type === "text")
-      .map((b) => b.text)
-      .join("")
-      .trim();
+        const latencyMs = Date.now() - startedAt;
 
-    const costBrl = this.estimateCostBrl(resp.usage.input_tokens, resp.usage.output_tokens);
+        const text = resp.content
+          .filter((b): b is Anthropic.TextBlock => b.type === "text")
+          .map((b) => b.text)
+          .join("")
+          .trim();
 
-    return {
-      text,
-      inputTokens: resp.usage.input_tokens,
-      outputTokens: resp.usage.output_tokens,
-      latencyMs,
-      costBrl,
-      rawModelId: this.modelId,
-    };
+        const costBrl = this.estimateCostBrl(resp.usage.input_tokens, resp.usage.output_tokens);
+
+        trace.output({ text, stop_reason: resp.stop_reason });
+        trace.cost({
+          brl: costBrl,
+          inputTokens: resp.usage.input_tokens,
+          outputTokens: resp.usage.output_tokens,
+        });
+
+        return {
+          text,
+          inputTokens: resp.usage.input_tokens,
+          outputTokens: resp.usage.output_tokens,
+          latencyMs,
+          costBrl,
+          rawModelId: this.modelId,
+        };
+      },
+    );
   }
 
   private estimateCostBrl(inputTokens: number, outputTokens: number): number {
