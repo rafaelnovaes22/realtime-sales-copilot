@@ -10,6 +10,7 @@
     "corpus": "npm run ingest && npm run sanitize && npm run tag",
     "test:deepgram": "tsx --env-file=.env scripts/test-deepgram.ts",
     "test:pipeline": "tsx --env-file=.env scripts/test-pipeline.ts",
+    "dev:poc": "tsx --env-file=.env apps/web-poc/server.ts",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
@@ -20,6 +21,8 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.0",
     "@deepgram/sdk": "^3.9.0",
+    "@hono/node-server": "^1.13.0",
+    "hono": "^4.6.0",
     "iconv-lite": "^0.6.3",
     "remark-parse": "^11.0.0",
     "unified": "^11.0.0",

@@ -107,7 +107,9 @@ async function classifyChunk(chunk: Chunk, attempt = 1): Promise<Chunk["tags"]> 
     const resp = await client.messages.create({
       model: MODEL,
       max_tokens: 200,
-      system: [{ type: "text", text: SYSTEM_PROMPT, cache_control: { type: "ephemeral" } }],
+      system: [
+        { type: "text", text: SYSTEM_PROMPT, cache_control: { type: "ephemeral" } },
+      ] as unknown as Anthropic.MessageCreateParams["system"],
       messages: [{ role: "user", content: userContent }],
     });
 

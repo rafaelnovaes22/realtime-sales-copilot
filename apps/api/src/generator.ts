@@ -70,7 +70,9 @@ export async function generate(opts: GenerateOptions): Promise<GenerateResult> {
   const resp = await client.messages.create({
     model: MODEL,
     max_tokens: 150,
-    system: [{ type: "text", text: SYSTEM_PROMPT, cache_control: { type: "ephemeral" } }],
+    system: [
+      { type: "text", text: SYSTEM_PROMPT, cache_control: { type: "ephemeral" } },
+    ] as unknown as Anthropic.MessageCreateParams["system"],
     messages: [{ role: "user", content: userParts.join("\n\n---\n\n") }],
   });
 

@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>POC Deepgram — Acme Forja Comercial</title>
+    <style>
+      :root {
+        --bg: #0b0d10;
+        --panel: #14181d;
+        --border: #1f262d;
+        --fg: #e6e9ee;
+        --fg-dim: #8b95a3;
+        --accent: #5eead4;
+        --interim: #8b95a3;
+        --final: #e6e9ee;
+        --danger: #f87171;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font: 14px/1.5 ui-monospace, "SF Mono", Menlo, monospace;
+        background: var(--bg);
+        color: var(--fg);
+        padding: 24px;
+        max-width: 960px;
+        margin-inline: auto;
+      }
+      h1 { font-size: 18px; font-weight: 600; margin: 0 0 4px; }
+      .sub { color: var(--fg-dim); margin-bottom: 24px; }
+
+      .controls {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+      button {
+        font: inherit;
+        padding: 10px 18px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        background: var(--panel);
+        color: var(--fg);
+        cursor: pointer;
+      }
+      button:hover:not(:disabled) { border-color: var(--accent); }
+      button:disabled { opacity: 0.4; cursor: not-allowed; }
+      button.primary { background: var(--accent); color: #0b0d10; border-color: var(--accent); }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+      .stat {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        padding: 8px 12px;
+        border-radius: 6px;
+      }
+      .stat-label { color: var(--fg-dim); font-size: 11px; text-transform: uppercase; }
+      .stat-value { font-size: 18px; font-weight: 600; margin-top: 2px; }
+
+      #transcript {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 16px;
+        min-height: 320px;
+        white-space: pre-wrap;
+        font-size: 15px;
+        line-height: 1.6;
+      }
+      .interim { color: var(--interim); font-style: italic; }
+      .final { color: var(--final); }
+
+      #log {
+        margin-top: 16px;
+        max-height: 200px;
+        overflow-y: auto;
+        font-size: 12px;
+        color: var(--fg-dim);
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 12px;
+      }
+      #log .err { color: var(--danger); }
+
+      .status-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #4a525a;
+        margin-right: 6px;
+      }
+      .status-dot.live { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
+    </style>
+  </head>
+  <body>
+    <h1>POC — Captura de áudio + Deepgram Streaming</h1>
+    <div class="sub">
+      <span class="status-dot" id="dot"></span><span id="status">Pronto</span>
+    </div>
+
+    <div class="controls">
+      <button id="start" class="primary">Iniciar captura</button>
+      <button id="stop" disabled>Parar</button>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">Latência média</div>
+        <div class="stat-value" id="lat-avg">—</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Latência máx</div>
+        <div class="stat-value" id="lat-max">—</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Chunks enviados</div>
+        <div class="stat-value" id="chunks">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Transcrições finais</div>
+        <div class="stat-value" id="finals">0</div>
+      </div>
+    </div>
+
+    <div id="transcript"></div>
+    <div id="log"></div>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

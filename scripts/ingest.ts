@@ -41,7 +41,7 @@ type RawChunk = {
  * contém o padrão clássico "Ã" seguido de outro byte alto.
  */
 function fixMojibake(text: string): string {
-  const looksMojibaked = /Ã[\x80-\xBF]|Â[\x80-\xBF]|â\x80\x9[CD]/.test(text);
+  const looksMojibaked = /Ã[-¿]|Â[-¿]|â[]/.test(text);
   if (!looksMojibaked) return text;
 
   try {
