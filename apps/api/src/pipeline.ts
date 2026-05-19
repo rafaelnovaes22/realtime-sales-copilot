@@ -44,7 +44,7 @@ export async function run(input: PipelineInput): Promise<PipelineResult> {
     gatilhos,
     estado: inferredEstado,
     buffer: input.buffer,
-    topN: 5,
+    topN: 3,
   });
 
   if (chunks.length === 0) {

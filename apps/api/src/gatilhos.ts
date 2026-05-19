@@ -24,7 +24,8 @@ export const GATILHO_PATTERNS: Record<Gatilho, RegExp> = {
   vou_pensar: /\b(vou|preciso|deixa eu|me da[ ´]?u? um tempo pra|tenho que) pensar\b/i,
   ja_tenho_seguro:
     /\b(j[áa] (tenho|fiz|sou) (um |uma )?(segur|ap[óo]lice|cobertura|seguradora|plano de sa[úu]de)|j[áa] sou segurad)/i,
-  esta_caro: /\b((t[áa]|est[áa]|fica|achei) caro|n[ãa]o vale a pena|caro demais|valor (muito )?alto|sai caro)\b/i,
+  esta_caro:
+    /\b(t[áa]|est[áa]|fica|ficou|achei|achou|achamos|ach[áa]vamos|sai|saiu|tava|tavam) (\w{2,15} )?caro\b|\b(caro demais|n[ãa]o vale a pena|valor (muito )?alto|valor alto demais|pre[çc]o (muito )?alto|n[ãa]o cabe no (or[çc]amento|bolso))\b/i,
   vou_falar_com_esposa:
     /\b(falar com (a |o )?(minha |meu )?(esposa|marido|mulher|c[ôo]njuge|companhei|parceir|patr[ãa]o)|consultar (a |o )?(minha |meu )?(esposa|marido))\b/i,
   prefiro_investir:

@@ -15,6 +15,7 @@ const $suggestionsBody = document.getElementById("suggestions-body");
 const $estadoSelect = document.getElementById("estado-select");
 
 const BUFFER_WINDOW_MS = 30_000;
+const BUFFER_MAX_TURNS = 4;
 const SUGGEST_DEBOUNCE_MS = 600;
 const SUGGEST_MIN_WORDS = 3;
 
@@ -73,8 +74,13 @@ function render() {
 }
 
 function pruneBuffer() {
+  // Janela rolante: máximo de BUFFER_MAX_TURNS turnos OU BUFFER_WINDOW_MS,
+  // o que for menor. Menos contexto = menos tokens = menor latência.
   const cutoff = Date.now() - BUFFER_WINDOW_MS;
   state.bufferTurns = state.bufferTurns.filter((t) => t.ts >= cutoff);
+  while (state.bufferTurns.length > BUFFER_MAX_TURNS) {
+    state.bufferTurns.shift();
+  }
 }
 
 function bufferText() {
