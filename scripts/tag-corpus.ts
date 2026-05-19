@@ -9,10 +9,10 @@
  */
 
 import { readFile, writeFile } from "node:fs/promises";
-import Anthropic from "@anthropic-ai/sdk";
+
+import { getLLM } from "../src/llm/index.js";
 
 const CORPUS_PATH = "corpus/clean/corpus.clean.json";
-const MODEL = "claude-haiku-4-5-20251001";
 const CONCURRENCY = 8;
 const SAVE_EVERY = 50;
 
@@ -98,28 +98,24 @@ Múltiplas tags por categoria são permitidas. Use arrays vazios quando não apl
 Responda APENAS com JSON válido no formato:
 {"estado": ["..."], "gatilho": ["..."], "tipo": ["..."]}`;
 
-const client = new Anthropic();
+const llmPromise = getLLM("tagger");
 
 async function classifyChunk(chunk: Chunk, attempt = 1): Promise<Chunk["tags"]> {
   const userContent = `Heading path: ${chunk.headingPath.join(" / ")}\n\nConteúdo:\n${chunk.content}`;
 
   try {
-    const resp = await client.messages.create({
-      model: MODEL,
-      max_tokens: 200,
-      system: [
-        { type: "text", text: SYSTEM_PROMPT, cache_control: { type: "ephemeral" } },
-      ] as unknown as Anthropic.MessageCreateParams["system"],
-      messages: [{ role: "user", content: userContent }],
+    const llm = await llmPromise;
+    const resp = await llm.complete({
+      system: SYSTEM_PROMPT,
+      user: userContent,
+      maxTokens: 200,
+      cacheSystem: true,
+      tenantId: "acme-internal",
+      traceName: "tag-corpus-classifier",
     });
 
-    const text = resp.content
-      .filter((b): b is Anthropic.TextBlock => b.type === "text")
-      .map((b) => b.text)
-      .join("");
-
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error(`sem JSON na resposta: ${text.slice(0, 100)}`);
+    const jsonMatch = resp.text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error(`sem JSON na resposta: ${resp.text.slice(0, 100)}`);
 
     const parsed = JSON.parse(jsonMatch[0]) as {
       estado?: string[];
@@ -174,7 +170,8 @@ async function main() {
   }
 
   const chunks: Chunk[] = JSON.parse(await readFile(CORPUS_PATH, "utf8"));
-  console.log(`Tagueando ${chunks.length} chunks com ${MODEL} (concorrência ${CONCURRENCY})`);
+  const llm = await llmPromise;
+  console.log(`Tagueando ${chunks.length} chunks com ${llm.modelId} (concorrência ${CONCURRENCY})`);
 
   const startedAt = Date.now();
   let lastSave = 0;

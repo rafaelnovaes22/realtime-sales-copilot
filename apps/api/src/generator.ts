@@ -1,13 +1,15 @@
 /**
- * Gerador de sugestão: Sonnet 4.6 com chunks relevantes em contexto.
+ * Gerador de sugestão: usa a abstração `src/llm/` (C7) com role=generator.
  * Output: 1-2 linhas curtas que o closer pode ler de relance.
+ *
+ * Este arquivo NÃO importa `@anthropic-ai/sdk` direto — toda interação com
+ * provider de LLM passa por `getLLM("generator")`. Trocar Sonnet por Opus
+ * ou rodar OpenAI fallback exige apenas mudar a config do role.
  */
 
-import Anthropic from "@anthropic-ai/sdk";
+import { getLLM } from "../../../src/llm/index.js";
 import type { Gatilho } from "./gatilhos.js";
 import type { ScoredChunk } from "./retriever.js";
-
-const MODEL = "claude-sonnet-4-6";
 
 const SYSTEM_PROMPT = `Você é um co-pilot que sugere falas a um vendedor consultivo (closer) durante ligações ao vivo.
 
@@ -23,12 +25,12 @@ Regras inegociáveis:
 
 Use o material de treinamento abaixo como referência de método e tom, mas reescreva — não copie blocos longos.`;
 
-const client = new Anthropic();
-
 export type GenerateOptions = {
   gatilhos: Gatilho[];
   bufferTranscript: string;
   chunks: ScoredChunk[];
+  /** Tenant ID propagado para o trace. C8. Default: "acme-internal". */
+  tenantId?: string;
 };
 
 export type GenerateResult = {
@@ -36,6 +38,8 @@ export type GenerateResult = {
   latencyMs: number;
   inputTokens: number;
   outputTokens: number;
+  costBrl: number;
+  modelId: string;
 };
 
 function buildContextFromChunks(chunks: ScoredChunk[]): string {
@@ -65,29 +69,22 @@ export async function generate(opts: GenerateOptions): Promise<GenerateResult> {
     "Escreva a fala que o closer deve usar agora. 1-2 linhas, direta, no tom do closer. Sem prefácio, sem aspas.",
   );
 
-  const startedAt = Date.now();
-
-  const resp = await client.messages.create({
-    model: MODEL,
-    max_tokens: 150,
-    system: [
-      { type: "text", text: SYSTEM_PROMPT, cache_control: { type: "ephemeral" } },
-    ] as unknown as Anthropic.MessageCreateParams["system"],
-    messages: [{ role: "user", content: userParts.join("\n\n---\n\n") }],
+  const llm = await getLLM("generator");
+  const resp = await llm.complete({
+    system: SYSTEM_PROMPT,
+    user: userParts.join("\n\n---\n\n"),
+    maxTokens: 150,
+    cacheSystem: true,
+    tenantId: opts.tenantId ?? "acme-internal",
+    traceName: "live-suggestion-generator",
   });
 
-  const latencyMs = Date.now() - startedAt;
-
-  const text = resp.content
-    .filter((b): b is Anthropic.TextBlock => b.type === "text")
-    .map((b) => b.text)
-    .join("")
-    .trim();
-
   return {
-    text,
-    latencyMs,
-    inputTokens: resp.usage.input_tokens,
-    outputTokens: resp.usage.output_tokens,
+    text: resp.text,
+    latencyMs: resp.latencyMs,
+    inputTokens: resp.inputTokens,
+    outputTokens: resp.outputTokens,
+    costBrl: resp.costBrl,
+    modelId: resp.rawModelId,
   };
 }
