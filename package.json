@@ -1,0 +1,28 @@
+{
+  "name": "realtime-sales-copilot",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Co-pilot de IA para closers de vendas consultivas em tempo real",
+  "scripts": {
+    "ingest": "tsx scripts/ingest.ts",
+    "sanitize": "tsx scripts/sanitize.ts",
+    "tag": "tsx --env-file=.env scripts/tag-corpus.ts",
+    "corpus": "npm run ingest && npm run sanitize && npm run tag",
+    "test:deepgram": "tsx --env-file=.env scripts/test-deepgram.ts",
+    "test:pipeline": "tsx --env-file=.env scripts/test-pipeline.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.0",
+    "@deepgram/sdk": "^3.9.0",
+    "iconv-lite": "^0.6.3",
+    "remark-parse": "^11.0.0",
+    "unified": "^11.0.0",
+    "unist-util-visit": "^5.0.0"
+  }
+}

@@ -6,6 +6,7 @@ dist/
 build/
 .next/
 *.log
+corpus/source/
 corpus/raw/
 corpus/clean/
 *.mp3
