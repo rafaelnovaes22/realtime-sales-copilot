@@ -1,0 +1,50 @@
+{
+  "version": "1",
+  "lastUpdated": "2026-05-19",
+  "description": "Glossário de sanitização de marca. Aplica-se no sanitize.ts entre corpus.raw.json e corpus.clean.json. O guardian regex em runtime usa o campo auditCheck como última camada antes de exibir sugestão ao closer.",
+  "replacements": {
+    "Prudential": "[Seguradora]",
+    "Life Planner": "consultor comercial",
+    "LifePlanner": "consultor comercial",
+    "Corretora Franqueada": "corretora",
+    "Corretoras Franqueadas": "corretoras",
+    "W1 Academy": "academia de treinamento",
+    "W1": "treinamento",
+    "Clube 3W+": "programa de reconhecimento",
+    "Quarter Hour": "bloco de treinamento",
+    "Joint Work": "trabalho conjunto",
+    "Opening Interview": "abertura de reunião",
+    "Fact and Feeling Finding": "investigação aprofundada",
+    "Fact Finding": "investigação de fatos",
+    "placed policies": "apólices implantadas",
+    "placed": "implantação"
+  },
+  "wordBoundaryReplacements": {
+    "MFA": "indicação",
+    "MFAs": "indicações",
+    "TS1": "ficha de prospecção",
+    "MFB": "corretora",
+    "MFBs": "corretoras"
+  },
+  "removePatterns": [
+    "^\\*\\*ObservaÃ?§Ã?£o:\\*\\*.*material.*Prudential.*$",
+    "^>?\\s*Material autoral.*Prudential.*$",
+    "^>?\\s*Uso recomendado:.*$",
+    ".*não deve ser apresentado como material oficial.*"
+  ],
+  "auditCheck": [
+    "prudential",
+    "life ?planner",
+    "\\bMFA\\b",
+    "\\bTS1\\b",
+    "\\bMFB\\b",
+    "\\bW1\\b",
+    "3W\\+",
+    "quarter ?hour",
+    "joint ?work",
+    "opening ?interview",
+    "\\[seguradora\\]",
+    "\\[empresa\\]",
+    "\\[marca\\]"
+  ]
+}
