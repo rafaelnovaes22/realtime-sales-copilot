@@ -89,6 +89,99 @@
       }
       #log .err { color: var(--danger); }
 
+      select {
+        font: inherit;
+        padding: 8px 12px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        background: var(--panel);
+        color: var(--fg);
+      }
+
+      .panes {
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 12px;
+      }
+
+      #suggestions-panel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 16px;
+        min-height: 320px;
+        max-height: 70vh;
+        overflow-y: auto;
+      }
+
+      #suggestions-panel h2 {
+        margin: 0 0 8px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--fg-dim);
+      }
+
+      .suggestion-card {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-left: 3px solid var(--accent);
+        border-radius: 6px;
+        padding: 12px;
+        margin-bottom: 10px;
+        animation: slide-in 200ms ease-out;
+      }
+
+      @keyframes slide-in {
+        from { transform: translateX(8px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+
+      .suggestion-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 8px;
+        font-size: 11px;
+        color: var(--fg-dim);
+      }
+
+      .gatilho-badge {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 1px 8px;
+        color: var(--accent);
+      }
+
+      .suggestion-text {
+        font-size: 14px;
+        line-height: 1.5;
+        color: var(--fg);
+        margin-bottom: 10px;
+      }
+
+      .suggestion-actions {
+        display: flex;
+        gap: 6px;
+      }
+
+      .suggestion-actions button {
+        padding: 4px 10px;
+        font-size: 12px;
+        background: var(--panel);
+        border: 1px solid var(--border);
+      }
+
+      .suggestion-actions button.accept:hover { border-color: #22c55e; color: #22c55e; }
+      .suggestion-actions button.reject:hover { border-color: var(--danger); color: var(--danger); }
+      .suggestion-actions button.dismiss:hover { border-color: var(--fg-dim); }
+
+      .suggestion-card.handled { opacity: 0.5; }
+
+      .placeholder { color: var(--fg-dim); font-style: italic; font-size: 13px; }
+
       .status-dot {
         display: inline-block;
         width: 8px;
@@ -109,28 +202,44 @@
     <div class="controls">
       <button id="start" class="primary">Iniciar captura</button>
       <button id="stop" disabled>Parar</button>
+      <select id="estado-select" title="Etapa atual da conversa">
+        <option value="abertura">abertura</option>
+        <option value="diagnostico" selected>diagnóstico</option>
+        <option value="apresentacao">apresentação</option>
+        <option value="objecao">objeção</option>
+        <option value="fechamento">fechamento</option>
+      </select>
     </div>
 
     <div class="stats">
       <div class="stat">
-        <div class="stat-label">Latência média</div>
+        <div class="stat-label">Latência STT</div>
         <div class="stat-value" id="lat-avg">—</div>
       </div>
       <div class="stat">
-        <div class="stat-label">Latência máx</div>
-        <div class="stat-value" id="lat-max">—</div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">Chunks enviados</div>
-        <div class="stat-value" id="chunks">0</div>
+        <div class="stat-label">Latência sugestão</div>
+        <div class="stat-value" id="lat-suggest">—</div>
       </div>
       <div class="stat">
         <div class="stat-label">Transcrições finais</div>
         <div class="stat-value" id="finals">0</div>
       </div>
+      <div class="stat">
+        <div class="stat-label">Sugestões emitidas</div>
+        <div class="stat-value" id="suggestions-count">0</div>
+      </div>
     </div>
 
-    <div id="transcript"></div>
+    <div class="panes">
+      <div id="transcript"></div>
+      <div id="suggestions-panel">
+        <h2>Sugestões</h2>
+        <div id="suggestions-body">
+          <p class="placeholder">As sugestões aparecem aqui quando um gatilho é detectado.</p>
+        </div>
+      </div>
+    </div>
+
     <div id="log"></div>
 
     <script type="module" src="/app.js"></script>

@@ -8,9 +8,15 @@ const $log = document.getElementById("log");
 const $status = document.getElementById("status");
 const $dot = document.getElementById("dot");
 const $latAvg = document.getElementById("lat-avg");
-const $latMax = document.getElementById("lat-max");
-const $chunks = document.getElementById("chunks");
+const $latSuggest = document.getElementById("lat-suggest");
 const $finals = document.getElementById("finals");
+const $suggestionsCount = document.getElementById("suggestions-count");
+const $suggestionsBody = document.getElementById("suggestions-body");
+const $estadoSelect = document.getElementById("estado-select");
+
+const BUFFER_WINDOW_MS = 30_000;
+const SUGGEST_DEBOUNCE_MS = 600;
+const SUGGEST_MIN_WORDS = 3;
 
 const state = {
   ws: null,
@@ -19,9 +25,13 @@ const state = {
   finals: [], // array de strings (transcrições finalizadas)
   interim: "", // string atual interim
   latencies: [],
-  chunkCount: 0,
   finalCount: 0,
   lastChunkSentAt: 0,
+  // buffer com timestamp para janela rolante de 30s
+  bufferTurns: [],
+  suggestInflight: false,
+  suggestDebounceTimer: null,
+  suggestionCount: 0,
 };
 
 function log(msg, isErr = false) {
@@ -56,12 +66,103 @@ function render() {
     const avg = Math.round(
       state.latencies.reduce((a, b) => a + b, 0) / state.latencies.length,
     );
-    const max = Math.max(...state.latencies);
     $latAvg.textContent = `${avg}ms`;
-    $latMax.textContent = `${max}ms`;
   }
-  $chunks.textContent = state.chunkCount;
   $finals.textContent = state.finalCount;
+  $suggestionsCount.textContent = state.suggestionCount;
+}
+
+function pruneBuffer() {
+  const cutoff = Date.now() - BUFFER_WINDOW_MS;
+  state.bufferTurns = state.bufferTurns.filter((t) => t.ts >= cutoff);
+}
+
+function bufferText() {
+  return state.bufferTurns.map((t) => t.text).join(" ").trim();
+}
+
+function escapeHtml(s) {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function renderSuggestionCard({ suggestion, gatilhos, latencyMs, costBrl }) {
+  const placeholder = $suggestionsBody.querySelector(".placeholder");
+  if (placeholder) placeholder.remove();
+
+  const card = document.createElement("div");
+  card.className = "suggestion-card";
+  const gatilhoBadges = (gatilhos ?? [])
+    .map((g) => `<span class="gatilho-badge">${escapeHtml(g)}</span>`)
+    .join("");
+  const costText = costBrl != null ? ` · R$ ${costBrl.toFixed(4)}` : "";
+  card.innerHTML = `
+    <div class="suggestion-meta">
+      ${gatilhoBadges}
+      <span>${latencyMs}ms${costText}</span>
+    </div>
+    <div class="suggestion-text">${escapeHtml(suggestion)}</div>
+    <div class="suggestion-actions">
+      <button class="accept" title="Aceitar (closer usou a fala)">👍 Aceitar</button>
+      <button class="reject" title="Sugestão ruim">👎 Refutar</button>
+      <button class="dismiss" title="Não se aplica agora">✓ Dispensar</button>
+    </div>
+  `;
+  const mark = () => card.classList.add("handled");
+  card.querySelector(".accept").addEventListener("click", mark);
+  card.querySelector(".reject").addEventListener("click", mark);
+  card.querySelector(".dismiss").addEventListener("click", mark);
+  $suggestionsBody.prepend(card);
+
+  state.suggestionCount++;
+  $latSuggest.textContent = `${latencyMs}ms`;
+  render();
+}
+
+async function callSuggest() {
+  if (state.suggestInflight) return;
+  if (state.bufferTurns.length === 0) return;
+
+  state.suggestInflight = true;
+  const text = bufferText();
+  const startedAt = performance.now();
+
+  try {
+    const res = await fetch("/api/suggest", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        buffer: text,
+        estado: $estadoSelect.value,
+      }),
+    });
+    const data = await res.json();
+    const wallClock = Math.round(performance.now() - startedAt);
+
+    if (data.status === "ok" && data.suggestion) {
+      renderSuggestionCard({
+        suggestion: data.suggestion,
+        gatilhos: data.gatilhos,
+        latencyMs: wallClock,
+        costBrl: data.cost_brl,
+      });
+    } else if (data.status === "blocked_by_guardian") {
+      log(`Guardian bloqueou: ${data.blocked_reason}`, true);
+    }
+    // status === "no_gatilho" → silêncio é correto, não logar
+  } catch (err) {
+    log(`Falha em /api/suggest: ${err.message}`, true);
+  } finally {
+    state.suggestInflight = false;
+  }
+}
+
+function scheduleSuggest() {
+  if (state.suggestDebounceTimer) clearTimeout(state.suggestDebounceTimer);
+  state.suggestDebounceTimer = setTimeout(callSuggest, SUGGEST_DEBOUNCE_MS);
 }
 
 async function start() {
@@ -129,9 +230,7 @@ async function start() {
       if (e.data.size === 0) return;
       if (state.ws?.readyState !== WebSocket.OPEN) return;
       state.ws.send(e.data);
-      state.chunkCount++;
       state.lastChunkSentAt = performance.now();
-      render();
     };
 
     state.mediaRecorder.start(250); // chunks de 250ms
@@ -161,6 +260,13 @@ async function start() {
       state.finals.push(transcript);
       state.finalCount++;
       state.interim = "";
+      // Atualiza buffer rolante de 30s e dispara /api/suggest (debounced)
+      state.bufferTurns.push({ text: transcript, ts: Date.now() });
+      pruneBuffer();
+      const wordCount = transcript.trim().split(/\s+/).length;
+      if (wordCount >= SUGGEST_MIN_WORDS) {
+        scheduleSuggest();
+      }
     } else {
       state.interim = transcript;
     }
