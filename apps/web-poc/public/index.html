@@ -191,9 +191,112 @@
         margin-right: 6px;
       }
       .status-dot.live { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
+
+      /* LGPD consent overlay */
+      #lgpd-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(11, 13, 16, 0.92);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 999;
+        padding: 24px;
+      }
+      #lgpd-overlay.hidden { display: none; }
+      #lgpd-box {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 32px;
+        max-width: 520px;
+        width: 100%;
+      }
+      #lgpd-box h2 {
+        margin: 0 0 12px;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--fg);
+      }
+      #lgpd-box p {
+        color: var(--fg-dim);
+        font-size: 13px;
+        line-height: 1.7;
+        margin: 0 0 12px;
+      }
+      #lgpd-box ul {
+        color: var(--fg-dim);
+        font-size: 13px;
+        line-height: 1.7;
+        margin: 0 0 20px;
+        padding-left: 18px;
+      }
+      #lgpd-box ul li { margin-bottom: 4px; }
+      #lgpd-actions { display: flex; gap: 10px; }
+      #lgpd-confirm {
+        flex: 1;
+        background: var(--accent);
+        color: #0b0d10;
+        border: none;
+        border-radius: 6px;
+        padding: 10px 16px;
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      #lgpd-confirm:hover { opacity: 0.9; }
+      #lgpd-cancel {
+        padding: 10px 16px;
+        background: transparent;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        color: var(--fg-dim);
+        font: inherit;
+        cursor: pointer;
+      }
+      #lgpd-cancel:hover { border-color: var(--danger); color: var(--danger); }
+
+      /* indicador de consentimento no rodapé */
+      #lgpd-badge {
+        display: none;
+        font-size: 11px;
+        color: var(--fg-dim);
+        margin-top: 8px;
+        padding: 4px 8px;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        width: fit-content;
+      }
+      #lgpd-badge.active { display: block; }
     </style>
   </head>
   <body>
+    <!-- Modal de consentimento LGPD — obrigatório antes de qualquer captura -->
+    <div id="lgpd-overlay">
+      <div id="lgpd-box" role="dialog" aria-modal="true" aria-labelledby="lgpd-title">
+        <h2 id="lgpd-title">Consentimento de uso de IA — LGPD</h2>
+        <p>
+          Antes de iniciar, você precisa estar ciente de como seus dados serão usados
+          durante esta sessão:
+        </p>
+        <ul>
+          <li>O <strong>áudio da conversa</strong> será capturado pelo microfone do seu dispositivo.</li>
+          <li>A transcrição será processada pela <strong>Deepgram</strong> (serviço de reconhecimento de voz).</li>
+          <li>Trechos da conversa serão enviados para um modelo de <strong>IA (Claude)</strong> para gerar sugestões.</li>
+          <li>Nenhum dado é armazenado permanentemente nesta versão de testes.</li>
+          <li>Você pode <strong>parar a captura a qualquer momento</strong> clicando em "Parar".</li>
+        </ul>
+        <p>
+          Ao clicar em <strong>"Concordo e iniciar"</strong>, você confirma que foi informado
+          e consente com o processamento descrito acima para fins de teste desta ferramenta.
+        </p>
+        <div id="lgpd-actions">
+          <button id="lgpd-confirm">Concordo e iniciar</button>
+          <button id="lgpd-cancel">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
     <h1>POC — Captura de áudio + Deepgram Streaming</h1>
     <div class="sub">
       <span class="status-dot" id="dot"></span><span id="status">Pronto</span>
@@ -202,13 +305,6 @@
     <div class="controls">
       <button id="start" class="primary">Iniciar captura</button>
       <button id="stop" disabled>Parar</button>
-      <select id="estado-select" title="Etapa atual da conversa">
-        <option value="abertura">abertura</option>
-        <option value="diagnostico" selected>diagnóstico</option>
-        <option value="apresentacao">apresentação</option>
-        <option value="objecao">objeção</option>
-        <option value="fechamento">fechamento</option>
-      </select>
     </div>
 
     <div class="stats">
@@ -241,6 +337,7 @@
     </div>
 
     <div id="log"></div>
+    <div id="lgpd-badge">🔒 Consentimento LGPD registrado</div>
 
     <script type="module" src="/app.js"></script>
   </body>

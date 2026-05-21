@@ -11,6 +11,7 @@
     "test:deepgram": "tsx --env-file=.env scripts/test-deepgram.ts",
     "test:pipeline": "tsx --env-file=.env scripts/test-pipeline.ts",
     "dev:poc": "tsx --env-file=.env apps/web-poc/server.ts",
+    "start:poc": "tsx apps/web-poc/server.ts",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
@@ -18,13 +19,18 @@
     "tsx": "^4.19.0",
     "typescript": "^5.7.0"
   },
+  "engines": {
+    "node": ">=20"
+  },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.0",
     "@deepgram/sdk": "^3.9.0",
     "@hono/node-server": "^1.13.0",
+    "@types/pg": "^8.20.0",
     "hono": "^4.6.0",
     "iconv-lite": "^0.6.3",
     "langsmith": "^0.2.0",
+    "pg": "^8.21.0",
     "remark-parse": "^11.0.0",
     "unified": "^11.0.0",
     "unist-util-visit": "^5.0.0"

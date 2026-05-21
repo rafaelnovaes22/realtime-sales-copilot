@@ -12,7 +12,28 @@ const $latSuggest = document.getElementById("lat-suggest");
 const $finals = document.getElementById("finals");
 const $suggestionsCount = document.getElementById("suggestions-count");
 const $suggestionsBody = document.getElementById("suggestions-body");
-const $estadoSelect = document.getElementById("estado-select");
+const $lgpdOverlay = document.getElementById("lgpd-overlay");
+const $lgpdConfirm = document.getElementById("lgpd-confirm");
+const $lgpdCancel = document.getElementById("lgpd-cancel");
+const $lgpdBadge = document.getElementById("lgpd-badge");
+
+// LGPD: bloqueia "Iniciar captura" até consentimento explícito
+$start.disabled = true;
+
+function registerConsent() {
+  const ts = new Date().toISOString();
+  sessionStorage.setItem("lgpd_consent", JSON.stringify({ granted: true, at: ts }));
+  $lgpdOverlay.classList.add("hidden");
+  $lgpdBadge.classList.add("active");
+  $lgpdBadge.title = `Consentimento registrado em ${new Date(ts).toLocaleTimeString()}`;
+  $start.disabled = false;
+  log(`Consentimento LGPD registrado — ${new Date(ts).toLocaleTimeString()}`);
+}
+
+$lgpdConfirm.addEventListener("click", registerConsent);
+$lgpdCancel.addEventListener("click", () => {
+  window.location.href = "about:blank";
+});
 
 const BUFFER_WINDOW_MS = 30_000;
 const BUFFER_MAX_TURNS = 4;
@@ -95,9 +116,28 @@ function escapeHtml(s) {
     .replace(/"/g, "&quot;");
 }
 
+function genId() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+}
+
+async function sendFeedback(payload) {
+  try {
+    await fetch("/api/feedback", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+  } catch (err) {
+    log(`Falha ao enviar feedback: ${err.message}`, true);
+  }
+}
+
 function renderSuggestionCard({ suggestion, gatilhos, latencyMs, costBrl }) {
   const placeholder = $suggestionsBody.querySelector(".placeholder");
   if (placeholder) placeholder.remove();
+
+  const suggestionId = genId();
+  const bufferExcerpt = bufferText().slice(-300);
 
   const card = document.createElement("div");
   card.className = "suggestion-card";
@@ -112,15 +152,31 @@ function renderSuggestionCard({ suggestion, gatilhos, latencyMs, costBrl }) {
     </div>
     <div class="suggestion-text">${escapeHtml(suggestion)}</div>
     <div class="suggestion-actions">
-      <button class="accept" title="Aceitar (closer usou a fala)">👍 Aceitar</button>
-      <button class="reject" title="Sugestão ruim">👎 Refutar</button>
-      <button class="dismiss" title="Não se aplica agora">✓ Dispensar</button>
+      <button class="accept" title="Você usou essa fala">👍 Aceitar</button>
+      <button class="reject" title="Sugestão inadequada">👎 Refutar</button>
+      <button class="dismiss" title="Não se aplicava agora">✓ Dispensar</button>
     </div>
   `;
-  const mark = () => card.classList.add("handled");
-  card.querySelector(".accept").addEventListener("click", mark);
-  card.querySelector(".reject").addEventListener("click", mark);
-  card.querySelector(".dismiss").addEventListener("click", mark);
+
+  const sendAndMark = (action) => {
+    if (card.classList.contains("handled")) return;
+    card.classList.add("handled");
+    sendFeedback({
+      suggestion_id: suggestionId,
+      action,
+      suggestion_text: suggestion,
+      gatilhos: gatilhos ?? [],
+      buffer_excerpt: bufferExcerpt,
+      latency_ms: latencyMs,
+      cost_brl: costBrl,
+    });
+    log(`Feedback: ${action} → "${suggestion.slice(0, 60)}..."`);
+  };
+
+  card.querySelector(".accept").addEventListener("click", () => sendAndMark("accepted"));
+  card.querySelector(".reject").addEventListener("click", () => sendAndMark("rejected"));
+  card.querySelector(".dismiss").addEventListener("click", () => sendAndMark("dismissed"));
+
   $suggestionsBody.prepend(card);
 
   state.suggestionCount++;
@@ -140,10 +196,7 @@ async function callSuggest() {
     const res = await fetch("/api/suggest", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        buffer: text,
-        estado: $estadoSelect.value,
-      }),
+      body: JSON.stringify({ buffer: text }),
     });
     const data = await res.json();
     const wallClock = Math.round(performance.now() - startedAt);

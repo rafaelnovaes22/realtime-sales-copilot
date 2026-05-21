@@ -10,7 +10,7 @@ build/
 *.log
 corpus/source/
 corpus/raw/
-corpus/clean/
+# corpus/clean/ não é ignorado — corpus.clean.json (sanitizado, sem IP) vai para o repo
 *.mp3
 *.mp4
 *.wav
