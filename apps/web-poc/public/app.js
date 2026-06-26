@@ -201,6 +201,13 @@ async function callSuggest() {
     const data = await res.json();
     const wallClock = Math.round(performance.now() - startedAt);
 
+    // HTTP 500 não cai no catch (fetch só rejeita em erro de rede). Tratar aqui
+    // para não engolir falhas do pipeline (ex: ANTHROPIC_API_KEY ausente).
+    if (!res.ok || data.error) {
+      log(`/api/suggest erro ${res.status}: ${data.error ?? "desconhecido"}`, true);
+      return;
+    }
+
     if (data.status === "ok" && data.suggestion) {
       renderSuggestionCard({
         suggestion: data.suggestion,
@@ -210,6 +217,8 @@ async function callSuggest() {
       });
     } else if (data.status === "blocked_by_guardian") {
       log(`Guardian bloqueou: ${data.blocked_reason}`, true);
+    } else if (data.status === "no_chunks") {
+      log(`Gatilho ${JSON.stringify(data.gatilhos)} detectado, mas sem material no corpus`, true);
     }
     // status === "no_gatilho" → silêncio é correto, não logar
   } catch (err) {
