@@ -84,7 +84,7 @@ elif [ -d "evals" ]; then
   LOW_EVALS=""
   for eval_dir in evals/*/cases/; do
     [ -d "$eval_dir" ] || continue
-    COUNT=$(find "$eval_dir" -name "*.json" -o -name "*.yaml" -o -name "*.yml" 2>/dev/null | wc -l)
+    COUNT=$(find "$eval_dir" \( -name "*.json" -o -name "*.yaml" -o -name "*.yml" -o -name "*.md" \) 2>/dev/null | wc -l)
     if [ "$COUNT" -lt 30 ]; then
       LOW_EVALS="$LOW_EVALS $(dirname "$eval_dir"):${COUNT}"
     fi
