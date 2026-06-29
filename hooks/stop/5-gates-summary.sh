@@ -34,19 +34,26 @@ else
   FAIL=$((FAIL+1))
 fi
 
-# G2 — sem `any` em src/skus/** e src/agents/**
-if [ -d "src" ]; then
-  ANY_COUNT=$(grep -rE ':\s*any(\[\]|[^A-Za-z]|$)|\bas\s+any\b' \
-    --include="*.ts" src/skus/ src/agents/ 2>/dev/null | grep -vc '^\s*//' || echo "0")
+# G2 — sem `any` no código de produção TS (paths reais do consumer)
+ANY_DIRS=()
+for d in apps/api/src src/llm src/observability; do
+  [ -d "$d" ] && ANY_DIRS+=("$d")
+done
+if [ ${#ANY_DIRS[@]} -gt 0 ]; then
+  ANY_MATCHES=$(grep -rnE ':\s*any(\[\]|[^A-Za-z]|$)|\bas\s+any\b|<any>' \
+    --include="*.ts" "${ANY_DIRS[@]}" 2>/dev/null | grep -vE ':[0-9]+:\s*//' || true)
+  ANY_COUNT=$(printf '%s' "$ANY_MATCHES" | grep -c . || true)
+  ANY_COUNT=${ANY_COUNT:-0}
+  SCOPE="${ANY_DIRS[*]}"
   if [ "$ANY_COUNT" -eq "0" ]; then
-    LINES+=("| G2 | Zero 'any' em src/skus + src/agents | ✅ PASS |")
+    LINES+=("| G2 | Zero 'any' em $SCOPE | ✅ PASS |")
     PASS=$((PASS+1))
   else
-    LINES+=("| G2 | Zero 'any' em src/skus + src/agents | ❌ FAIL — $ANY_COUNT ocorrências |")
+    LINES+=("| G2 | Zero 'any' em $SCOPE | ❌ FAIL — $ANY_COUNT ocorrências |")
     FAIL=$((FAIL+1))
   fi
 else
-  LINES+=("| G2 | Zero 'any' em src/skus + src/agents | ⏭ SKIP — src/ não existe |")
+  LINES+=("| G2 | Zero 'any' no código de produção | ⏭ SKIP — sem dirs de código TS |")
   WARN=$((WARN+1))
 fi
 
