@@ -14,10 +14,13 @@ import { fileURLToPath } from "node:url";
 import { appendFileSync, mkdirSync, existsSync } from "node:fs";
 
 import { run } from "../api/src/pipeline.js";
+import { sanitizePII, editDistance } from "../api/src/pii.js";
+import { buildReport } from "../api/src/learning/report.js";
 import {
   ensureSchema,
   insertFeedback,
   insertSuggestion,
+  updateOutcome,
   fetchFeedback,
   getPool,
 } from "./db.js";
@@ -61,7 +64,13 @@ app.get("/api/dg-key", (c) => {
 });
 
 app.post("/api/suggest", async (c) => {
-  let body: { buffer?: string; estado?: string; suggestion_id?: string };
+  let body: {
+    buffer?: string;
+    estado?: string;
+    suggestion_id?: string;
+    tenant_id?: string;
+    closer_id?: string;
+  };
   try {
     body = await c.req.json();
   } catch {
@@ -77,23 +86,28 @@ app.post("/api/suggest", async (c) => {
       ? (body.estado as "abertura" | "diagnostico" | "apresentacao" | "objecao" | "fechamento")
       : undefined;
 
+  const tenantId = body.tenant_id ?? "acme-internal";
+
   try {
-    const result = await run({ buffer: body.buffer, estado });
+    const result = await run({ buffer: body.buffer, estado, tenantId, closerId: body.closer_id });
     const suggestionText = result.guardian?.ok ? result.guardian.text : "";
     const suggestionId = body.suggestion_id ?? `${Date.now().toString(36)}`;
 
-    // Persiste sugestão gerada para análise futura
+    // Persiste sugestão gerada para análise futura (buffer sanitizado — LGPD)
     if (result.status === "ok" && suggestionText) {
       insertSuggestion({
         suggestion_id: suggestionId,
         status: result.status,
         gatilhos: result.gatilhos,
         suggestion_text: suggestionText,
-        buffer_excerpt: body.buffer.slice(-300),
+        buffer_excerpt: sanitizePII(body.buffer.slice(-300)),
         total_latency_ms: result.totalLatencyMs,
         generation_latency_ms: result.generation?.latencyMs ?? null,
         cost_brl: result.generation?.costBrl ?? null,
         chunks_used: result.chunks.length,
+        tenant_id: tenantId,
+        closer_id: body.closer_id ?? null,
+        tipo: result.tipo ?? null,
       }).catch((err) => console.error("[db] insertSuggestion failed:", err));
     }
 
@@ -101,6 +115,7 @@ app.post("/api/suggest", async (c) => {
       suggestion_id: suggestionId,
       status: result.status,
       gatilhos: result.gatilhos,
+      tipo: result.tipo ?? null,
       suggestion: suggestionText || null,
       blocked_reason: result.status === "blocked_by_guardian" ? result.reason : null,
       chunks_used: result.chunks.length,
@@ -123,6 +138,9 @@ app.post("/api/feedback", async (c) => {
     buffer_excerpt?: string;
     latency_ms?: number;
     cost_brl?: number;
+    tenant_id?: string;
+    closer_id?: string;
+    final_text?: string;
   };
   try {
     body = await c.req.json();
@@ -135,14 +153,28 @@ app.post("/api/feedback", async (c) => {
     return c.json({ error: "action must be accepted | rejected | dismissed" }, 400);
   }
 
+  // Sinal de ouro: texto que o closer realmente usou (se editou o card).
+  const suggestionText = body.suggestion_text ?? "";
+  const finalTextRaw = body.final_text ?? null;
+  const wasEdited =
+    finalTextRaw != null && finalTextRaw.trim() !== suggestionText.trim() ? true : finalTextRaw != null ? false : null;
+  const editDist =
+    finalTextRaw != null ? editDistance(suggestionText.trim(), finalTextRaw.trim()) : null;
+
+  // PII sanitizada antes de persistir (LGPD).
   const record = {
     suggestion_id: body.suggestion_id ?? "unknown",
     action: body.action,
     gatilhos: body.gatilhos ?? [],
-    suggestion_text: body.suggestion_text ?? "",
-    buffer_excerpt: body.buffer_excerpt ?? "",
+    suggestion_text: suggestionText,
+    buffer_excerpt: sanitizePII(body.buffer_excerpt ?? ""),
     latency_ms: body.latency_ms ?? null,
     cost_brl: body.cost_brl ?? null,
+    tenant_id: body.tenant_id ?? "acme-internal",
+    closer_id: body.closer_id ?? null,
+    final_text: finalTextRaw != null ? sanitizePII(finalTextRaw) : null,
+    was_edited: wasEdited,
+    edit_distance: editDist,
   };
 
   console.log(`[feedback] ${JSON.stringify(record)}`);
@@ -155,6 +187,37 @@ app.post("/api/feedback", async (c) => {
     saveFeedbackFallback({ ts: new Date().toISOString(), ...record });
   }
 
+  return c.json({ ok: true });
+});
+
+app.get("/api/learning/report", async (c) => {
+  if (!getPool()) {
+    return c.json({ error: "DATABASE_URL ausente — sem dados de aprendizado" }, 503);
+  }
+  const windowDays = Number(c.req.query("window") ?? 7);
+  try {
+    const report = await buildReport({ windowDays });
+    return c.json(report);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    return c.json({ error: `report failed: ${msg}` }, 500);
+  }
+});
+
+app.post("/api/outcome", async (c) => {
+  let body: { suggestion_id?: string; outcome?: string };
+  try {
+    body = await c.req.json();
+  } catch {
+    return c.json({ error: "invalid json body" }, 400);
+  }
+  const valid = ["won", "advanced", "lost"];
+  if (!body.suggestion_id || !body.outcome || !valid.includes(body.outcome)) {
+    return c.json({ error: "suggestion_id e outcome (won|advanced|lost) obrigatórios" }, 400);
+  }
+  await updateOutcome(body.suggestion_id, body.outcome as "won" | "advanced" | "lost").catch((err) =>
+    console.error("[db] updateOutcome failed:", err),
+  );
   return c.json({ ok: true });
 });
 

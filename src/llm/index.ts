@@ -11,7 +11,13 @@
  * de `src/llm/adapters/`. Validado pelo code-reviewer-claude antes de merge.
  */
 
-export type LLMRole = "generator" | "tagger" | "guardian";
+export type LLMRole =
+  | "generator"
+  | "tagger"
+  | "guardian"
+  | "classifier"
+  | "ranker"
+  | "refiner";
 
 export type LLMRequest = {
   /** Mensagem de sistema. Pode ser cacheada via `cacheSystem: true`. */
@@ -48,33 +54,78 @@ export interface LLMProvider {
   readonly modelId: string;
 }
 
+type ProviderSpec = { provider: string; modelId: string };
+
 /**
- * Mapeamento role → (provider + model). Em projetos multi-tenant, o tenant
- * pode override via `TenantContext.llm_role_overrides` (futuro PR-fase2-02).
- * Por enquanto, hardcoded para Acme-internal (decisão D007).
+ * Mapeamento role → (primary + fallback). Gemini 2.5 Flash via Vertex é o
+ * provider primário (D011); Anthropic é o fallback de portabilidade (C7).
+ * Em projetos multi-tenant, o tenant pode override via
+ * `TenantContext.llm_role_overrides` (futuro PR-fase2-02).
  */
-const DEFAULT_MODEL_BY_ROLE: Record<LLMRole, { provider: string; modelId: string }> = {
-  generator: { provider: "anthropic", modelId: "claude-sonnet-4-6" },
-  tagger: { provider: "anthropic", modelId: "claude-haiku-4-5-20251001" },
-  guardian: { provider: "anthropic", modelId: "claude-haiku-4-5-20251001" },
+const ROLE_CONFIG: Record<LLMRole, { primary: ProviderSpec; fallback?: ProviderSpec }> = {
+  generator: {
+    primary: { provider: "gemini-vertex", modelId: "gemini-2.5-flash" },
+    fallback: { provider: "anthropic", modelId: "claude-sonnet-4-6" },
+  },
+  classifier: {
+    primary: { provider: "gemini-vertex", modelId: "gemini-2.5-flash" },
+    fallback: { provider: "anthropic", modelId: "claude-haiku-4-5-20251001" },
+  },
+  ranker: {
+    primary: { provider: "gemini-vertex", modelId: "gemini-2.5-flash" },
+    fallback: { provider: "anthropic", modelId: "claude-haiku-4-5-20251001" },
+  },
+  refiner: {
+    primary: { provider: "gemini-vertex", modelId: "gemini-2.5-flash" },
+    fallback: { provider: "anthropic", modelId: "claude-sonnet-4-6" },
+  },
+  tagger: {
+    primary: { provider: "gemini-vertex", modelId: "gemini-2.5-flash" },
+    fallback: { provider: "anthropic", modelId: "claude-haiku-4-5-20251001" },
+  },
+  guardian: {
+    primary: { provider: "gemini-vertex", modelId: "gemini-2.5-flash" },
+    fallback: { provider: "anthropic", modelId: "claude-haiku-4-5-20251001" },
+  },
 };
 
 const providerCache = new Map<string, LLMProvider>();
 
-export async function getLLM(role: LLMRole): Promise<LLMProvider> {
-  const { provider, modelId } = DEFAULT_MODEL_BY_ROLE[role];
-  const cacheKey = `${provider}:${modelId}`;
+async function buildProvider(spec: ProviderSpec): Promise<LLMProvider> {
+  const cacheKey = `${spec.provider}:${spec.modelId}`;
+  const cached = providerCache.get(cacheKey);
+  if (cached) return cached;
 
-  let instance = providerCache.get(cacheKey);
-  if (instance) return instance;
-
-  if (provider === "anthropic") {
+  let instance: LLMProvider;
+  if (spec.provider === "gemini-vertex") {
+    const { GeminiVertexProvider } = await import("./adapters/gemini.js");
+    instance = new GeminiVertexProvider(spec.modelId);
+  } else if (spec.provider === "anthropic") {
     const { AnthropicProvider } = await import("./adapters/anthropic.js");
-    instance = new AnthropicProvider(modelId);
+    instance = new AnthropicProvider(spec.modelId);
   } else {
-    throw new Error(`LLM provider not implemented: ${provider}`);
+    throw new Error(`LLM provider not implemented: ${spec.provider}`);
   }
 
   providerCache.set(cacheKey, instance);
   return instance;
+}
+
+export async function getLLM(role: LLMRole): Promise<LLMProvider> {
+  const { primary, fallback } = ROLE_CONFIG[role];
+  const cacheKey = fallback
+    ? `${primary.provider}:${primary.modelId}->${fallback.provider}:${fallback.modelId}`
+    : `${primary.provider}:${primary.modelId}`;
+
+  const cached = providerCache.get(cacheKey);
+  if (cached) return cached;
+
+  const primaryProvider = await buildProvider(primary);
+  if (!fallback) return primaryProvider;
+
+  const secondaryProvider = await buildProvider(fallback);
+  const { FallbackProvider } = await import("./adapters/fallback.js");
+  const wrapped = new FallbackProvider(primaryProvider, secondaryProvider);
+  providerCache.set(cacheKey, wrapped);
+  return wrapped;
 }

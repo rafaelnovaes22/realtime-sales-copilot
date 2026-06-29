@@ -11,7 +11,7 @@ import { getLLM } from "../../../src/llm/index.js";
 import type { Gatilho } from "./gatilhos.js";
 import type { ScoredChunk } from "./retriever.js";
 
-const SYSTEM_PROMPT = `Você é um co-pilot que sugere falas a um closer durante ligações ao vivo de venda consultiva.
+export const SYSTEM_PROMPT = `Você é um co-pilot que sugere falas a um closer durante ligações ao vivo de venda consultiva.
 
 O closer pode estar em dois contextos — use as pistas da transcrição para identificar qual:
 
@@ -54,7 +54,7 @@ export type GenerateResult = {
   modelId: string;
 };
 
-function buildContextFromChunks(chunks: ScoredChunk[]): string {
+export function buildContextFromChunks(chunks: ScoredChunk[]): string {
   return chunks
     .map((c, i) => {
       const path = c.chunk.headingPath.join(" / ");

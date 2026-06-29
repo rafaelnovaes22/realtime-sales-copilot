@@ -39,6 +39,9 @@ const BUFFER_WINDOW_MS = 30_000;
 const BUFFER_MAX_TURNS = 4;
 const SUGGEST_DEBOUNCE_MS = 600;
 const SUGGEST_MIN_WORDS = 3;
+// POC: identidade fixa. Em produção vem do login do closer/tenant.
+const TENANT_ID = "acme-internal";
+const CLOSER_ID = "poc-closer";
 
 const state = {
   ws: null,
@@ -132,11 +135,11 @@ async function sendFeedback(payload) {
   }
 }
 
-function renderSuggestionCard({ suggestion, gatilhos, latencyMs, costBrl }) {
+function renderSuggestionCard({ suggestion, gatilhos, latencyMs, costBrl, suggestionId }) {
   const placeholder = $suggestionsBody.querySelector(".placeholder");
   if (placeholder) placeholder.remove();
 
-  const suggestionId = genId();
+  const id = suggestionId ?? genId();
   const bufferExcerpt = bufferText().slice(-300);
 
   const card = document.createElement("div");
@@ -150,9 +153,9 @@ function renderSuggestionCard({ suggestion, gatilhos, latencyMs, costBrl }) {
       ${gatilhoBadges}
       <span>${latencyMs}ms${costText}</span>
     </div>
-    <div class="suggestion-text">${escapeHtml(suggestion)}</div>
+    <div class="suggestion-text" contenteditable="true" spellcheck="false" title="Edite a fala antes de aceitar — o que você usar de fato vira sinal de aprendizado">${escapeHtml(suggestion)}</div>
     <div class="suggestion-actions">
-      <button class="accept" title="Você usou essa fala">👍 Aceitar</button>
+      <button class="accept" title="Você usou essa fala (edite acima se quiser)">👍 Aceitar</button>
       <button class="reject" title="Sugestão inadequada">👎 Refutar</button>
       <button class="dismiss" title="Não se aplicava agora">✓ Dispensar</button>
     </div>
@@ -161,16 +164,22 @@ function renderSuggestionCard({ suggestion, gatilhos, latencyMs, costBrl }) {
   const sendAndMark = (action) => {
     if (card.classList.contains("handled")) return;
     card.classList.add("handled");
+    // Sinal de ouro: o texto realmente usado (card é editável).
+    const finalText = card.querySelector(".suggestion-text").textContent.trim();
     sendFeedback({
-      suggestion_id: suggestionId,
+      suggestion_id: id,
       action,
       suggestion_text: suggestion,
+      final_text: finalText,
       gatilhos: gatilhos ?? [],
       buffer_excerpt: bufferExcerpt,
       latency_ms: latencyMs,
       cost_brl: costBrl,
+      tenant_id: TENANT_ID,
+      closer_id: CLOSER_ID,
     });
-    log(`Feedback: ${action} → "${suggestion.slice(0, 60)}..."`);
+    const edited = finalText !== suggestion.trim() ? " (editada)" : "";
+    log(`Feedback: ${action}${edited} → "${finalText.slice(0, 60)}..."`);
   };
 
   card.querySelector(".accept").addEventListener("click", () => sendAndMark("accepted"));
@@ -196,10 +205,17 @@ async function callSuggest() {
     const res = await fetch("/api/suggest", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ buffer: text }),
+      body: JSON.stringify({ buffer: text, tenant_id: TENANT_ID, closer_id: CLOSER_ID }),
     });
     const data = await res.json();
     const wallClock = Math.round(performance.now() - startedAt);
+
+    // HTTP 500 não cai no catch (fetch só rejeita em erro de rede). Tratar aqui
+    // para não engolir falhas do pipeline (ex: ANTHROPIC_API_KEY ausente).
+    if (!res.ok || data.error) {
+      log(`/api/suggest erro ${res.status}: ${data.error ?? "desconhecido"}`, true);
+      return;
+    }
 
     if (data.status === "ok" && data.suggestion) {
       renderSuggestionCard({
@@ -207,9 +223,12 @@ async function callSuggest() {
         gatilhos: data.gatilhos,
         latencyMs: wallClock,
         costBrl: data.cost_brl,
+        suggestionId: data.suggestion_id,
       });
     } else if (data.status === "blocked_by_guardian") {
       log(`Guardian bloqueou: ${data.blocked_reason}`, true);
+    } else if (data.status === "no_chunks") {
+      log(`Gatilho ${JSON.stringify(data.gatilhos)} detectado, mas sem material no corpus`, true);
     }
     // status === "no_gatilho" → silêncio é correto, não logar
   } catch (err) {

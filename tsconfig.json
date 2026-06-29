@@ -14,6 +14,6 @@
     "noEmit": true,
     "lib": ["ES2022", "DOM"]
   },
-  "include": ["scripts/**/*.ts", "apps/**/*.ts", "apps/**/*.tsx"],
+  "include": ["src/**/*.ts", "scripts/**/*.ts", "apps/**/*.ts", "apps/**/*.tsx"],
   "exclude": ["node_modules", "dist", ".next"]
 }

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Hook: any-type-guard
-# Blocks TypeScript `any` type usage in src/skus/** and src/agents/**.
+# Blocks TypeScript `any` type usage no código de produção (apps/api/src/**, src/**).
 
 INPUT=$(cat)
 
@@ -20,7 +20,7 @@ fi
 [ -z "$CONTENT" ] && exit 0
 
 # Only guard TypeScript files in protected paths
-if [[ "$FILE_PATH" =~ src/(skus|agents)/.+\.ts$ ]]; then
+if [[ "$FILE_PATH" =~ (apps/api/src|src)/.+\.ts$ ]]; then
   # Detect: ': any', ': any[]', ': any |', 'as any', '<any>', '(any)'
   # Exclude commented lines
   VIOLATIONS=$(echo "$CONTENT" | grep -vE '^\s*//' | grep -E ':\s*any(\[\]|[^A-Za-z]|$)|\bas\s+any\b|<any>|\(any\)' | head -5)
