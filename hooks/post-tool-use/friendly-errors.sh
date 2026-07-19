@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Hook: friendly-errors (Forge-12 Fase 2)
+# Hook: friendly-errors (Foundry-12 Fase 2)
 # Intercepta mensagens de erro relacionadas a violações de Constitution C1-C8 e
-# traduz para linguagem amigável conforme modo de operação (.forge-mode).
+# traduz para linguagem amigável conforme modo de operação (.foundry-mode).
 #
 # Modos suportados:
 #   vibe  → tradução leiga (ex: "C3 violation" → "Esse SKU está caro demais")
@@ -17,17 +17,17 @@ INPUT=$(cat)
 
 # Diretório raiz do repo (pasta acima do hooks/)
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-MODE_FILE="${REPO_ROOT}/.forge-mode"
+MODE_FILE="${REPO_ROOT}/.foundry-mode"
 
 # Determina modo
 if [[ -f "${MODE_FILE}" ]]; then
-  FORGE_MODE=$(cat "${MODE_FILE}" | tr -d '[:space:]')
+  FOUNDRY_MODE=$(cat "${MODE_FILE}" | tr -d '[:space:]')
 else
-  FORGE_MODE="dev"
+  FOUNDRY_MODE="dev"
 fi
 
 # Em modo agent → não traduz
-if [[ "${FORGE_MODE}" == "agent" ]]; then
+if [[ "${FOUNDRY_MODE}" == "agent" ]]; then
   exit 0
 fi
 
@@ -56,19 +56,19 @@ FRIENDLY_MSG=""
 
 # C1 — Diagnose-first
 if echo "${TOOL_OUTPUT}" | grep -qiE "(C1|diagnose-?(before|first))"; then
-  case "${FORGE_MODE}" in
+  case "${FOUNDRY_MODE}" in
     vibe)
       FRIENDLY_MSG="🤔 Antes de criar isso, preciso entender melhor o problema. Você pode me contar o que o cliente vai pagar por aqui?"
       ;;
     dev)
-      FRIENDLY_MSG="C1 violation — diagnose-first principle: capability nova exige /acme:diagnose antes de spec/plan/code. Veja COMMON_ERRORS.md #1."
+      FRIENDLY_MSG="C1 violation — diagnose-first principle: capability nova exige /novais-digital:diagnose antes de spec/plan/code. Veja COMMON_ERRORS.md #1."
       ;;
   esac
 fi
 
 # C2 — Outcome contratual
 if echo "${TOOL_OUTPUT}" | grep -qiE "(C2|outcome.?clause|po.guardian.*reject)"; then
-  case "${FORGE_MODE}" in
+  case "${FOUNDRY_MODE}" in
     vibe)
       FRIENDLY_MSG="📝 O pedido tá muito vago — me ajuda a deixar mais claro? Tenta responder: 'O cliente vai poder MEDIR se eu cumpri assim: ___'"
       ;;
@@ -80,7 +80,7 @@ fi
 
 # C3 — Unit economics
 if echo "${TOOL_OUTPUT}" | grep -qiE "(C3|cost.?per.?outcome|unit.?economics|margin)"; then
-  case "${FORGE_MODE}" in
+  case "${FOUNDRY_MODE}" in
     vibe)
       FRIENDLY_MSG="💸 Esse projeto tá caro demais pra você cobrar o preço atual — você precisa: (a) cobrar mais, (b) cortar custos, ou (c) entregar menos. Posso te ajudar a decidir."
       ;;
@@ -92,7 +92,7 @@ fi
 
 # C4 — Verifiable evaluation
 if echo "${TOOL_OUTPUT}" | grep -qiE "(C4|eval.?suite|shadow|acceptance.?gate|tdd.?red)"; then
-  case "${FORGE_MODE}" in
+  case "${FOUNDRY_MODE}" in
     vibe)
       FRIENDLY_MSG="✅ Antes de cobrar do cliente, eu preciso ter certeza que funciona — isso significa rodar uns testes/exemplos primeiro. Quer que eu prepare?"
       ;;
@@ -104,19 +104,19 @@ fi
 
 # C5 — ADR
 if echo "${TOOL_OUTPUT}" | grep -qiE "(C5|ADR|adr-approval-gate|architectural.?decision)"; then
-  case "${FORGE_MODE}" in
+  case "${FOUNDRY_MODE}" in
     vibe)
       FRIENDLY_MSG="📋 Essa é uma mudança importante na estrutura — eu preciso documentar PORQUÊ estamos fazendo. Me explica em 1 frase: por que essa mudança agora?"
       ;;
     dev)
-      FRIENDLY_MSG="C5 violation — mudança arquitetural sem ADR. Crie em docs/forge/decisions.md com template (Contexto/Decisão/Consequências). Veja COMMON_ERRORS.md #5."
+      FRIENDLY_MSG="C5 violation — mudança arquitetural sem ADR. Crie em docs/foundry/decisions.md com template (Contexto/Decisão/Consequências). Veja COMMON_ERRORS.md #5."
       ;;
   esac
 fi
 
 # C6 — Observability
 if echo "${TOOL_OUTPUT}" | grep -qiE "(C6|langfuse|telemetry|trace)"; then
-  case "${FORGE_MODE}" in
+  case "${FOUNDRY_MODE}" in
     vibe)
       FRIENDLY_MSG="📊 Eu preciso registrar tudo que acontece (pra você saber depois) — vou configurar isso automaticamente, ok?"
       ;;
@@ -128,7 +128,7 @@ fi
 
 # C7 — Portability
 if echo "${TOOL_OUTPUT}" | grep -qiE "(C7|portability|coupling|domain.?layer)"; then
-  case "${FORGE_MODE}" in
+  case "${FOUNDRY_MODE}" in
     vibe)
       FRIENDLY_MSG="🔌 Você tá amarrando muito o código a uma ferramenta específica — se um dia quisermos trocar, vai dar trabalho. Vou abstrair isso."
       ;;
@@ -140,7 +140,7 @@ fi
 
 # C8 — Tenant context
 if echo "${TOOL_OUTPUT}" | grep -qiE "(C8|tenant|multi.?tenant|RLS)"; then
-  case "${FORGE_MODE}" in
+  case "${FOUNDRY_MODE}" in
     vibe)
       FRIENDLY_MSG="🏢 Lembra que diferentes clientes não podem ver dados uns dos outros — vou garantir que isso esteja respeitado."
       ;;
@@ -152,7 +152,7 @@ fi
 
 # Hash mismatch (C2 path-related)
 if echo "${TOOL_OUTPUT}" | grep -qiE "(hash mismatch|sha256.*divergent)"; then
-  case "${FORGE_MODE}" in
+  case "${FOUNDRY_MODE}" in
     vibe)
       FRIENDLY_MSG="🔐 Um arquivo foi editado mas a 'impressão digital' dele no controle de versão não foi atualizada — eu corrijo agora."
       ;;
@@ -164,7 +164,7 @@ fi
 
 # Secret detected
 if echo "${TOOL_OUTPUT}" | grep -qiE "(secret.?scan|api.?key|password|token).*(detected|found|block)"; then
-  case "${FORGE_MODE}" in
+  case "${FOUNDRY_MODE}" in
     vibe)
       FRIENDLY_MSG="🚨 Você tem uma senha ou chave secreta no código — isso é perigoso! Vou mover pra um lugar seguro automaticamente."
       ;;
@@ -174,45 +174,45 @@ if echo "${TOOL_OUTPUT}" | grep -qiE "(secret.?scan|api.?key|password|token).*(d
   esac
 fi
 
-# C9 — Drift vs canônico (consumer-only, Forge-13 Sprint 2)
-if echo "${TOOL_OUTPUT}" | grep -qiE "(C9|drift|framework_version_required|forge-sync\\.sh)"; then
-  case "${FORGE_MODE}" in
+# C9 — Drift vs canônico (consumer-only, Foundry-13 Sprint 2)
+if echo "${TOOL_OUTPUT}" | grep -qiE "(C9|drift|framework_version_required|foundry-sync\\.sh)"; then
+  case "${FOUNDRY_MODE}" in
     vibe)
-      FRIENDLY_MSG="⚙️ Tem uma versão nova do Forge — vou atualizar suas regras automaticamente. Pode demorar 30 segundos."
+      FRIENDLY_MSG="⚙️ Tem uma versão nova do Foundry — vou atualizar suas regras automaticamente. Pode demorar 30 segundos."
       ;;
     dev)
-      FRIENDLY_MSG="C9 drift detected — framework_version_required < canônico atual. Rode: bash scripts/forge-sync.sh --from \$FORGE_PATH --dry-run primeiro, depois sem --dry-run."
+      FRIENDLY_MSG="C9 drift detected — framework_version_required < canônico atual. Rode: bash scripts/foundry-sync.sh --from \$FOUNDRY_PATH --dry-run primeiro, depois sem --dry-run."
       ;;
   esac
 fi
 
-# project.json missing (Forge-9+)
+# project.json missing (Foundry-9+)
 if echo "${TOOL_OUTPUT}" | grep -qiE "(project\\.json (missing|not found|ausente)|project_type undeclared)"; then
-  case "${FORGE_MODE}" in
+  case "${FOUNDRY_MODE}" in
     vibe)
       FRIENDLY_MSG="📋 Esse projeto ainda não me disse que tipo de coisa ele é (plataforma? agente IA? automação?). Me ajuda a decidir?"
       ;;
     dev)
-      FRIENDLY_MSG="docs/forge/project.json ausente — declare project_type ∈ {agentic_saas, platform, automation, hybrid} + ai_enabled. Copie templates/project.template.json."
+      FRIENDLY_MSG="docs/foundry/project.json ausente — declare project_type ∈ {agentic_saas, platform, automation, hybrid} + ai_enabled. Copie templates/project.template.json."
       ;;
   esac
 fi
 
-# forge-router baixa confiança (Forge-14)
-if echo "${TOOL_OUTPUT}" | grep -qiE "(forge.?router.*low.confidence|intent.*ambiguous|escalate.*master.?prompt)"; then
-  case "${FORGE_MODE}" in
+# foundry-router baixa confiança (Foundry-14)
+if echo "${TOOL_OUTPUT}" | grep -qiE "(foundry.?router.*low.confidence|intent.*ambiguous|escalate.*master.?prompt)"; then
+  case "${FOUNDRY_MODE}" in
     vibe)
       FRIENDLY_MSG="🤷 Não entendi bem o que você quer. Tenta de novo descrevendo: O QUÊ você quer fazer + PARA QUEM (cliente, módulo, agente)?"
       ;;
     dev)
-      FRIENDLY_MSG="forge-router confidence < 0.75 — intent ambíguo. Reformule com verbo + objeto explícitos OU invoque /acme:* diretamente."
+      FRIENDLY_MSG="foundry-router confidence < 0.75 — intent ambíguo. Reformule com verbo + objeto explícitos OU invoque /novais-digital:* diretamente."
       ;;
   esac
 fi
 
-# AIOS TDD RED não falha (Forge-10 / F26-bis)
+# AIOS TDD RED não falha (Foundry-10 / F26-bis)
 if echo "${TOOL_OUTPUT}" | grep -qiE "(tdd.?red.*not.?failing|red phase.*green|tests should fail.*red)"; then
-  case "${FORGE_MODE}" in
+  case "${FOUNDRY_MODE}" in
     vibe)
       FRIENDLY_MSG="🧪 Os testes deveriam estar falhando agora (porque ainda não construímos a coisa). Se eles passam, é porque tem placeholder ou mock incorreto."
       ;;
@@ -222,45 +222,45 @@ if echo "${TOOL_OUTPUT}" | grep -qiE "(tdd.?red.*not.?failing|red phase.*green|t
   esac
 fi
 
-# Coverage gate Tier C (Forge-10)
+# Coverage gate Tier C (Foundry-10)
 if echo "${TOOL_OUTPUT}" | grep -qiE "(coverage.*below.*threshold|tier.?c.*coverage|critical_path.*<.*100)"; then
-  case "${FORGE_MODE}" in
+  case "${FOUNDRY_MODE}" in
     vibe)
       FRIENDLY_MSG="🛡️ Esse módulo é crítico (financeiro/contratual) e ainda não está testado o suficiente. Eu preciso de mais testes antes de poder cobrar."
       ;;
     dev)
-      FRIENDLY_MSG="Coverage gate fail — Tier C exige line ≥ 95% e critical_path 100%. Adicione testes em tests/{module}/unit/ e tests/{module}/integration/. Workflow forge-test bloqueia merge."
+      FRIENDLY_MSG="Coverage gate fail — Tier C exige line ≥ 95% e critical_path 100%. Adicione testes em tests/{module}/unit/ e tests/{module}/integration/. Workflow foundry-test bloqueia merge."
       ;;
   esac
 fi
 
-# Gate 6 CI/CD ausente para AUTONOMOUS (Forge-8)
+# Gate 6 CI/CD ausente para AUTONOMOUS (Foundry-8)
 if echo "${TOOL_OUTPUT}" | grep -qiE "(gate.?6.*cicd|cicd.checklist.*not.signed|assisted.?to.?autonomous.*ci)"; then
-  case "${FORGE_MODE}" in
+  case "${FOUNDRY_MODE}" in
     vibe)
       FRIENDLY_MSG="🚦 Pra promover esse agente pra modo final (cobrando do cliente), eu preciso que o CI esteja rodando. Já configuramos?"
       ;;
     dev)
-      FRIENDLY_MSG="Gate 6 missing — assisted→autonomous exige CI/CD ativo (forge-validate + forge-eval workflows + branch protection). Veja templates/cicd/cicd-checklist.template.md."
+      FRIENDLY_MSG="Gate 6 missing — assisted→autonomous exige CI/CD ativo (foundry-validate + foundry-eval workflows + branch protection). Veja templates/cicd/cicd-checklist.template.md."
       ;;
   esac
 fi
 
-# Persona detect → vibe inadequado (Forge-14 / F35)
-if echo "${TOOL_OUTPUT}" | grep -qiE "(persona.?detect|forge-mode.*invalid|mode.*ambiguous)"; then
-  case "${FORGE_MODE}" in
+# Persona detect → vibe inadequado (Foundry-14 / F35)
+if echo "${TOOL_OUTPUT}" | grep -qiE "(persona.?detect|foundry-mode.*invalid|mode.*ambiguous)"; then
+  case "${FOUNDRY_MODE}" in
     vibe)
-      FRIENDLY_MSG="🎭 O Forge tentou detectar seu modo de operação automático mas ficou inseguro. Você pode rodar: bash scripts/forge mode vibe (ou dev / agent)."
+      FRIENDLY_MSG="🎭 O Foundry tentou detectar seu modo de operação automático mas ficou inseguro. Você pode rodar: bash scripts/foundry mode vibe (ou dev / agent)."
       ;;
     dev)
-      FRIENDLY_MSG="persona-detect uncertain — sinais filesystem ambíguos. Override explícito: bash scripts/forge mode <vibe|dev|agent>. Log em docs/forge/persona-detection.log."
+      FRIENDLY_MSG="persona-detect uncertain — sinais filesystem ambíguos. Override explícito: bash scripts/foundry mode <vibe|dev|agent>. Log em docs/foundry/persona-detection.log."
       ;;
   esac
 fi
 
 # Provider lock-in detectado em produção (C7 extended)
 if echo "${TOOL_OUTPUT}" | grep -qiE "(import.*from.*['\"]anthropic['\"].*src/(skus|agents|modules)|require\\(.*['\"]openai['\"].*src/)"; then
-  case "${FORGE_MODE}" in
+  case "${FOUNDRY_MODE}" in
     vibe)
       FRIENDLY_MSG="🔒 Esse código tá amarrado a um provider de IA específico — se quisermos trocar, vai dar muito trabalho. Vou abstrair em adapter."
       ;;
@@ -270,9 +270,9 @@ if echo "${TOOL_OUTPUT}" | grep -qiE "(import.*from.*['\"]anthropic['\"].*src/(s
   esac
 fi
 
-# Manifest entry órfã (Forge-13 / refatoração consumer-mode)
+# Manifest entry órfã (Foundry-13 / refatoração consumer-mode)
 if echo "${TOOL_OUTPUT}" | grep -qiE "(orphan.*artifact|artifact.*órfão|manifest.?sync.*orphan)"; then
-  case "${FORGE_MODE}" in
+  case "${FOUNDRY_MODE}" in
     vibe)
       FRIENDLY_MSG="📦 Tem um arquivo novo que ainda não está registrado no inventário do projeto. Vou registrar agora ou você quer revisar primeiro?"
       ;;
@@ -288,9 +288,9 @@ fi
 
 if [[ -n "${FRIENDLY_MSG}" ]]; then
   echo ""
-  echo "─── 🤖 Forge Friendly Errors ───────────────"
+  echo "─── 🤖 Foundry Friendly Errors ───────────────"
   echo "${FRIENDLY_MSG}"
-  if [[ "${FORGE_MODE}" == "vibe" ]]; then
+  if [[ "${FOUNDRY_MODE}" == "vibe" ]]; then
     echo ""
     echo "💡 Quer que eu te mostre o erro técnico original também? Diga: 'modo dev'"
   fi

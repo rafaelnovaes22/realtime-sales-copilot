@@ -1,12 +1,12 @@
 """
 Backend Agent — implementa API + service layer de UM módulo.
 
-Gerado a partir de templates/aios/agents/backend_agent/entry.py.template (Forge v0.6.0+).
+Gerado a partir de templates/aios/agents/backend_agent/entry.py.template (Foundry v0.6.0+).
 Stack lida de aios/config.yaml → stack.backend (sem hardcode de framework).
 
 C5/C6/C7/C8 — ver cabeçalho do spec_agent.
 
-Substituições aplicadas pelo /acme:aios-init:
+Substituições aplicadas pelo /novais-digital:aios-init:
   {PROJECT_NAME}, {MODULE}, {TIER}
 """
 

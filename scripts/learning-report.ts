@@ -1,6 +1,6 @@
 /**
  * Gera o relatório de acompanhamento do aprendizado e o persiste em
- * docs/forge/learning-reports/{data}.md. Cadência sugerida: semanal (cron) +
+ * docs/foundry/learning-reports/{data}.md. Cadência sugerida: semanal (cron) +
  * execução sob demanda. Imprime as recomendações de intervenção no console.
  *
  * Uso: npm run learning:report  (ou tsx --env-file=.env scripts/learning-report.ts)
@@ -11,7 +11,7 @@ import { resolve } from "node:path";
 
 import { buildReport, renderReportMarkdown } from "../apps/api/src/learning/report.js";
 
-const OUT_DIR = "docs/forge/learning-reports";
+const OUT_DIR = "docs/foundry/learning-reports";
 
 async function main() {
   if (!process.env.DATABASE_URL) {

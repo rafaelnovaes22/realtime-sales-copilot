@@ -6,13 +6,13 @@ metadata:
   source-path: .claude/skills/L1/baseline-cost-builder.md
   converter-version: "2.1"
   deep-agents-compat: ">=0.0.34"
-  forge-tier: 2
-  forge-version: "0.2.0"
+  foundry-tier: 2
+  foundry-version: "0.2.0"
   linked-principles: [C1, C2, C3]
   helper-pattern: none
 ---
 
-# Skill: baseline-cost-builder — Tier 2 Tactical (Forge)
+# Skill: baseline-cost-builder — Tier 2 Tactical (Foundry)
 
 Measures economics for C3 compliance. Operates in two modes based on `project.ai_enabled`:
 
@@ -27,7 +27,7 @@ Measures economics for C3 compliance. Operates in two modes based on `project.ai
 
 | Tool | Usage |
 |------|-------|
-| `read_file` | Read `__forge_cache.offerings`, diagnostic, process-map |
+| `read_file` | Read `__foundry_cache.offerings`, diagnostic, process-map |
 | `write_file` | Persist `docs/clients/{client_id}/baseline-cost-{process_id}.md` |
 | `execute` | Validate input ranges, compute formulas, render template |
 
@@ -35,7 +35,7 @@ Measures economics for C3 compliance. Operates in two modes based on `project.ai
 
 ## Execution Plan — mode detection
 
-- [ ] 0. Read `docs/forge/project.json` → `project.ai_enabled` (default `true` if absent)
+- [ ] 0. Read `docs/foundry/project.json` → `project.ai_enabled` (default `true` if absent)
 - [ ] **If `ai_enabled=true`** → follow **agentic path** (Steps 1-9 below)
 - [ ] **If `ai_enabled=false`** → follow **platform path** (Steps P1-P7 below)
 
@@ -275,13 +275,13 @@ write_file: docs/clients/{client_id}/baseline-cost-{process_id}.md
 
 ```bash
 deepagents -y
-> Build baseline cost for client acme, process triagem-tickets-tier1
+> Build baseline cost for client novais-digital, process triagem-tickets-tier1
 ```
 
 ### Mode 2 — One-shot
 
 ```bash
-deepagents -n -y "Build baseline-cost for client=acme process=triagem-tickets \
+deepagents -n -y "Build baseline-cost for client=novais-digital process=triagem-tickets \
   volume=1200 actors=[{role:analista-n1,headcount:3,hourly_cost:80,hours_per_unit:0.18}] \
   quality_baseline={error_rate:0.08,rework_rate:0.04} data_confidence=medium"
 ```
@@ -300,7 +300,7 @@ deepagents -n -y "Run baseline-cost-builder with inputs from .deepagents/cache/b
 | Symptom | Cause | Fix |
 |---|---|---|
 | `inputs_missing` | Required field absent | Collect from CFO/operations sessions |
-| `c3_unviable` | Negative margin | Block `/acme:sla-threshold`; renegotiate scope |
+| `c3_unviable` | Negative margin | Block `/novais-digital:sla-threshold`; renegotiate scope |
 | `volume_mismatch` (>20%) | Diagnostic vs process-map disagree | Reconcile in another session |
 | `data_confidence_low_blocked` | Settings require ≥medium | Schedule CFO session for hard data |
 

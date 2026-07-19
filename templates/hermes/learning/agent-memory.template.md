@@ -1,8 +1,8 @@
 ---
-# Acme Forge — Agent Memory Template
+# Novais Digital Foundry — Agent Memory Template
 # Equivalente ao MEMORY.md do Hermes. Fatos aprendidos de um projeto consumer.
 # Instalar em: docs/clients/{client_id}/agent-memory.md
-# Carregado por forge-context.sh a cada SessionStart (Forge-20).
+# Carregado por foundry-context.sh a cada SessionStart (Foundry-20).
 # Princípios: C6 (source_run_id obrigatório), C7 (agnóstico), C8 (sem tenant hardcode)
 #
 # Formato de fato:
@@ -18,7 +18,7 @@
 
 # Agent Memory — {project_name}
 
-> Fatos aprendidos do projeto **{project_name}** ao longo das sessões Forge.
+> Fatos aprendidos do projeto **{project_name}** ao longo das sessões Foundry.
 > Cada fato tem rastreabilidade obrigatória: confidence + data + run_id (C6).
 > Gerenciado pelo Hermes Learning Loop via PRs automáticos após cada sessão SHADOW+.
 
@@ -72,7 +72,7 @@ Restrições técnicas aprendidas na prática (complementa agent-soul.md).
 Custos e volumes reais observados (alimenta unit-economist guardian).
 
 <!-- Exemplo:
-§ [confidence:shadow] [2026-05-18] [run:gh-1000] Sessão típica de /acme:implement custa ~$0.45 em tokens
+§ [confidence:shadow] [2026-05-18] [run:gh-1000] Sessão típica de /novais-digital:implement custa ~$0.45 em tokens
 § [confidence:shadow] [2026-05-20] [run:gh-1200] Volume de eval: ~150 casos/mês — bem dentro do limite C4
 -->
 
@@ -81,7 +81,7 @@ Custos e volumes reais observados (alimenta unit-economist guardian).
 Dicas para observability-guardian neste projeto.
 
 <!-- Exemplo:
-§ [confidence:local] [2026-05-18] [run:local] Langfuse project_id=prj_happiness — traces ativos
+§ [confidence:local] [2026-05-18] [run:local] Langfuse project_id=prj_example — traces ativos
 § [confidence:shadow] [2026-05-19] [run:gh-1100] Campo extra útil nos traces: user_segment (free|premium)
 -->
 

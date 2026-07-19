@@ -6,15 +6,15 @@ metadata:
   source-path: .claude/skills/L0/icp-loader.md
   converter-version: "2.1"
   deep-agents-compat: ">=0.0.34"
-  forge-tier: 1
-  forge-version: "0.1.0"
+  foundry-tier: 1
+  foundry-version: "0.1.0"
   linked-principles: [C5, C7]
   helper-pattern: bmad
 ---
 
-# Skill: icp-loader — Tier 1 Strategic (Forge)
+# Skill: icp-loader — Tier 1 Strategic (Foundry)
 
-Loads the **Ideal Customer Profile** — segments served, qualification signals, **anti-ICP** (mandatory) — for downstream skills and the `forge-auditor`.
+Loads the **Ideal Customer Profile** — segments served, qualification signals, **anti-ICP** (mandatory) — for downstream skills and the `foundry-auditor`.
 
 > Tier 1 hard rule (C5): does not read Tier 2/3. Output ≤ 600 tokens YAML compact.
 
@@ -178,11 +178,11 @@ deepagents -y
 deepagents -n -y "Run icp-loader skill"
 ```
 
-### Mode 3 — In CI as Tier 1 prep for forge-auditor
+### Mode 3 — In CI as Tier 1 prep for foundry-auditor
 
 ```bash
 deepagents -n -y "Run icp-loader skill" > /dev/null   # populates cache
-deepagents -n -y "Run forge-auditor for month 2026-04"
+deepagents -n -y "Run foundry-auditor for month 2026-04"
 ```
 
 ---

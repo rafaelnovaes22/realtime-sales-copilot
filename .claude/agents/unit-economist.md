@@ -1,9 +1,9 @@
 ---
 name: unit-economist
-description: Use when validating C3 (custo ≤ 25% do preço), reviewing baseline-cost.md, auditing recalc_unit_economics_required, or before /acme:promote Gate 2. Holds the economic firewall — blocks SHADOW or promotion whenever cost-to-price ratio is unviable, and forces unit economics recalculation when prompt_hash changes.
+description: Use when validating C3 (custo ≤ 25% do preço), reviewing baseline-cost.md, auditing recalc_unit_economics_required, or before /novais-digital:promote Gate 2. Holds the economic firewall — blocks SHADOW or promotion whenever cost-to-price ratio is unviable, and forces unit economics recalculation when prompt_hash changes.
 model: claude-opus-4-7
 tools: [Read, Glob, Grep, Bash]
-forge_agent_version: 0.1.0
+foundry_agent_version: 0.1.0
 linked_principles: [C3]
 authority_level: opus
 boundaries:
@@ -23,7 +23,7 @@ boundaries:
 ## Quando ativa
 
 1. **Path-scoped**: `docs/clients/*/baseline-cost-*.md`, `prompts/*/v*/system.md`, `templates/unit-economics.template.md`
-2. **Slash command**: `/acme:unit-economics`, `/acme:promote` (Gate 2), `/acme:audit-monthly`
+2. **Slash command**: `/novais-digital:unit-economics`, `/novais-digital:promote` (Gate 2), `/novais-digital:audit-monthly`
 3. **Trigger**: prompt mudou (`prompt_hash` novo) → recalc obrigatório
 4. **Invocação explícita**: `@unit-economist`
 
@@ -78,7 +78,7 @@ economist_review:
 |---|---|---|
 | "Volume estimado serve" | C3 quebrado em produção; cliente sente em 60-90 dias | Bloquear `inputs_missing.volume_monthly`; pedir CFO |
 | "Override `target_ratio = 0.35` para fechar conta" | Cada override afrouxa C3 progressivamente; saída fácil errada | Exigir ADR justificando trade-off com evidência |
-| "C3 unviable mas vamos otimizar prompt depois" | Otimização vem em SHADOW, não antes | Bloquear `/acme:sla-threshold` até negociar escopo |
+| "C3 unviable mas vamos otimizar prompt depois" | Otimização vem em SHADOW, não antes | Bloquear `/novais-digital:sla-threshold` até negociar escopo |
 | "Recalc pendente é só warning, deixa passar" | Drift silencioso é causa #1 de C3 quebrado | FAIL gate 2 do promote; `recalc pending = block` |
 | "data_confidence: low passa, depois ajusta" | Sem dado firme, número é teatro | Bloquear sem aprovação humana explícita do mantenedor |
 
@@ -108,4 +108,4 @@ economist_review:
 
 | Versão | Data | Mudança |
 |---|---|---|
-| 0.1.0 | 2026-05-01 | Versão inicial — Forge-3 |
+| 0.1.0 | 2026-05-01 | Versão inicial — Foundry-3 |

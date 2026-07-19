@@ -26,7 +26,7 @@ activation:
 
 Carrega o **catálogo de ofertas** da organização em formato compacto e cacheável: produtos self-serve, SKUs de plataforma high-touch, diagnósticos cobráveis. Para cada oferta entrega `name`, `category`, `pricing_model`, `lifecycle_stage`, `linked_outcome_clause`. Skill Tier 1 — não conhece instância de oferta vendida (isso é Tier 2).
 
-> Categorização default segue o modelo Acme (Diagnóstico / Plataforma / Produto). Outras organizações podem usar suas próprias categorias declaradas no portfolio — a skill carrega o que está declarado, não impõe taxonomia.
+> Categorização default segue o modelo Novais Digital (Diagnóstico / Plataforma / Produto). Outras organizações podem usar suas próprias categorias declaradas no portfolio — a skill carrega o que está declarado, não impõe taxonomia.
 
 ## Quando ativa
 
@@ -46,7 +46,7 @@ Resolve em ordem de precedência:
 | 3 | `docs/strategy/portfolio.md` | projetos com `docs/` por domínio |
 | 4 | `examples/{org}/portfolio.md` + `examples/{org}/products/*.md` | repo de framework com caso real |
 
-Se nenhum existir → `offerings_missing: true` e orienta criar a partir do template `examples/acme/portfolio.md` (referência canônica).
+Se nenhum existir → `offerings_missing: true` e orienta criar a partir do template `examples/novais-digital/portfolio.md` (referência canônica).
 
 ## O que entrega
 
@@ -54,7 +54,7 @@ Output determinístico, **≤ 800 tokens** (mais alto que DNA/ICP por ser lista)
 
 ```yaml
 offerings_loaded: true
-source_paths: [docs/portfolio.md, examples/acme/products/acme-fin.md]
+source_paths: [docs/portfolio.md, examples/novais-digital/products/novais-digital-fin.md]
 total_offerings: <N>
 offerings:
   - id: <slug>
@@ -74,7 +74,7 @@ Quando `offerings_missing: true`:
 offerings_loaded: false
 offerings_missing: true
 checked_paths: [...]
-recommended_action: "Criar docs/portfolio.md a partir de examples/acme/portfolio.md"
+recommended_action: "Criar docs/portfolio.md a partir de examples/novais-digital/portfolio.md"
 ```
 
 ## Tabela anti-rationalization
@@ -106,7 +106,7 @@ Mesmo modelo das outras skills L0: **ephemeral-strong**.
 
 Uma chamada por run → cache → reuso por skills L1/L2 que precisem de contexto de catálogo (ex: `sku-prompt-builder` checando colisão de naming).
 
-Detalhes em `docs/forge/helper-pattern.md`.
+Detalhes em `docs/foundry/helper-pattern.md`.
 
 ## C5 hard rule
 
@@ -135,4 +135,4 @@ hint: <ação recomendada>
 
 | Versão | Data | Mudança |
 |---|---|---|
-| 0.1.0 | 2026-04-30 | Versão inicial — Forge-1 onda 1 |
+| 0.1.0 | 2026-04-30 | Versão inicial — Foundry-1 onda 1 |

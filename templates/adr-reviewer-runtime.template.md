@@ -1,6 +1,6 @@
 # ADR-002: Runtime do Reviewer DeepAgent — {{ Nome do projeto consumidor }}
 
-> **Template do Forge** — projeto consumidor adapta isto como `docs/adr/002-reviewer-runtime.md`.
+> **Template do Foundry** — projeto consumidor adapta isto como `docs/adr/002-reviewer-runtime.md`.
 > **Origem**: `templates/adr-reviewer-runtime.template.md` v0.1.0 do `agent-governance-framework`.
 
 ---
@@ -13,9 +13,9 @@
 
 ## Contexto
 
-O Acme Forge define o **reviewer DeepAgent** como camada externa de auditoria contínua (decisões F17/F18 do Forge).
+O Novais Digital Foundry define o **reviewer DeepAgent** como camada externa de auditoria contínua (decisões F17/F18 do Foundry).
 
-O Forge **decide o quê** (stack `deepagents` LangChain Python + 10 SKILL.md em `reviewer/deepagents/skills/`).
+O Foundry **decide o quê** (stack `deepagents` LangChain Python + 10 SKILL.md em `reviewer/deepagents/skills/`).
 O projeto consumidor **decide o como** desta ADR — onde o reviewer roda, com que cadência, com que credenciais e com que orçamento.
 
 ---
@@ -81,7 +81,7 @@ Opções:
 
 ### D4 — Cadência
 
-Default Forge: **mensal** (1º dia útil do mês, último mês fechado).
+Default Foundry: **mensal** (1º dia útil do mês, último mês fechado).
 
 | Cenário | Cadência adicional |
 |---|---|
@@ -95,9 +95,9 @@ Default Forge: **mensal** (1º dia útil do mês, último mês fechado).
 
 ### D5 — Onde o output vive
 
-Output do `forge-auditor`:
-- `docs/forge/audits/{YYYY-MM}.md` — relatório legível
-- `docs/forge/audits/{YYYY-MM}-findings.json` — machine-readable
+Output do `foundry-auditor`:
+- `docs/foundry/audits/{YYYY-MM}.md` — relatório legível
+- `docs/foundry/audits/{YYYY-MM}-findings.json` — machine-readable
 
 **Decisão**:
 
@@ -111,7 +111,7 @@ Output do `forge-auditor`:
 
 ### D6 — Auto-rollback em SLA breach severo
 
-Forge default: `auto_rollback_on_breach: false` (opt-in).
+Foundry default: `auto_rollback_on_breach: false` (opt-in).
 
 **Risco de `true`**: rollback automático sem aviso humano gera incidente comercial.
 **Risco de `false`**: SLA continua quebrado até humano agir.
@@ -159,8 +159,8 @@ Se `true`, declarar canal de notificação obrigatório (Slack, email, etc).
 ## Aprovação
 
 **Aprovado por**: `{{ nome }}` em `{{ data }}`
-**Forge version no momento da decisão**: `{{ x.y.z }}`
-**Reviewer skill version**: `forge-auditor@{{ version }}`
+**Foundry version no momento da decisão**: `{{ x.y.z }}`
+**Reviewer skill version**: `foundry-auditor@{{ version }}`
 
 ---
 

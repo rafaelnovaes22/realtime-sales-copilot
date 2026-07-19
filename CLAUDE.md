@@ -1,7 +1,7 @@
 # realtime-sales-copilot — Guia para Claude Code
 
 > Co-pilot de IA para closers de vendas consultivas em tempo real. Captura ligação, transcreve, detecta gatilhos e sussurra sugestões curtas para o closer.
-> Operado pelo framework **Acme Forge** v0.21.0 ([`docs/forge/project.json`](docs/forge/project.json)).
+> Operado pelo framework **Novais Digital Foundry** v0.21.0 ([`docs/foundry/project.json`](docs/foundry/project.json)).
 
 ---
 
@@ -22,13 +22,13 @@ Os 8 princípios são não-negociáveis e orientam toda decisão neste repositó
 
 Se uma instrução conflitar com a Constitution, **levante o conflito antes de executar**.
 
-> Operação adaptativa sob Forge: ver [`templates/master-prompt.md`](./templates/master-prompt.md).
+> Operação adaptativa sob Foundry: ver [`templates/master-prompt.md`](./templates/master-prompt.md).
 
 ---
 
 ## Extensão de domínio (obrigatória)
 
-[`examples/acme-comercial/constitution-extension.md`](examples/acme-comercial/constitution-extension.md) define guardrails específicos deste projeto:
+[`examples/novais-digital-comercial/constitution-extension.md`](examples/novais-digital-comercial/constitution-extension.md) define guardrails específicos deste projeto:
 
 - **Proibido em toda sugestão**: nome de seguradora, marca, programa proprietário (Life Planner, TS1, MFA, W1, 3W+, MFB). Promessa de rentabilidade. Citação de fonte ("conforme aula X").
 - **Obrigatório em toda sugestão**: voz consultiva, cards 1-2 linhas, latência ≤3s, ≤3 cards por gatilho.
@@ -40,7 +40,7 @@ Três camadas anti-leakage: corpus sanitizado no ingest, system prompt com proib
 
 ## Contexto do projeto
 
-- **project_type**: `agentic_saas` (declarado em `docs/forge/project.json`)
+- **project_type**: `agentic_saas` (declarado em `docs/foundry/project.json`)
 - **ai_enabled**: `true` (Sonnet 4.6 gerador + Haiku 4.5 detectores e guardian)
 - **Lifecycle**: `SHADOW` (3-5 closers paralelos) → `ASSISTED` (closer aceita/recusa) → `AUTONOMOUS`
 - **Estado atual**: módulo `live-suggestion-copilot` em DRAFT, pipeline funcional end-to-end com latência p95 = 2.8s
@@ -71,7 +71,7 @@ npm run test:pipeline  # end-to-end com 5 cenários, mede latência
 
 # Validação
 npm run typecheck
-bash scripts/forge-doctor.sh --consumer
+bash scripts/foundry-doctor.sh --consumer
 ```
 
 ---
@@ -95,19 +95,19 @@ corpus/
 scripts/
 ├── ingest.ts, sanitize.ts, tag-corpus.ts
 ├── test-deepgram.ts, test-pipeline.ts
-└── forge, forge-doctor.sh   # Forge canônico
+└── foundry, foundry-doctor.sh   # Foundry canônico
 docs/
-├── forge/
+├── foundry/
 │   ├── project.json         # declaração canônica (agentic_saas + ai_enabled)
 │   └── decisions.md         # D001-D009 já travadas
 └── adr/                     # ADR-001 stack, ADR-002 LGPD
 examples/
-└── acme-comercial/
+└── novais-digital-comercial/
     └── constitution-extension.md  # guardrails de domínio
 .claude/
 ├── CONSTITUTION.md          # princípios canônicos (LER PRIMEIRO)
 ├── agents/                  # 12 Guardians
-├── commands/acme/         # /acme:* slash commands
+├── commands/novais-digital/         # /novais-digital:* slash commands
 └── skills/{L0,L1,L2}/       # skills por tier
 hooks/                       # pre/post-tool-use + session-start + stop
 templates/                   # adr, eval-case, project, etc.
@@ -120,7 +120,7 @@ reviewer/                    # contrato com DeepAgent externo
 |---|---|
 | `.claude/CONSTITUTION.md` | Mudança exige ADR + bump (hook `adr-approval-gate` bloqueia) |
 | `docs/adr/*.md` (assinada) | Não muda; abrir nova ADR |
-| `docs/forge/project.json` | Mudança em `project.type` ou `ai_enabled` exige ADR + nova auditoria |
+| `docs/foundry/project.json` | Mudança em `project.type` ou `ai_enabled` exige ADR + nova auditoria |
 | `corpus/glossary/brand-glossary.json` | Adição de termos sempre permitida; remoção exige justificativa |
 | `apps/api/src/guardian.ts` | Aumentar permissividade exige ADR + eval cases novos |
 | `apps/api/src/generator.ts` (system prompt) | Mudança versionada via `prompts/{id}/v{n}/system.md` (futuro) |
@@ -149,7 +149,7 @@ return observe(
 );
 ```
 
-Sem trace, **não conta como outcome auditável**. O hook canônico do Forge
+Sem trace, **não conta como outcome auditável**. O hook canônico do Foundry
 `langfuse-trace-check.sh` (nome herdado do framework — opera sobre o
 wrapper `observe()`) valida em PR. O wrapper já está integrado no
 Anthropic adapter; toda chamada LLM passa por ele.
@@ -187,20 +187,20 @@ Quebrar a hierarquia (ex: skill L0 lendo turno de chamada) viola C5 e bloqueia m
 
 ---
 
-## Fluxo Forge (sequência típica)
+## Fluxo Foundry (sequência típica)
 
 ```
-1. /acme:diagnose          → qualifica problema, baseline humano (CEO/closer atual)
-2. /acme:spec              → cláusula de outcome do co-pilot (latência, agreement_rate, leak_rate)
-3. /acme:unit-economics    → custo por sugestão viável (C3) — alvo ≤ 25% do preço/outcome
-4. /acme:sla-threshold     → latência p95 ≤3s, leakage = 0, agreement ≥70% (Shadow)
-5. /acme:plan              → 3 camadas (corpus + pipeline + UI), C7 abstraction
-6. /acme:tasks             → ondas com dependências (já estamos na onda 2-3 do MVP)
-7. /acme:implement         → código + prompts versionados
-8. /acme:eval              → suíte de 50 cenários (Step 4 do roadmap)
-9. /acme:pre-merge-check   → 5 gates go/no-go antes do PR mergear
-10. /acme:promote          → SHADOW (3-5 closers) → ASSISTED → AUTONOMOUS
-11. /acme:audit-monthly    → drift detection + scoring (DeepAgent externo)
+1. /novais-digital:diagnose          → qualifica problema, baseline humano (CEO/closer atual)
+2. /novais-digital:spec              → cláusula de outcome do co-pilot (latência, agreement_rate, leak_rate)
+3. /novais-digital:unit-economics    → custo por sugestão viável (C3) — alvo ≤ 25% do preço/outcome
+4. /novais-digital:sla-threshold     → latência p95 ≤3s, leakage = 0, agreement ≥70% (Shadow)
+5. /novais-digital:plan              → 3 camadas (corpus + pipeline + UI), C7 abstraction
+6. /novais-digital:tasks             → ondas com dependências (já estamos na onda 2-3 do MVP)
+7. /novais-digital:implement         → código + prompts versionados
+8. /novais-digital:eval              → suíte de 50 cenários (Step 4 do roadmap)
+9. /novais-digital:pre-merge-check   → 5 gates go/no-go antes do PR mergear
+10. /novais-digital:promote          → SHADOW (3-5 closers) → ASSISTED → AUTONOMOUS
+11. /novais-digital:audit-monthly    → drift detection + scoring (DeepAgent externo)
 ```
 
 > Status atual: pulamos formalmente as etapas 1-4 (diagnose/spec/unit-economics/sla). O MVP atual é um spike técnico. Antes de SHADOW, os artefatos canônicos devem existir.
@@ -212,9 +212,9 @@ Quebrar a hierarquia (ex: skill L0 lendo turno de chamada) viola C5 e bloqueia m
 Auditoria mensal por **DeepAgent** (GPT-5.5) valida os 8 princípios + coerência entre artefatos. Veja `reviewer/prompt.template.md` + `reviewer/validation-rules.json`.
 
 Para o reviewer funcionar:
-- Toda mudança no Forge atualiza `docs/forge/manifest.json` (futuro)
+- Toda mudança no Foundry atualiza `docs/foundry/manifest.json` (futuro)
 - Toda LLM call tem trace LangSmith (gate de ativação antes de SHADOW)
-- Toda promoção de modo é registrada via `/acme:promote`
+- Toda promoção de modo é registrada via `/novais-digital:promote`
 
 ---
 
@@ -225,9 +225,9 @@ Operações reversíveis e locais (edição em `apps/api/src/`, criação de eva
 **Sempre confirme antes de**:
 - Editar `.claude/CONSTITUTION.md` (precisa nova ADR)
 - Editar `docs/adr/*.md` assinada
-- Editar `docs/forge/project.json` campos críticos (`project.type`, `ai_enabled`)
+- Editar `docs/foundry/project.json` campos críticos (`project.type`, `ai_enabled`)
 - Promover lifecycle (DRAFT → SHADOW → ASSISTED → AUTONOMOUS)
-- Executar `git push --force`, `prisma migrate reset`, `rm -rf` (Forge nega via `settings.json`)
+- Executar `git push --force`, `prisma migrate reset`, `rm -rf` (Foundry nega via `settings.json`)
 
 ---
 

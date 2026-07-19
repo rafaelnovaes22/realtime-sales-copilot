@@ -6,7 +6,7 @@
   ],
   "tools": [],
   "meta": {
-    "author": "forge",
+    "author": "foundry",
     "version": "0.1.0",
     "tier": "shared",
     "context_isolation": true,

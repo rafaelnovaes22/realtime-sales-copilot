@@ -1,10 +1,10 @@
 name: agent-governance-framework-memory
 version: "1.0.0"
 description: >
-  Plugin Hermes para memória distribuída do Acme Forge.
+  Plugin Hermes para memória distribuída do Novais Digital Foundry.
   Permite ao Hermes/Codex acessar e atualizar agent-memory.md de cada consumer
   via GitHub API, sem necessidade de acesso local à máquina.
-author: Acme
+author: Novais Digital
 linked_principles:
   - C6  # rastreabilidade: toda operação tem run_id + timestamp
   - C7  # agnóstico: usa GitHub API pura, sem dependência de plataforma
@@ -13,12 +13,12 @@ linked_principles:
 # Configuração
 config:
   gh_token_env: GH_TOKEN           # PAT com escopo repo
-  forge_repo_env: FORGE_REPO       # ex: acme-startup/agent-governance-framework
+  foundry_repo_env: FOUNDRY_REPO       # ex: novais-digital/agent-governance-framework
   clients_base_path: docs/clients  # base path dos clients no repo
 
 # Tools expostas ao Hermes/Codex
 tools:
-  - name: forge_recall_memory
+  - name: foundry_recall_memory
     description: >
       Busca fatos em agent-memory.md de um projeto consumer.
       Retorna fatos relevantes à query, ordenados por confidence.
@@ -38,18 +38,18 @@ tools:
     implementation:
       type: gh_api
       method: GET
-      path: "repos/{FORGE_REPO}/contents/{clients_base_path}/{project_id}/agent-memory.md"
+      path: "repos/{FOUNDRY_REPO}/contents/{clients_base_path}/{project_id}/agent-memory.md"
       transform: |
         # Fetch + base64 decode + parse sections + filter by query
         content = base64.b64decode(response["content"]).decode()
         facts = parse_facts(content, section=params.get("section"))
         return semantic_filter(facts, query=params["query"])
 
-  - name: forge_store_learning
+  - name: foundry_store_learning
     description: >
       Persiste um novo fato aprendido em agent-memory.md de um consumer.
       Cria ou atualiza o arquivo via commit direto (apenas em branches de learning).
-      Para persistência em main, use forge_propose_pr.
+      Para persistência em main, use foundry_propose_pr.
     parameters:
       project_id:
         type: string
@@ -73,13 +73,13 @@ tools:
     implementation:
       type: gh_api
       method: PUT
-      path: "repos/{FORGE_REPO}/contents/{clients_base_path}/{project_id}/agent-memory.md"
+      path: "repos/{FOUNDRY_REPO}/contents/{clients_base_path}/{project_id}/agent-memory.md"
       validation:
         - "assert not contains_pii(fact), 'Fato contém PII — violação C8'"
         - "assert not contains_credentials(fact), 'Fato contém credencial — violação C8'"
         - "assert run_id in fact, 'Fato deve incluir run_id para rastreabilidade — C6'"
 
-  - name: forge_get_soul
+  - name: foundry_get_soul
     description: >
       Carrega o agent-soul.md de um consumer para injeção de contexto.
       Usado pelo SessionStart hook e pelo learning curator.
@@ -90,10 +90,10 @@ tools:
     implementation:
       type: gh_api
       method: GET
-      path: "repos/{FORGE_REPO}/contents/{clients_base_path}/{project_id}/agent-soul.md"
+      path: "repos/{FOUNDRY_REPO}/contents/{clients_base_path}/{project_id}/agent-soul.md"
       transform: "base64.b64decode(response['content']).decode()"
 
-  - name: forge_propose_pr
+  - name: foundry_propose_pr
     description: >
       Propõe PR com patches ao agent-memory.md de um consumer.
       Chamado pelo learning-loop após decidir persistir fatos.
@@ -123,16 +123,16 @@ tools:
     implementation:
       type: gh_cli
       command: |
-        # 1. Criar branch forge-learning/{project_id}/{date}-{run_id[:8]}
+        # 1. Criar branch foundry-learning/{project_id}/{date}-{run_id[:8]}
         # 2. Atualizar agent-memory.md com novos fatos via gh api
         # 3. gh pr create com template padronizado
         # Ver templates/hermes/learning-loop.md § propose_pr() para detalhes
 
 # Hooks automáticos
 hooks:
-  post_forge_run:
-    description: "Triggered após forge-headless webhook com exit_code=0"
-    skill: forge-learning-loop
+  post_foundry_run:
+    description: "Triggered após foundry-headless webhook com exit_code=0"
+    skill: foundry-learning-loop
     conditions:
       - "payload.exit_code == 0"
       - "payload.learning_snapshot_path is not null"

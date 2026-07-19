@@ -43,7 +43,7 @@ O output é o input canônico de `artifact-prompt-builder` (L2) e do `eval-case-
 
 1. **Path-scoped** — turno toca `docs/clients/{client}/process-*.md` ou `docs/clients/{client}/diagnostic.md`
 2. **Keyword-scoped** — termo de `activation.keywords`
-3. **Explícita** — `@process-mapper client_id=acme process_id=triagem-tickets-tier1 process_name="Triagem N1 de tickets"`
+3. **Explícita** — `@process-mapper client_id=novais-digital process_id=triagem-tickets-tier1 process_name="Triagem N1 de tickets"`
 4. **Indireta** — chamada por `@diagnostic-runner` no handoff Bloco 3 quando processo é central
 
 ## Inputs Tier 1 (via helper pattern)
@@ -77,8 +77,8 @@ Em memória:
 
 ```yaml
 process_mapped: true
-artifact_path: docs/clients/acme/process-triagem-tickets-tier1.md
-client_id: acme
+artifact_path: docs/clients/novais-digital/process-triagem-tickets-tier1.md
+client_id: novais-digital
 process_id: triagem-tickets-tier1
 mapping_summary:
   steps_count: <N>
@@ -120,7 +120,7 @@ process_id: <>
 process_name: <>
 mapped_at: YYYY-MM-DD
 mapped_by: <skill ou humano>
-forge_skill_version: process-mapper@0.1.0
+foundry_skill_version: process-mapper@0.1.0
 linked_principles: [C1, C5, C7]
 ---
 ```
@@ -186,8 +186,8 @@ Skill considera-se aplicada **com sucesso** quando:
 - [x] `automatable_hypotheses` ≥ 1 com `step_id`, `confidence`, `rationale`
 - [x] `agent_readiness_score` calculado (heurística declarada na skill)
 - [x] Arquivo `docs/clients/{client_id}/process-{process_id}.md` persistido e parseia
-- [x] Frontmatter com `forge_skill_version`
-- [x] `__forge_cache.offerings` consumido
+- [x] Frontmatter com `foundry_skill_version`
+- [x] `__foundry_cache.offerings` consumido
 - [x] Nenhuma leitura Tier 3
 
 ## Heurística de `agent_readiness_score`
@@ -211,7 +211,7 @@ Esta skill **não pode**:
 
 **Pode**:
 
-- Consumir `__forge_cache.{dna,offerings}`
+- Consumir `__foundry_cache.{dna,offerings}`
 - Ler outros artefatos Tier 2 do mesmo cliente (`diagnostic.md`, outros `process-*.md`, `baseline-cost-*.md`)
 - Ler templates
 
@@ -232,15 +232,15 @@ hint: <ação>
 
 | Skill | Direção | Como |
 |---|---|---|
-| `@offerings-loader` | upstream (helper) | `__forge_cache.offerings` |
+| `@offerings-loader` | upstream (helper) | `__foundry_cache.offerings` |
 | `@diagnostic-runner` | upstream | Handoff do problema declarado |
 | `@baseline-cost-builder` | par-Tier 2 | Lê `metrics_baseline` deste mapa para calcular custo humano por unidade |
 | `@artifact-prompt-builder` (L2) | downstream | Lê este mapa para construir system prompt do SKU |
 | `@eval-case-author` (L2) | downstream | Usa decision points e métricas para gerar casos com gabarito |
-| `@sku-architect` (Guardian, Forge-3) | reviewer | Valida `agent_readiness_score` antes de virar spec |
+| `@sku-architect` (Guardian, Foundry-3) | reviewer | Valida `agent_readiness_score` antes de virar spec |
 
 ## Histórico
 
 | Versão | Data | Mudança |
 |---|---|---|
-| 0.1.0 | 2026-04-30 | Versão inicial — Forge-1 onda 2 (Tier 2) |
+| 0.1.0 | 2026-04-30 | Versão inicial — Foundry-1 onda 2 (Tier 2) |

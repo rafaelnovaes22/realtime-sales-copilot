@@ -1,17 +1,17 @@
 ---
-name: forge-learning-loop
+name: foundry-learning-loop
 version: "1.0.0"
 description: >
-  Hermes skill que orquestra o loop de aprendizado do Acme Forge.
-  Recebe callback do forge-headless após cada run, decide "should I persist?",
+  Hermes skill que orquestra o loop de aprendizado do Novais Digital Foundry.
+  Recebe callback do foundry-headless após cada run, decide "should I persist?",
   e propõe PRs com patches ao agent-memory.md do consumer.
 triggers:
-  - forge_run_completed
-  - forge_webhook_callback
+  - foundry_run_completed
+  - foundry_webhook_callback
 requires:
   - gh CLI autenticado com repo+workflow scope
   - GH_TOKEN env var
-  - FORGE_REPO env var (ex: acme-startup/agent-governance-framework)
+  - FOUNDRY_REPO env var (ex: novais-digital/agent-governance-framework)
   - TELEGRAM_CHAT_ID (para notificações)
 linked_principles:
   - C1  # learning vinculado a diagnostic real
@@ -23,14 +23,14 @@ rate_limits:
   min_novelty_score_to_persist: 0.6  # 0-1; fatos triviais não geram PR
 ---
 
-# Forge Learning Loop
+# Foundry Learning Loop
 
-Skill Hermes que fecha o loop de aprendizado entre execuções do Acme Forge e o agent-memory.md de cada consumer.
+Skill Hermes que fecha o loop de aprendizado entre execuções do Novais Digital Foundry e o agent-memory.md de cada consumer.
 
 ## Fluxo principal
 
 ```
-forge-headless callback
+foundry-headless callback
       ↓
 1. parse_snapshot()       — lê learning snapshot do artifact
 2. assess_novelty()       — verifica se há algo novo (vs agent-memory atual)
@@ -40,19 +40,19 @@ forge-headless callback
 6. rate_limit_check()     — máx 1 PR de learning por consumer por dia
 ```
 
-## Trigger: forge_run_completed
+## Trigger: foundry_run_completed
 
-O Hermes recebe este evento via webhook HMAC-signed do `forge-headless.yml`.
+O Hermes recebe este evento via webhook HMAC-signed do `foundry-headless.yml`.
 
 Payload esperado:
 ```json
 {
-  "event": "forge_run_completed",
+  "event": "foundry_run_completed",
   "timestamp": "2026-05-18T10:00:00Z",
   "run_id": "12345678",
-  "run_url": "https://github.com/acme-startup/agent-governance-framework/actions/runs/12345678",
+  "run_url": "https://github.com/novais-digital/agent-governance-framework/actions/runs/12345678",
   "consumer": "school-platform",
-  "command": "/acme:implement",
+  "command": "/novais-digital:implement",
   "exit_code": 0,
   "learning_snapshot_path": "docs/learnings/2026-05/20260518T100000-12345.md",
   "learning_snapshot_content": "...",
@@ -108,7 +108,7 @@ def assess_novelty(snapshot: dict, current_memory_content: str) -> list[dict]:
 
 Fetch do agent-memory.md atual:
 ```bash
-gh api repos/acme-startup/agent-governance-framework/contents/docs/clients/{consumer}/agent-memory.md \
+gh api repos/novais-digital/agent-governance-framework/contents/docs/clients/{consumer}/agent-memory.md \
   --jq '.content' | base64 -d
 ```
 
@@ -118,7 +118,7 @@ Codex decide se os fatos novos merecem ser persistidos.
 
 **Prompt para Codex:**
 ```
-Você é o curador de memória do Acme Forge. Analise os fatos candidatos abaixo e decida quais persistir em agent-memory.md.
+Você é o curador de memória do Novais Digital Foundry. Analise os fatos candidatos abaixo e decida quais persistir em agent-memory.md.
 
 Critérios de persistência:
 - O fato é acionável? (muda comportamento futuro do agente)
@@ -148,12 +148,12 @@ def propose_pr(consumer: str, new_facts: list[dict], run_id: str, snapshot_path:
     """
     1. Fetch SHA do agent-memory.md atual via gh api
     2. Adiciona novos fatos nas seções corretas (§ integration_quirks, etc.)
-    3. Cria branch forge-learning/{consumer}/{date}-{run_id[:8]}
+    3. Cria branch foundry-learning/{consumer}/{date}-{run_id[:8]}
     4. Push do arquivo atualizado
     5. gh pr create com body estruturado
     """
-    branch = f"forge-learning/{consumer}/{today}-{run_id[:8]}"
-    pr_title = f"[forge-learning] {consumer}: {len(new_facts)} novos fatos aprendidos"
+    branch = f"foundry-learning/{consumer}/{today}-{run_id[:8]}"
+    pr_title = f"[foundry-learning] {consumer}: {len(new_facts)} novos fatos aprendidos"
     pr_body = f"""
 ## Learning PR — {consumer}
 
@@ -167,7 +167,7 @@ Fatos aprendidos na run [{run_id}]({run_url}) de `{command}`.
 
 - Learning snapshot: `{snapshot_path}`
 - Confidence: `{confidence}`
-- Decidido por: Hermes/Codex (forge-learning-loop v1.0.0)
+- Decidido por: Hermes/Codex (foundry-learning-loop v1.0.0)
 
 ### Revisão
 
@@ -183,8 +183,8 @@ Fatos aprendidos na run [{run_id}]({run_url}) de `{command}`.
 ```python
 def check_rate_limit(consumer: str) -> bool:
     """Retorna True se pode criar PR (máx 1/consumer/dia)."""
-    # Verificar PRs abertos com label forge-learning e consumer={consumer}
-    # gh pr list --repo ... --label forge-learning --search "consumer:{consumer}"
+    # Verificar PRs abertos com label foundry-learning e consumer={consumer}
+    # gh pr list --repo ... --label foundry-learning --search "consumer:{consumer}"
     ...
 ```
 
@@ -194,7 +194,7 @@ Formata e envia notificação ao Telegram do Rafael.
 
 **Mensagem de sucesso:**
 ```
-🧠 *Forge aprendeu algo novo*
+🧠 *Foundry aprendeu algo novo*
 
 📦 Consumer: `{consumer}`
 🏃 Run: `{command}` ([#{run_id}]({run_url}))
@@ -208,7 +208,7 @@ Fatos:
 
 **Mensagem sem novidade:**
 ```
-ℹ️ *Forge run concluída — sem novidades*
+ℹ️ *Foundry run concluída — sem novidades*
 
 📦 Consumer: `{consumer}`
 🏃 Run: `{command}` (#{run_id})
@@ -233,13 +233,13 @@ Variáveis de ambiente Hermes (Railway):
 ```env
 # Já definidas em templates/hermes/railway/env.example
 GH_TOKEN=ghp_...               # PAT com repo+workflow scope
-FORGE_REPO=acme-startup/agent-governance-framework
-HERMES_WEBHOOK_SECRET=...      # HMAC secret compartilhado com forge-headless.yml
+FOUNDRY_REPO=novais-digital/agent-governance-framework
+HERMES_WEBHOOK_SECRET=...      # HMAC secret compartilhado com foundry-headless.yml
 
 # Específicas do learning loop
-FORGE_LEARNING_MIN_NOVELTY=0.6
-FORGE_LEARNING_MAX_PRS_PER_DAY=1
-FORGE_LEARNING_NOTIFY_TELEGRAM=true
+FOUNDRY_LEARNING_MIN_NOVELTY=0.6
+FOUNDRY_LEARNING_MAX_PRS_PER_DAY=1
+FOUNDRY_LEARNING_NOTIFY_TELEGRAM=true
 ```
 
 ## Registro no skill catalog
@@ -248,10 +248,10 @@ Adicionar ao `skills.json` do Hermes Railway:
 
 ```json
 {
-  "name": "forge-learning-loop",
-  "file": "skills/forge-learning-loop.md",
+  "name": "foundry-learning-loop",
+  "file": "skills/foundry-learning-loop.md",
   "version": "1.0.0",
-  "auto_trigger": ["forge_run_completed"],
+  "auto_trigger": ["foundry_run_completed"],
   "manual_trigger": false
 }
 ```

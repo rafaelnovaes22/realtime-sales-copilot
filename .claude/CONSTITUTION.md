@@ -1,4 +1,4 @@
-# Acme Forge — Constitution
+# Novais Digital Foundry — Constitution
 
 > **Versão**: 0.3.0
 > **Data**: 2026-05-08
@@ -9,7 +9,7 @@
 
 ## Como esta Constitution é usada
 
-Este arquivo é a **fonte canônica de princípios** que regem qualquer projeto operado pelo Acme Forge. Ele é:
+Este arquivo é a **fonte canônica de princípios** que regem qualquer projeto operado pelo Novais Digital Foundry. Ele é:
 
 - Carregado automaticamente pelo Claude Code via referência em `CLAUDE.md` raiz do projeto consumidor
 - Lido pelo reviewer externo (DeepAgent / GPT-5.5) a cada auditoria
@@ -21,23 +21,23 @@ A Constitution define **8 princípios genéricos (C1–C8)** aplicáveis a qualq
 
 ## Tipos de projeto suportados (v0.3.0)
 
-A v0.3.0 desacopla a Constitution do pressuposto de "agente de IA". O Forge passa a reconhecer formalmente quatro tipos de projeto consumidor:
+A v0.3.0 desacopla a Constitution do pressuposto de "agente de IA". O Foundry passa a reconhecer formalmente quatro tipos de projeto consumidor:
 
 | `project_type` | O que é | Exemplos |
 |---|---|---|
-| `agentic_saas` | Centrado em agentes de IA com governança de outcome cobrável (default histórico do Forge). | Acme Fin, SKUs SaaS² |
+| `agentic_saas` | Centrado em agentes de IA com governança de outcome cobrável (default histórico do Foundry). | Novais Digital Fin, SKUs SaaS² |
 | `platform` | Plataforma SaaS/operacional com módulos CRUD/CRM/financeiro/etc. Outcome = ação operacional verificável (tela/API/dado persistido). IA pode estar ausente ou pontual. | SchoolPlatform, sucessor de CAPSYSTEM |
 | `automation` | Automações operacionais determinísticas (jobs, workers, integrações, RPA). Outcome = execução verificável; IA opcional. | Pipelines internos, ETL governado |
 | `hybrid` | Plataforma com módulos agênticos. Convive `ai_enabled=true` em alguns módulos, `false` em outros. | SaaS com 1-2 módulos IA |
 
-Combinado a `project_type`, cada projeto declara em `docs/forge/project.json` um booleano **`ai_enabled`**:
+Combinado a `project_type`, cada projeto declara em `docs/foundry/project.json` um booleano **`ai_enabled`**:
 
 - `ai_enabled: true` → aplicam-se checks de prompts, LLM, instrumentação de inferência, eval LLM, custo por outcome.
 - `ai_enabled: false` → substitui-se por checks de plataforma: audit logs, testes funcionais, aceite humano, custo de infra/manutenção, evidência de pilot.
 
-> **Backwards compatibility**: projetos consumidores **sem** `docs/forge/project.json` são tratados como `project_type: agentic_saas` + `ai_enabled: true` (mantém comportamento ≤ v0.7.0 do Forge).
+> **Backwards compatibility**: projetos consumidores **sem** `docs/foundry/project.json` são tratados como `project_type: agentic_saas` + `ai_enabled: true` (mantém comportamento ≤ v0.7.0 do Foundry).
 
-> Princípios específicos do contexto Acme (lifecycle, two-track economics, portfolio em 3 categorias) vivem em [`examples/acme/constitution-extension.md`](../examples/acme/constitution-extension.md). Outros projetos podem definir suas próprias extensões.
+> Princípios específicos do contexto Novais Digital (lifecycle, two-track economics, portfolio em 3 categorias) vivem em [`examples/novais-digital/constitution-extension.md`](../examples/novais-digital/constitution-extension.md). Outros projetos podem definir suas próprias extensões.
 
 ---
 
@@ -97,7 +97,7 @@ Combinado a `project_type`, cada projeto declara em `docs/forge/project.json` um
 
 ### C3 — Economic viability
 
-**Regra**: O custo de operar a entrega **não pode** exceder uma fração do preço cobrado / margem alvo. Hard gate de unit economics. Default `25%`; projetos podem ajustar via `economics.cost_to_price_ratio_max` em `docs/forge/project.json`.
+**Regra**: O custo de operar a entrega **não pode** exceder uma fração do preço cobrado / margem alvo. Hard gate de unit economics. Default `25%`; projetos podem ajustar via `economics.cost_to_price_ratio_max` em `docs/foundry/project.json`.
 
 > v0.3.0 generaliza C3 (antes "Cost ≤ 25% of price" — referindo-se ao custo de inferência LLM). A regra continua, mas o **modelo de custo** depende do `project_type`/`ai_enabled`.
 
@@ -230,7 +230,7 @@ Cada módulo segue a tabela do seu tipo. Conjunto deve ser auditável.
 - `ai_enabled=true` → lint regex em código de produção exige instrumentação (ex: `langfuse.observe()` ou wrapper) próxima a cada chamada LLM; hook compara contagens outcomes ↔ traces (desvio > 1% = FAIL).
 - `ai_enabled=false` → lint regex exige chamada a `auditLog.write(...)` próxima a mutações críticas; reviewer compara mutações no DB com entradas no audit log (desvio > 1% = FAIL).
 
-**Provedores compatíveis**: o Forge **não opina** sobre o provedor — opina sobre a obrigação de rastreamento.
+**Provedores compatíveis**: o Foundry **não opina** sobre o provedor — opina sobre a obrigação de rastreamento.
 
 **Exceções**: scripts pontuais e seeds que rodam offline podem rodar sem trace/audit, desde que **não** estejam em fluxo de produção.
 
@@ -298,7 +298,7 @@ Exemplo: cliente urgente exige autonomia/canonicalização imediata sem janela P
 
 ## Como o reviewer aplica os princípios
 
-1. Carrega `docs/forge/project.json` do consumidor (ou aplica defaults `agentic_saas` + `ai_enabled=true`).
+1. Carrega `docs/foundry/project.json` do consumidor (ou aplica defaults `agentic_saas` + `ai_enabled=true`).
 2. Resolve, para cada princípio, qual ramo da matriz aplicar com base em `project.type` + `module.ai_enabled` (ou herdado do projeto).
 3. Aplica os checks correspondentes em [`reviewer/validation-rules.json`](../reviewer/validation-rules.json), seções `common` + `<project_type>`.
 4. Reporta PASS/WARN/FAIL com evidência citada.
@@ -316,7 +316,7 @@ Para alterar, adicionar ou remover qualquer princípio:
 3. Atualizar `manifest.json` com novo `constitution_version`
 4. Notificar o reviewer DeepAgent (atualizar prompt em [`reviewer/prompt.template.md`](../reviewer/prompt.template.md))
 5. Comunicar ao time em onboarding e changelog do projeto
-6. Atualizar [`CHANGELOG.md`](../CHANGELOG.md) raiz do Forge
+6. Atualizar [`CHANGELOG.md`](../CHANGELOG.md) raiz do Foundry
 
 ---
 
@@ -324,15 +324,15 @@ Para alterar, adicionar ou remover qualquer princípio:
 
 | Versão | Data | Mudança |
 |---|---|---|
-| 0.1.0 | 2026-04-30 | Versão inicial — 8 princípios fundadores (acoplados ao contexto Acme) |
-| 0.2.0 | 2026-04-30 | Generalização — princípios desacoplados de Acme específico; vocabulário multi-domínio; refs a examples/acme/ para extensões |
+| 0.1.0 | 2026-04-30 | Versão inicial — 8 princípios fundadores (acoplados ao contexto Novais Digital) |
+| 0.2.0 | 2026-04-30 | Generalização — princípios desacoplados de Novais Digital específico; vocabulário multi-domínio; refs a examples/novais-digital/ para extensões |
 | 0.3.0 | 2026-05-08 | **Delivery-type agnostic** — introdução de `project_type` (`agentic_saas`/`platform`/`automation`/`hybrid`) e `ai_enabled`. C1 renomeado para "Diagnose-before-build". C3 generalizado para custo-por-outcome OU margem-de-plataforma. C4 ganha vocabulário paralelo (DRAFT/STAGING/PILOT/CANONICAL/DEPRECATED). C6 ganha audit-log como provedor obrigatório quando `ai_enabled=false`. C7 ampliado para integrações/pagamentos/infra. Backwards compatible — defaults legados quando `project.json` ausente. ADR F26. |
 
 ---
 
 ## Extensões e exemplos
 
-- [`examples/acme/constitution-extension.md`](../examples/acme/constitution-extension.md) — Extensões C9, C10, C11 específicas do contexto Acme (lifecycle, two-track economics, portfolio em 3 categorias)
-- [`examples/acme/methodology/`](../examples/acme/methodology/) — Metodologias Acme (clássica, SaaS², Sincra) que originaram esta Constitution
+- [`examples/novais-digital/constitution-extension.md`](../examples/novais-digital/constitution-extension.md) — Extensões C9, C10, C11 específicas do contexto Novais Digital (lifecycle, two-track economics, portfolio em 3 categorias)
+- [`examples/novais-digital/methodology/`](../examples/novais-digital/methodology/) — Metodologias Novais Digital (clássica, SaaS², Sincra) que originaram esta Constitution
 - [`reviewer/prompt.template.md`](../reviewer/prompt.template.md) — Como o reviewer DeepAgent valida cada princípio
 - [`templates/project.template.json`](../templates/project.template.json) — Declaração canônica de `project_type` e `ai_enabled` consumida por reviewer e commands

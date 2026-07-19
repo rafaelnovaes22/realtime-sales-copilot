@@ -13,7 +13,7 @@ tags: ["{{ tag1 }}", "{{ tag2 }}"]
 
 # Eval Case {{ case_id }}
 
-> Caso de eval suite para o SKU `{{ sku_code }}`. Roda automaticamente em `npm run eval:{{ sku_code }}` e em `/acme:eval`.
+> Caso de eval suite para o SKU `{{ sku_code }}`. Roda automaticamente em `npm run eval:{{ sku_code }}` e em `/novais-digital:eval`.
 
 ---
 

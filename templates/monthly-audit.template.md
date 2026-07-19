@@ -15,7 +15,7 @@ version: "0.1.0"
 
 > Output do reviewer DeepAgent / GPT-5.5.
 > Estrutura segue [`reviewer/output-schema.json`](../reviewer/output-schema.json).
-> Detalhes do contrato em [`docs/forge/reviewer-contract.md`](../docs/forge/reviewer-contract.md).
+> Detalhes do contrato em [`docs/foundry/reviewer-contract.md`](../docs/foundry/reviewer-contract.md).
 
 ---
 

@@ -1,6 +1,6 @@
 # Retrospectiva — {{ SKU ID }} ({{ Nome do SKU }})
 
-> **Template do Forge** — projeto consumidor adapta isto como `docs/retrospectives/{sku}/retrospective.md`.
+> **Template do Foundry** — projeto consumidor adapta isto como `docs/retrospectives/{sku}/retrospective.md`.
 > **Origem**: `templates/retrospective.template.md` v0.1.0 do `agent-governance-framework`.
 
 ---
@@ -14,7 +14,7 @@
 | **Cliente** | `{{ client_id }}` |
 | **Data de promoção a AUTONOMOUS** | `{{ data }}` |
 | **Data desta retrospectiva** | `{{ data }}` |
-| **Forge version no momento** | `{{ x.y.z }}` |
+| **Foundry version no momento** | `{{ x.y.z }}` |
 
 ---
 
@@ -22,7 +22,7 @@
 
 | Marco | Data | Duração acumulada |
 |---|---|---|
-| `/acme:diagnose` concluído | `{{ data }}` | dia 1 |
+| `/novais-digital:diagnose` concluído | `{{ data }}` | dia 1 |
 | Spec + unit-economics aprovados | `{{ data }}` | dia `{{ N }}` |
 | SHADOW iniciado | `{{ data }}` | dia `{{ N }}` |
 | SHADOW encerrado | `{{ data }}` | dia `{{ N }}` |
@@ -133,7 +133,7 @@ Playbook vertical: `docs/playbooks/{{ vertical }}/playbook.md`
 
 **Retrospectiva conduzida por**: `{{ nome }}` em `{{ data }}`
 **Revisada por**: `{{ nome }}` em `{{ data }}`
-**Forge version**: `{{ x.y.z }}`
+**Foundry version**: `{{ x.y.z }}`
 
 ---
 

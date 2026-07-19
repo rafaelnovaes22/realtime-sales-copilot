@@ -1,12 +1,12 @@
 """
 Review Agent — revisa código gerado contra spec + checklist Constitution.
 
-Gerado a partir de templates/aios/agents/review_agent/entry.py.template (Forge v0.6.0+).
+Gerado a partir de templates/aios/agents/review_agent/entry.py.template (Foundry v0.6.0+).
 
 C5/C6/C7/C8 — ver cabeçalho do spec_agent.
 
 Este agente é COMPARTILHADO entre módulos. Ele aplica um checklist baseado nos
-8 princípios da Constitution Forge — independente da stack escolhida.
+8 princípios da Constitution Foundry — independente da stack escolhida.
 """
 
 import os
@@ -57,7 +57,7 @@ _TENANT_FIELD = _CONFIG.get("project", {}).get("tenant_field", "tenantId")
 SYSTEM_PROMPT = f"""Você é o Review Agent do projeto {_PROJECT_NAME}.
 
 Responsabilidade única: revisar o código gerado contra a spec, contra a suíte de testes TDD
-e contra os 8 princípios da Constitution Forge. Apontar BLOCKERs, WARNINGs e SUGGESTIONs
+e contra os 8 princípios da Constitution Foundry. Apontar BLOCKERs, WARNINGs e SUGGESTIONs
 com precisão.
 
 LEIA APENAS:

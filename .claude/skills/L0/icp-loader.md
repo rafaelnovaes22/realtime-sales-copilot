@@ -45,7 +45,7 @@ Resolve em ordem de precedência:
 | 3 | `examples/{org}/icp.md` | repo de framework com múltiplos exemplos |
 | 4 | `examples/{org}/portfolio.md` § `ICP` | ICP embutido em portfolio |
 
-Se nenhum existir → `icp_missing: true` e orienta criar via `/acme:diagnose` (Fase 0 inclui ICP — C1).
+Se nenhum existir → `icp_missing: true` e orienta criar via `/novais-digital:diagnose` (Fase 0 inclui ICP — C1).
 
 ## O que entrega
 
@@ -75,7 +75,7 @@ Quando `icp_missing: true`:
 icp_loaded: false
 icp_missing: true
 checked_paths: [...]
-recommended_action: "Rodar /acme:diagnose; ICP é output da Fase 0"
+recommended_action: "Rodar /novais-digital:diagnose; ICP é output da Fase 0"
 ```
 
 ## Tabela anti-rationalization
@@ -105,11 +105,11 @@ Se algum item falhar → erro estruturado, não retorna ICP parcial.
 
 Mesmo modelo de `company-dna`: **ephemeral-strong**.
 
-1. Primeira chamada no run → lê, parseia, popula `__forge_cache.icp`
+1. Primeira chamada no run → lê, parseia, popula `__foundry_cache.icp`
 2. Chamadas subsequentes → cache; não re-lê
 3. Fim do run → cache descartado
 
-Detalhes em `docs/forge/helper-pattern.md`.
+Detalhes em `docs/foundry/helper-pattern.md`.
 
 ## C5 hard rule
 
@@ -137,4 +137,4 @@ hint: <ação recomendada>
 
 | Versão | Data | Mudança |
 |---|---|---|
-| 0.1.0 | 2026-04-30 | Versão inicial — Forge-1 onda 1 |
+| 0.1.0 | 2026-04-30 | Versão inicial — Foundry-1 onda 1 |

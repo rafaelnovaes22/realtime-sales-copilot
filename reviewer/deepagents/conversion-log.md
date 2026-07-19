@@ -40,7 +40,7 @@ Mais semantic replacements: `CLAUDE.md` → `AGENTS.md`, `.claude/` → `.deepag
 
 | # | Origem | Destino | Origem sha256:16 | Status |
 |---|---|---|---|---|
-| 1 | `.claude/skills/L0/company-dna.md` | `reviewer/deepagents/skills/L0/company-dna/SKILL.md` | (a calcular em hook Forge-4) | ✅ |
+| 1 | `.claude/skills/L0/company-dna.md` | `reviewer/deepagents/skills/L0/company-dna/SKILL.md` | (a calcular em hook Foundry-4) | ✅ |
 | 2 | `.claude/skills/L0/icp-loader.md` | `reviewer/deepagents/skills/L0/icp-loader/SKILL.md` | (a calcular) | ✅ |
 | 3 | `.claude/skills/L0/offerings-loader.md` | `reviewer/deepagents/skills/L0/offerings-loader/SKILL.md` | (a calcular) | ✅ |
 | 4 | `.claude/skills/L1/baseline-cost-builder.md` | `reviewer/deepagents/skills/L1/baseline-cost-builder/SKILL.md` | (a calcular) | ✅ |
@@ -54,15 +54,15 @@ Mais semantic replacements: `CLAUDE.md` → `AGENTS.md`, `.claude/` → `.deepag
 
 | # | Destino | Origem | Status |
 |---|---|---|---|
-| 10 | `reviewer/deepagents/skills/reviewer/forge-auditor/SKILL.md` | (escrita direta — não convertida) | ✅ |
+| 10 | `reviewer/deepagents/skills/reviewer/foundry-auditor/SKILL.md` | (escrita direta — não convertida) | ✅ |
 
-`forge-auditor` é a skill que **orquestra** a auditoria mensal usando as 9 skills convertidas como contexto. Não tem origem em Claude Code — é nativa Deep Agents.
+`foundry-auditor` é a skill que **orquestra** a auditoria mensal usando as 9 skills convertidas como contexto. Não tem origem em Claude Code — é nativa Deep Agents.
 
 ---
 
 ## Como detectar drift
 
-Quando uma skill em `.claude/skills/` mudar, o hash diverge da entrada aqui. **Forge-4** entregará hook `deepagents-resync` que:
+Quando uma skill em `.claude/skills/` mudar, o hash diverge da entrada aqui. **Foundry-4** entregará hook `deepagents-resync` que:
 
 1. Recalcula sha256:16 das skills em `.claude/skills/`
 2. Compara com `origem sha256:16` deste log

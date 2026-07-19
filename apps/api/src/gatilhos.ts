@@ -1,7 +1,7 @@
 /**
  * 18 gatilhos — cobre dois contextos de venda:
  *   • Educação executiva (ClientC): programas, mentoria, imersão
- *   • B2B tech/IA (Acme): co-pilot, Aicfo, SchoolPlatform, Social
+ *   • B2B tech/IA (Novais Digital): co-pilot, Aicfo, SchoolPlatform, Social
  *
  * Cobertura ampla > precisão cirúrgica — falsos positivos são filtrados
  * pelo retriever (que só puxa chunks associados ao gatilho).
@@ -23,7 +23,7 @@ export const GATILHOS = [
   "proxima_turma",
   "online_nao_funciona",
   "prefiro_investir",
-  // B2B tech/IA (Acme)
+  // B2B tech/IA (Novais Digital)
   "ia_nao_funciona",
   "precisa_do_ti",
   "dados_sensiveis",
@@ -77,7 +77,7 @@ export const GATILHO_PATTERNS: Record<Gatilho, RegExp> = {
   prefiro_investir:
     /\b(prefiro investir|melhor investir|invisto (em outra coisa|por conta)|deixar (o dinheiro )?(rendendo|investido)|aplico (em )?(cdb|fundo|tesouro)|esse dinheiro (rende|renderia) mais)\b/i,
 
-  // ── B2B tech/IA (Acme) ─────────────────────────────────────────────────
+  // ── B2B tech/IA (Novais Digital) ─────────────────────────────────────────────────
 
   ia_nao_funciona:
     /\b(j[áa] tentamos? (ia|intelig[êe]ncia artificial|automa[çc][ãa]o)|ia (n[ãa]o funciona|[ée] muito promessa|n[ãa]o entregou|decepcionou)|n[ãa]o acredito (em ia|nessa tecnologia)|intelig[êe]ncia artificial (n[ãa]o|ainda n[ãa]o) (funciona|resolve)|chatgpt n[ãa]o (serviu|funcionou|resolveu))\b/i,

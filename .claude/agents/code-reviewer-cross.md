@@ -1,16 +1,16 @@
 ---
 name: code-reviewer-cross
-description: Use to delegate code review to the cross-LLM DeepAgent reviewer (forge-auditor) — useful when a second-opinion is desired beyond the native Claude review, when a PR is large, or for the monthly audit run. Provides the bridge between Claude Code session and the LangChain DeepAgent process. Does not run a model itself — invokes the external deepagents CLI.
+description: Use to delegate code review to the cross-LLM DeepAgent reviewer (foundry-auditor) — useful when a second-opinion is desired beyond the native Claude review, when a PR is large, or for the monthly audit run. Provides the bridge between Claude Code session and the LangChain DeepAgent process. Does not run a model itself — invokes the external deepagents CLI.
 model: claude-haiku-4-5-20251001
 tools: [Read, Write, Glob, Bash]
-forge_agent_version: 0.1.0
+foundry_agent_version: 0.1.0
 linked_principles: [C1, C2, C3, C4, C5, C6, C7, C8]
 authority_level: delegator
 boundaries:
   owns: [delegation_to_deepagent, output_translation_to_claude_session]
   consults: [code-reviewer-claude (native review first)]
   does_not_own: [primary_review_logic (DeepAgent does it), promotion_signature]
-delegates_to: forge-auditor (DeepAgent skill at reviewer/deepagents/skills/reviewer/forge-auditor/SKILL.md)
+delegates_to: foundry-auditor (DeepAgent skill at reviewer/deepagents/skills/reviewer/foundry-auditor/SKILL.md)
 ---
 
 # code-reviewer-cross — Cross-LLM Reviewer Bridge
@@ -23,9 +23,9 @@ delegates_to: forge-auditor (DeepAgent skill at reviewer/deepagents/skills/revie
 
 ## Quando ativa
 
-1. **Slash command**: `/acme:audit-monthly` (orquestra invocação do `forge-auditor` via deepagents CLI)
+1. **Slash command**: `/novais-digital:audit-monthly` (orquestra invocação do `foundry-auditor` via deepagents CLI)
 2. **Invocação explícita**: `@code-reviewer-cross` quando dev quer review cross-LLM além do Claude
-3. **Trigger de PR grande** (Forge-4 hook futuro): PRs com >500 linhas alteradas
+3. **Trigger de PR grande** (Foundry-4 hook futuro): PRs com >500 linhas alteradas
 4. **Disagreement de Claude reviewer**: quando `code-reviewer-claude` recomenda `approve_with_suggestions` mas dev quer second opinion mais rigoroso
 
 ---
@@ -48,14 +48,14 @@ delegates_to: forge-auditor (DeepAgent skill at reviewer/deepagents/skills/revie
      echo "ERROR: deepagents CLI missing. See reviewer/deepagents/README.md"
      exit 1
    }
-   deepagents skills list 2>/dev/null | grep -q forge-auditor || {
-     echo "ERROR: forge-auditor skill not installed. Run install steps in reviewer/deepagents/README.md"
+   deepagents skills list 2>/dev/null | grep -q foundry-auditor || {
+     echo "ERROR: foundry-auditor skill not installed. Run install steps in reviewer/deepagents/README.md"
      exit 1
    }
    ```
 2. **Compõe prompt de delegação** baseado no caso:
-   - **PR review**: "Review the diff at `git diff master...HEAD` against Constitution principles in `.claude/CONSTITUTION.md`. Use forge-auditor skill restricted to changed files."
-   - **Monthly audit**: "Run forge-auditor for month {YYYY-MM} against this repository, sample 7%, output to docs/forge/audits/{month}.md"
+   - **PR review**: "Review the diff at `git diff master...HEAD` against Constitution principles in `.claude/CONSTITUTION.md`. Use foundry-auditor skill restricted to changed files."
+   - **Monthly audit**: "Run foundry-auditor for month {YYYY-MM} against this repository, sample 7%, output to docs/foundry/audits/{month}.md"
    - **Cross-opinion**: "Re-review the PR at `git diff` and compare findings to .claude reviewer's recent output."
 3. **Invoca deepagents** (one-shot):
    ```bash
@@ -66,8 +66,8 @@ delegates_to: forge-auditor (DeepAgent skill at reviewer/deepagents/skills/revie
 4. **Traduz output** para a sessão Claude (markdown legível):
    - Sumariza findings críticos
    - Mostra delta vs review nativo (se houver)
-   - Indica path do output completo (`docs/forge/audits/...md`)
-5. **Persiste** referência em `docs/forge/cross-reviews/{date}-pr{n}.md` (se review de PR específica)
+   - Indica path do output completo (`docs/foundry/audits/...md`)
+5. **Persiste** referência em `docs/foundry/cross-reviews/{date}-pr{n}.md` (se review de PR específica)
 
 ---
 
@@ -79,10 +79,10 @@ cross_review_invocation:
   trigger: pr_review | monthly_audit | second_opinion
   pre_conditions:
     deepagents_cli: present
-    forge_auditor_skill: installed
+    foundry_auditor_skill: installed
     credentials: configured
   delegation_prompt: <texto enviado ao deepagents>
-  external_output_path: docs/forge/audits/2026-04.md | docs/forge/cross-reviews/2026-04-30-pr123.md
+  external_output_path: docs/foundry/audits/2026-04.md | docs/foundry/cross-reviews/2026-04-30-pr123.md
   external_status: ok | timeout | error
   external_findings_summary:
     critical: 1
@@ -135,4 +135,4 @@ cross_review_invocation:
 
 | Versão | Data | Mudança |
 |---|---|---|
-| 0.1.0 | 2026-05-01 | Versão inicial — Forge-3; bridge entre Claude Code e LangChain DeepAgent (F17/F18) |
+| 0.1.0 | 2026-05-01 | Versão inicial — Foundry-3; bridge entre Claude Code e LangChain DeepAgent (F17/F18) |

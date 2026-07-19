@@ -40,7 +40,7 @@ const BUFFER_MAX_TURNS = 4;
 const SUGGEST_DEBOUNCE_MS = 600;
 const SUGGEST_MIN_WORDS = 3;
 // POC: identidade fixa. Em produção vem do login do closer/tenant.
-const TENANT_ID = "acme-internal";
+const TENANT_ID = "novais-digital-internal";
 const CLOSER_ID = "poc-closer";
 
 const state = {

@@ -1,9 +1,9 @@
 ---
 name: artifact-architect
-description: Use when designing technical plan for an artifact (platform-sku, product, diagnostic), validating agent_readiness_score, choosing layers/abstractions, or before /acme:plan persists. Renamed from sku-architect (v0.2.0) to align with multi-type artifact vocabulary. Holds C5 (three-tier), C7 (portability), C8 (no per-tenant hardcode) at design time.
+description: Use when designing technical plan for an artifact (platform-sku, product, diagnostic), validating agent_readiness_score, choosing layers/abstractions, or before /novais-digital:plan persists. Renamed from sku-architect (v0.2.0) to align with multi-type artifact vocabulary. Holds C5 (three-tier), C7 (portability), C8 (no per-tenant hardcode) at design time.
 model: claude-opus-4-7
 tools: [Read, Write, Glob, Grep]
-forge_agent_version: 0.1.0
+foundry_agent_version: 0.1.0
 linked_principles: [C5, C7, C8]
 authority_level: opus
 boundaries:
@@ -27,7 +27,7 @@ naming_history:
 ## Quando ativa
 
 1. **Path-scoped**: `docs/clients/*/plan-*.md`, `src/skus/*`, `src/products/*`, `prompts/*/v*/system.md`
-2. **Slash command**: `/acme:plan` (todas as 8 seções), `/acme:implement` (Wave 1 scaffolding)
+2. **Slash command**: `/novais-digital:plan` (todas as 8 seções), `/novais-digital:implement` (Wave 1 scaffolding)
 3. **Invocação explícita**: `@artifact-architect`
 4. **Indireta**: `eval-engineer` consulta para alinhar eval suite à decision points; `code-reviewer-claude` consulta antes de aprovar PR estrutural
 
@@ -115,4 +115,4 @@ architect_review:
 
 | Versão | Data | Mudança |
 |---|---|---|
-| 0.1.0 | 2026-05-01 | Versão inicial — renomeada de `sku-architect` para alinhar ao v0.2.0 (Forge-3) |
+| 0.1.0 | 2026-05-01 | Versão inicial — renomeada de `sku-architect` para alinhar ao v0.2.0 (Foundry-3) |

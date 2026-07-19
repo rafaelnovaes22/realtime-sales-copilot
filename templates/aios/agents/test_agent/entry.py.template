@@ -1,7 +1,7 @@
 """
 Test Agent — gera testes TDD (RED-first) para um módulo do projeto consumidor.
 
-Gerado a partir de templates/aios/agents/test_agent/entry.py.template (Forge v0.9.0+).
+Gerado a partir de templates/aios/agents/test_agent/entry.py.template (Foundry v0.9.0+).
 Stack de testes lida de aios/config.yaml → stack.tests_{unit,integration,e2e} (sem hardcode).
 
 Modos de operação:

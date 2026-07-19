@@ -1,4 +1,4 @@
-# Acme Forge — Reviewer
+# Novais Digital Foundry — Reviewer
 
 > Entrypoint do DeepAgent reviewer e dos assets de auditoria mensal.
 
@@ -6,7 +6,7 @@
 
 ## O que é este diretório
 
-Contém os artefatos que habilitam o **reviewer externo independente** (DeepAgent / GPT-5.5) a auditar qualquer projeto que usa o Forge. O reviewer valida os 8 princípios C1–C8 mensalmente a partir do `manifest.json` do projeto consumidor.
+Contém os artefatos que habilitam o **reviewer externo independente** (DeepAgent / GPT-5.5) a auditar qualquer projeto que usa o Foundry. O reviewer valida os 8 princípios C1–C8 mensalmente a partir do `manifest.json` do projeto consumidor.
 
 ## Ordem de leitura
 
@@ -35,7 +35,7 @@ Para um dev humano configurando o reviewer:
 ## Contrato
 
 O contrato formal do reviewer (SLAs de auditoria, frequência, escopo) está em:
-[`docs/forge/reviewer-contract.md`](../docs/forge/reviewer-contract.md)
+[`docs/foundry/reviewer-contract.md`](../docs/foundry/reviewer-contract.md)
 
 A decisão sobre stack e runtime está em **F4**, **F9**, **F17**, **F18** de
-[`docs/forge/decisions.md`](../docs/forge/decisions.md).
+[`docs/foundry/decisions.md`](../docs/foundry/decisions.md).

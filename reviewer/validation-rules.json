@@ -1,12 +1,12 @@
 {
-  "$schema": "https://acme.com.br/forge/validation-rules-v1.json",
+  "$schema": "https://novais-digital.com.br/foundry/validation-rules-v1.json",
   "validation_rules_version": "0.3.0",
   "constitution_version": "0.3.0",
 
-  "_doc": "Validation rules estruturadas em três camadas: 'common' (sempre aplica), 'agentic_saas' / 'platform' / 'automation' (aplicam conforme project.type em docs/forge/project.json do consumidor) e 'hybrid' (combina platform + checks por módulo conforme module.ai_enabled). Cada check tem campo 'applies_when' que o reviewer avalia contra project.json. Quando project.json ausente, defaults legados: project_type=agentic_saas + ai_enabled=true (compat v0.2.0).",
+  "_doc": "Validation rules estruturadas em três camadas: 'common' (sempre aplica), 'agentic_saas' / 'platform' / 'automation' (aplicam conforme project.type em docs/foundry/project.json do consumidor) e 'hybrid' (combina platform + checks por módulo conforme module.ai_enabled). Cada check tem campo 'applies_when' que o reviewer avalia contra project.json. Quando project.json ausente, defaults legados: project_type=agentic_saas + ai_enabled=true (compat v0.2.0).",
 
   "project_config_loader": {
-    "primary_path": "docs/forge/project.json",
+    "primary_path": "docs/foundry/project.json",
     "fallback_defaults": {
       "project_type": "agentic_saas",
       "ai_enabled": true,

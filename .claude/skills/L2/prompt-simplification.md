@@ -1,6 +1,6 @@
 ---
 name: prompt-simplification
-description: Simplifica artefatos de prompt Forge e código de consumer project para clareza e eficiência de tokens, sem mudar comportamento. Use após uma wave de implementação quando o prompt funciona mas está verbose, redundante ou caro demais. Também aplica-se a código de consumer project antes de /acme:pre-merge-check. Adaptado de code-simplification (agent-skills).
+description: Simplifica artefatos de prompt Foundry e código de consumer project para clareza e eficiência de tokens, sem mudar comportamento. Use após uma wave de implementação quando o prompt funciona mas está verbose, redundante ou caro demais. Também aplica-se a código de consumer project antes de /novais-digital:pre-merge-check. Adaptado de code-simplification (agent-skills).
 tier: 2
 vocabulary_aliases: [L2, prompt-compression, refactoring, token-reduction]
 linked_principles: [C3, C5, C6, C7]
@@ -10,19 +10,19 @@ activation:
   explicit_invocation: "@prompt-simplification"
 requires_helper:
   - skill: artifact-prompt-builder
-    field: __forge_cache.current_prompt
+    field: __foundry_cache.current_prompt
     optional: true
 ---
 
-# Prompt Simplification (Forge)
+# Prompt Simplification (Foundry)
 
 ## Visão Geral
 
 Simplifique reduzindo complexidade sem mudar comportamento. O objetivo não são menos linhas — é um artefato que produz os mesmos outcomes com menos tokens (C3) e que é mais fácil de versionar, auditar e manter.
 
 **Dois contextos de uso:**
-1. **Prompt Forge** (`prompts/{id}/v{n}/system.md`) — reduz custo de inferência (C3) e facilita manutenção do artefato ao longo do ciclo SHADOW→AUTONOMOUS.
-2. **Código de consumer project** — integra com `/acme:pre-merge-check` gates G1-G3 (C6/C7/C8) antes de merge.
+1. **Prompt Foundry** (`prompts/{id}/v{n}/system.md`) — reduz custo de inferência (C3) e facilita manutenção do artefato ao longo do ciclo SHADOW→AUTONOMOUS.
+2. **Código de consumer project** — integra com `/novais-digital:pre-merge-check` gates G1-G3 (C6/C7/C8) antes de merge.
 
 ## Quando Usar
 
@@ -137,12 +137,12 @@ Varredura por estes padrões — cada um é sinal concreto:
 
 ### Step 3: Aplicar Mudanças Incrementalmente
 
-Faça uma simplificação de cada vez. Rode eval após cada mudança em prompts; rode forge-doctor após cada mudança estrutural.
+Faça uma simplificação de cada vez. Rode eval após cada mudança em prompts; rode foundry-doctor após cada mudança estrutural.
 
 ```
 PARA CADA SIMPLIFICAÇÃO DE PROMPT:
 1. Fazer a mudança
-2. Rodar /acme:eval (ou o subset de cases afetados)
+2. Rodar /novais-digital:eval (ou o subset de cases afetados)
 3. Pass rate mantido? → Commit ou próxima simplificação
 4. Pass rate caiu? → Reverter e reconsiderar
 ```
@@ -169,7 +169,7 @@ Se a versão "simplificada" for mais difícil de entender ou mantiver o mesmo cu
 
 ```
 # ANTES — contexto disponível via L0
-"Você é um assistente da Acme Soluções, empresa brasileira
+"Você é um assistente da Novais Digital Soluções, empresa brasileira
  especializada em automação de processos. Nossa missão é..."
 
 # DEPOIS — referência ao que vem de L0
@@ -238,8 +238,8 @@ confianca: <0-100>%"
 Após um passe de simplificação:
 
 - [ ] Eval suite passa sem modificação nos cases (pass_rates idênticos)
-- [ ] `bash scripts/forge-doctor.sh` retorna 0 FAIL
-- [ ] `/acme:pre-merge-check` retorna go (C6/C7/C8 não foram violados)
+- [ ] `bash scripts/foundry-doctor.sh` retorna 0 FAIL
+- [ ] `/novais-digital:pre-merge-check` retorna go (C6/C7/C8 não foram violados)
 - [ ] Custo estimado de tokens reduziu ou se manteve (nunca aumentou)
 - [ ] Nenhum exemplo do 3+3 foi removido sem verificação via eval
 - [ ] Contexto de "por quê" de instruções críticas foi preservado ou documentado em comentário

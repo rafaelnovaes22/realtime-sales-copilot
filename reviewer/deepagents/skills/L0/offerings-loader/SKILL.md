@@ -6,13 +6,13 @@ metadata:
   source-path: .claude/skills/L0/offerings-loader.md
   converter-version: "2.1"
   deep-agents-compat: ">=0.0.34"
-  forge-tier: 1
-  forge-version: "0.1.0"
+  foundry-tier: 1
+  foundry-version: "0.1.0"
   linked-principles: [C2, C5, C7]
   helper-pattern: bmad
 ---
 
-# Skill: offerings-loader — Tier 1 Strategic (Forge)
+# Skill: offerings-loader — Tier 1 Strategic (Foundry)
 
 Loads the **offerings catalog** of the organization with `lifecycle_stage` and `pricing_model` per offering. Output ≤ 800 tokens (higher cap than DNA/ICP because it's a list).
 
@@ -172,7 +172,7 @@ deepagents -n -y "Run offerings-loader skill"
 
 ```bash
 deepagents -n -y "Run offerings-loader skill" > /dev/null
-deepagents -n -y "Run forge-auditor for month 2026-04"
+deepagents -n -y "Run foundry-auditor for month 2026-04"
 ```
 
 ---
@@ -181,8 +181,8 @@ deepagents -n -y "Run forge-auditor for month 2026-04"
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| `offerings_missing` | No catalog file | Create `docs/portfolio.md` from `examples/acme/portfolio.md` |
-| `ga_without_outcome_clause` | Offering in GA lacks contractual outcome | Block; needs `/acme:spec` to define outcome before GA |
+| `offerings_missing` | No catalog file | Create `docs/portfolio.md` from `examples/novais-digital/portfolio.md` |
+| `ga_without_outcome_clause` | Offering in GA lacks contractual outcome | Block; needs `/novais-digital:spec` to define outcome before GA |
 | `unknown_lifecycle` | Stage not in enum | Use only: discovery, mvp, beta, ga, maturity, sunset |
 | `unknown_pricing` | Pricing not in enum | Use only: fixed-monthly, outcome-based, one-shot, hybrid |
 

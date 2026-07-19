@@ -10,13 +10,13 @@ activation:
   explicit_invocation: "@source-driven-implementation"
 ---
 
-# Source-Driven Implementation (Forge)
+# Source-Driven Implementation (Foundry)
 
 ## Visão Geral
 
 Toda decisão específica de SDK ou API externa deve ser fundamentada em documentação oficial. Não implemente de memória — verifique, cite, e deixe o usuário ver as fontes. Dados de treinamento ficam desatualizados, APIs são depreciadas, práticas recomendadas evoluem.
 
-No contexto Forge, isso é especialmente crítico em `src/llm/adapters/` (C7): um adapter que usa uma API depreciada do Anthropic SDK silenciosamente quebra a abstração sem violar a estrutura de pastas.
+No contexto Foundry, isso é especialmente crítico em `src/llm/adapters/` (C7): um adapter que usa uma API depreciada do Anthropic SDK silenciosamente quebra a abstração sem violar a estrutura de pastas.
 
 ## Quando Usar
 
@@ -45,13 +45,13 @@ DETECTAR ──→ BUSCAR ──→ IMPLEMENTAR ──→ CITAR
 Leia o `package.json` do projeto consumidor para identificar versões exatas:
 
 ```bash
-# Versões relevantes para Forge
+# Versões relevantes para Foundry
 cat package.json | python3 -c "
 import sys,json
 d=json.load(sys.stdin)
 deps = {**d.get('dependencies',{}), **d.get('devDependencies',{})}
-forge_keys = ['@anthropic-ai/sdk','langfuse','@langfuse/langchain','prisma','@prisma/client']
-for k in forge_keys:
+foundry_keys = ['@anthropic-ai/sdk','langfuse','@langfuse/langchain','prisma','@prisma/client']
+for k in foundry_keys:
     if k in deps: print(f'{k}: {deps[k]}')
 "
 ```
@@ -74,7 +74,7 @@ Busque a página específica para a feature que está implementando. Não a home
 
 **Hierarquia de fontes (por ordem de autoridade):**
 
-| Prioridade | Fonte | Exemplos Forge |
+| Prioridade | Fonte | Exemplos Foundry |
 |------------|-------|----------------|
 | 1 | Documentação oficial | docs.anthropic.com, langfuse.com/docs, prisma.io/docs |
 | 2 | Changelog / migration guide | SDK release notes, breaking changes |
@@ -152,7 +152,7 @@ Baseado em dados de treinamento — pode estar desatualizado.
 Verifique antes de usar em produção.
 ```
 
-## Fontes Primárias para o Ecossistema Forge
+## Fontes Primárias para o Ecossistema Foundry
 
 | SDK / Serviço | URL Base | Seções Críticas |
 |---------------|----------|-----------------|
@@ -162,13 +162,13 @@ Verifique antes de usar em produção.
 | Prisma | prisma.io/docs | `/reference/api-reference/prisma-client-reference` |
 | ClickUp API | clickup.com/api | endpoints específicos do projeto |
 
-## Integração com Princípios Forge
+## Integração com Princípios Foundry
 
 **C7 (portabilidade de modelo):** Sempre que implementar um adapter em `src/llm/adapters/`, verificar que a assinatura segue o padrão documentado atual — não uma versão antiga memorizada.
 
 **C6 (observabilidade):** Verificar na documentação do Langfuse a assinatura correta de `observe()` para a versão instalada. Uma assinatura errada faz o trace ser criado mas sem os campos obrigatórios.
 
-**C8 (anti-hardcode):** Se a documentação mostra `model: 'claude-opus-4-7'` hardcoded num exemplo, o Forge exige parametrizar. Cite a doc mas adapte para C8.
+**C8 (anti-hardcode):** Se a documentação mostra `model: 'claude-opus-4-7'` hardcoded num exemplo, o Foundry exige parametrizar. Cite a doc mas adapte para C8.
 
 ## Racionalizações Comuns
 

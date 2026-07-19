@@ -3,7 +3,7 @@ artifact_id: "live-suggestion-copilot"
 prompt_version: "1.0.0"
 prompt_hash: "b79c0cdf8b65efe7"
 ran_at: "2026-05-20T00:00:00Z"
-ran_by: "Rafael Novaes / /acme:eval"
+ran_by: "Rafael Novaes / /novais-digital:eval"
 total_cases: 50
 subset_filter: "seed — estruturação inicial da suite"
 adapter_provider: "anthropic"
@@ -11,7 +11,7 @@ target_model: "claude-sonnet-4-6"
 judge_model: "claude-haiku-4-5"
 total_cost_usd: 0
 total_latency_seconds: 0
-forge_command_version: "eval@0.1.0"
+foundry_command_version: "eval@0.1.0"
 linked_principles: ["C2", "C4", "C6"]
 status: "partial"
 note: "Run de estruturação — casos criados e validados por humano (curador). Execução automática via runner pendente de implementação."
@@ -57,7 +57,7 @@ Para atingir o gate obrigatório de 30 casos por categoria (= 300 total):
 
 | Ação | Quantidade | Fonte prioritária |
 |---|---|---|
-| Casos adicionais por categoria | +25/categoria = +250 total | Transcrições reais anonimizadas de closers Acme |
+| Casos adicionais por categoria | +25/categoria = +250 total | Transcrições reais anonimizadas de closers Novais Digital |
 | Mix obrigatório (C4): ≤ 40% sintético | Máx 120 sintéticos nos 300 | Restante = real/edge/adversarial |
 | Casos reais (pós-SHADOW seed) | +180 mínimo | Gravações de closers em SHADOW aprovadas pelo curador |
 

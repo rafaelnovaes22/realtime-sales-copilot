@@ -1,8 +1,8 @@
 ---
-# Acme Forge — Agent Soul Template
+# Novais Digital Foundry — Agent Soul Template
 # Equivalente ao SOUL.md do Hermes. Define a identidade durável do agente para um projeto consumer.
 # Instalar em: docs/clients/{client_id}/agent-soul.md
-# Injetado por forge-context.sh no slot #1 do system prompt (Forge-20).
+# Injetado por foundry-context.sh no slot #1 do system prompt (Foundry-20).
 # Princípios: C7 (agnóstico), C8 (sem tenant hardcode), C6 (rastreável via session_id)
 #
 # Como preencher:

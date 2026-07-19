@@ -1,6 +1,6 @@
 # Playbook Vertical — {{ Nome do Vertical }}
 
-> **Template do Forge** — projeto consumidor adapta isto como `docs/playbooks/{vertical}/playbook.md`.
+> **Template do Foundry** — projeto consumidor adapta isto como `docs/playbooks/{vertical}/playbook.md`.
 > **Origem**: `templates/playbook.template.md` v0.1.0 do `agent-governance-framework`.
 
 ---
@@ -12,7 +12,7 @@
 | **Vertical** | `{{ ex: financeiro, saúde, educacional, imobiliário }}` |
 | **Criado em** | `{{ data }}` |
 | **Atualizado em** | `{{ data }}` |
-| **Forge version** | `{{ x.y.z }}` |
+| **Foundry version** | `{{ x.y.z }}` |
 | **Cliente origem** (1º AUTONOMOUS) | `{{ client_id }}` |
 | **SKUs de origem** | `{{ lista de SKUs que geraram este playbook }}` |
 
@@ -108,19 +108,19 @@ observe(langfuse, {
 
 | Fase | Horas reais |
 |---|---|
-| `/acme:diagnose` | `{{ h }}` |
-| `/acme:spec` + `/acme:unit-economics` | `{{ h }}` |
-| `/acme:plan` + `/acme:tasks` + `/acme:implement` | `{{ h }}` |
-| `/acme:eval` (seed + calibração) | `{{ h }}` |
+| `/novais-digital:diagnose` | `{{ h }}` |
+| `/novais-digital:spec` + `/novais-digital:unit-economics` | `{{ h }}` |
+| `/novais-digital:plan` + `/novais-digital:tasks` + `/novais-digital:implement` | `{{ h }}` |
+| `/novais-digital:eval` (seed + calibração) | `{{ h }}` |
 | SHADOW ({{ N dias }}) | `{{ h de monitoramento }}` |
-| `/acme:promote` | `{{ h }}` |
+| `/novais-digital:promote` | `{{ h }}` |
 | **Total** | **`{{ total h }}`** |
 
 ### Cliente 2 (estimativa com playbook)
 
 | Fase | Horas estimadas | % cliente 1 |
 |---|---|---|
-| `/acme:diagnose` | `{{ h }}` | `{{ % }}` |
+| `/novais-digital:diagnose` | `{{ h }}` | `{{ % }}` |
 | Spec + economics (reutiliza blocos Tier 1) | `{{ h }}` | `{{ % }}` |
 | Implement (reutiliza prompts + adapters) | `{{ h }}` | `{{ % }}` |
 | Eval (reutiliza seed 70%) | `{{ h }}` | `{{ % }}` |
@@ -163,7 +163,7 @@ observe(langfuse, {
 
 **Criado por**: `{{ nome }}` em `{{ data }}`
 **Validado com cliente 2**: `{{ nome cliente }}` em `{{ data }}`
-**Forge version**: `{{ x.y.z }}`
+**Foundry version**: `{{ x.y.z }}`
 
 ---
 

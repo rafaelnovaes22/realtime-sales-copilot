@@ -6,13 +6,13 @@ metadata:
   source-path: .claude/skills/L2/eval-case-author.md
   converter-version: "2.1"
   deep-agents-compat: ">=0.0.34"
-  forge-tier: 3
-  forge-version: "0.1.0"
+  foundry-tier: 3
+  foundry-version: "0.1.0"
   linked-principles: [C2, C4, C6]
   helper-pattern: none
 ---
 
-# Skill: eval-case-author — Tier 3 Operational (Forge)
+# Skill: eval-case-author — Tier 3 Operational (Foundry)
 
 > **applies_when**: `project.ai_enabled = true` — This skill generates LLM evaluation cases (classified outcomes, agreement rate). For platform modules (`ai_enabled=false`), C4 compliance uses E2E functional tests + `platform-acceptance-report.template.md` instead of LLM eval suites. Invoking this skill in a platform project will produce cases that cannot be measured against the correct promotion gates.
 
@@ -233,7 +233,7 @@ deepagents -y "Author 10 eval cases for each outcome_category in spec for \
   artifact triagem-tickets-tier1-v1, source_mode=real. Use parallel sub-agents."
 ```
 
-### Mode 3 — In CI as Wave 3 of /acme:implement
+### Mode 3 — In CI as Wave 3 of /novais-digital:implement
 
 ```bash
 deepagents -n -y "Run eval-case-author for each category in \

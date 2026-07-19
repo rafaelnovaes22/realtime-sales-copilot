@@ -6,13 +6,13 @@ metadata:
   source-path: .claude/skills/L1/diagnostic-runner.md
   converter-version: "2.1"
   deep-agents-compat: ">=0.0.34"
-  forge-tier: 2
-  forge-version: "0.1.0"
+  foundry-tier: 2
+  foundry-version: "0.1.0"
   linked-principles: [C1, C2]
   helper-pattern: none
 ---
 
-# Skill: diagnostic-runner — Tier 2 Tactical (Forge)
+# Skill: diagnostic-runner — Tier 2 Tactical (Foundry)
 
 Entry point of the pipeline `diagnose → spec → unit-economics → ... → promote`. Executes the **10-block diagnostic script** and persists `docs/clients/{client_id}/diagnostic.md` satisfying C1.
 
@@ -36,8 +36,8 @@ Entry point of the pipeline `diagnose → spec → unit-economics → ... → pr
 - [ ] 1. Verify Tier 1 caches present (dna, icp, offerings)
 - [ ] 2. Validate required parameters (client_id, interlocutor_role, declared_problem)
 - [ ] 3. Run 10 diagnostic blocks (script below)
-- [ ] 4. Compute icp_fit (internal — compare with __forge_cache.icp)
-- [ ] 5. Compute catalog_fit (internal — compare with __forge_cache.offerings)
+- [ ] 4. Compute icp_fit (internal — compare with __foundry_cache.icp)
+- [ ] 5. Compute catalog_fit (internal — compare with __foundry_cache.offerings)
 - [ ] 6. Render diagnostic.md from template + write file
 - [ ] 7. Emit handoff for baseline-cost-builder + process-mapper
 
@@ -135,7 +135,7 @@ baseline_inputs_handoff:
   fields_collected: [volume_monthly, actors, hours_per_unit, error_rate, rework_rate]
   fields_missing: []
 go_no_go: go | no-go | needs-paid-diagnostic
-next_step: "Run baseline-cost-builder; then /acme:spec"
+next_step: "Run baseline-cost-builder; then /novais-digital:spec"
 ```
 
 ---
@@ -147,7 +147,7 @@ next_step: "Run baseline-cost-builder; then /acme:spec"
 - `icp_fit` ∈ {fit, edge, out_of_icp} declared
 - `catalog_fit` declared
 - `go_no_go` declared with justification
-- File persisted in `docs/clients/{client_id}/diagnostic.md` with frontmatter `forge_skill_version`
+- File persisted in `docs/clients/{client_id}/diagnostic.md` with frontmatter `foundry_skill_version`
 - Tier 1 caches consumed (no re-read of disk)
 - No Tier 3 reads
 
@@ -173,7 +173,7 @@ next_step: "Run baseline-cost-builder; then /acme:spec"
 
 ```bash
 deepagents -y
-> Run diagnostic-runner for client=acme interlocutor=ceo \
+> Run diagnostic-runner for client=novais-digital interlocutor=ceo \
   declared_problem="follow-up de propostas se perde"
 ```
 
@@ -181,13 +181,13 @@ deepagents -y
 
 ```bash
 deepagents -y
-> Run diagnostic-runner for client=acme interlocutor=ceo \
+> Run diagnostic-runner for client=novais-digital interlocutor=ceo \
   declared_problem="..." session_minutes=10
 ```
 
 (All 10 blocks still execute — `session_minutes` parameterizes depth, not count.)
 
-### Mode 3 — In CI as part of /acme:diagnose pipeline
+### Mode 3 — In CI as part of /novais-digital:diagnose pipeline
 
 ```bash
 deepagents -n -y "Run dna+icp+offerings loaders" > /dev/null

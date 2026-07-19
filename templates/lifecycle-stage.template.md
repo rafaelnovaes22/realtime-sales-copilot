@@ -1,5 +1,5 @@
 ---
-target_artifact: "{{ ex: products/acme-fin/spec.md OR src/skus/triagem-comercial/spec.md }}"
+target_artifact: "{{ ex: products/novais-digital-fin/spec.md OR src/skus/triagem-comercial/spec.md }}"
 artifact_type: "product|platform-sku|diagnostic"
 current_stage: "discovery|mvp|beta|ga|maturity|sunset"
 constitution_version: "0.2.0"

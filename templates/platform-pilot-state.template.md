@@ -19,7 +19,7 @@ last_updated: "{{ YYYY-MM-DD }}"
 
 > **Append-only**. Cada transição entre estados (DRAFT → STAGING → PILOT → CANONICAL → DEPRECATED) é registrada como nova seção no topo. Não editar transições anteriores.
 
-> Este arquivo é a **versão platform** de `subscriptions/{id}/promotions.md` (que existe para `agentic_saas`). Lido pelo `/acme:promote` com `to_mode` ∈ {to_staging, to_pilot, to_canonical, to_deprecated, rollback} e pelo reviewer DeepAgent (check C4.platform.1).
+> Este arquivo é a **versão platform** de `subscriptions/{id}/promotions.md` (que existe para `agentic_saas`). Lido pelo `/novais-digital:promote` com `to_mode` ∈ {to_staging, to_pilot, to_canonical, to_deprecated, rollback} e pelo reviewer DeepAgent (check C4.platform.1).
 
 ---
 
@@ -35,7 +35,7 @@ last_updated: "{{ YYYY-MM-DD }}"
 
 ## Transition N — {{ YYYY-MM-DD }} — {{ from_state }} → {{ to_state }}
 
-- **Triggered by**: `/acme:promote --module_id={{ id }} --to_mode={{ to_state }}`
+- **Triggered by**: `/novais-digital:promote --module_id={{ id }} --to_mode={{ to_state }}`
 - **Approver(s)**:
   - PO: `{{ nome / role }}` (signature_hash: `{{ sha256:16 }}`)
   - Tech Lead: `{{ nome / role }}` (signature_hash: `{{ sha256:16 }}`)
@@ -80,7 +80,7 @@ last_updated: "{{ YYYY-MM-DD }}"
 
 ### Rollback plan (caso necessário)
 
-- Comando: `/acme:promote --module_id={{ id }} --to_mode=rollback --rollback_reason={{ enum }}`
+- Comando: `/novais-digital:promote --module_id={{ id }} --to_mode=rollback --rollback_reason={{ enum }}`
 - Estado-alvo: {{ estado anterior estável }}
 - Migração de dados: {{ se aplicável }}
 
@@ -96,4 +96,4 @@ last_updated: "{{ YYYY-MM-DD }}"
 
 | Versão | Data | Mudança |
 |---|---|---|
-| 0.1.0 | 2026-05-08 | Versão inicial — Forge-9 (delivery-type agnostic) |
+| 0.1.0 | 2026-05-08 | Versão inicial — Foundry-9 (delivery-type agnostic) |

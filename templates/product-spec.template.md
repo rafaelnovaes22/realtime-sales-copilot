@@ -31,7 +31,7 @@ version: "0.1.0"
 {{ Produto entrega X quando cliente faz Y, mediante condições Z }}
 ```
 
-> Exemplo (Acme Fin): *"Análise financeira mensal entregue quando cliente importa ≥ N lançamentos, gerando DRE estruturado + 3 cards de Leitura da história + Plano de ação com R$ projetado."*
+> Exemplo (Novais Digital Fin): *"Análise financeira mensal entregue quando cliente importa ≥ N lançamentos, gerando DRE estruturado + 3 cards de Leitura da história + Plano de ação com R$ projetado."*
 
 ### 1.2. Outcomes principais cobráveis
 

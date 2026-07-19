@@ -2,7 +2,7 @@ node_modules/
 .env
 .env.local
 .env.*.local
-.forge-mode
+.foundry-mode
 .claude/settings.local.json
 dist/
 build/

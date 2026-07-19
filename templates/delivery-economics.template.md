@@ -21,7 +21,7 @@ version: "0.1.0"
 
 > **Princípio Constitution C3** (v0.3.0): viabilidade econômica. Para módulos com `ai_enabled=false`, este arquivo substitui (ou complementa) o `unit-economics.md`. Limite default: razão custo/receita ≤ 25%.
 
-> Este arquivo é lido pelo reviewer DeepAgent (check `C3.platform.*`) e pelo `/acme:promote` (Gate 2 do gate-set platform).
+> Este arquivo é lido pelo reviewer DeepAgent (check `C3.platform.*`) e pelo `/novais-digital:promote` (Gate 2 do gate-set platform).
 
 ---
 
@@ -161,4 +161,4 @@ ratio = Σ_total / Σ_receita = {{ X }} / {{ Y }} = {{ Z }}
 
 | Versão | Data | Mudança |
 |---|---|---|
-| 0.1.0 | 2026-05-08 | Versão inicial — Forge-9 (delivery-type agnostic) |
+| 0.1.0 | 2026-05-08 | Versão inicial — Foundry-9 (delivery-type agnostic) |

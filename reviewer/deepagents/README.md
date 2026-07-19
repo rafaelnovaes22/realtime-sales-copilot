@@ -1,8 +1,8 @@
 # Reviewer — Deep Agents (LangChain)
 
-> **Decisão F17/F18** (2026-05-01) — `docs/forge/decisions.md`
+> **Decisão F17/F18** (2026-05-01) — `docs/foundry/decisions.md`
 
-Esta pasta contém os assets necessários para que um **DeepAgent (LangChain)** auditarmensalmente um projeto consumidor do Forge contra a Constitution C1-C8 + extensões declaradas.
+Esta pasta contém os assets necessários para que um **DeepAgent (LangChain)** auditarmensalmente um projeto consumidor do Foundry contra a Constitution C1-C8 + extensões declaradas.
 
 ---
 
@@ -26,13 +26,13 @@ reviewer/deepagents/
       │   ├── eval-case-author/SKILL.md
       │   └── shadow-mode-runner/SKILL.md
       └── reviewer/
-          └── forge-auditor/SKILL.md
+          └── foundry-auditor/SKILL.md
 ```
 
 | Pasta | O que é | Origem |
 |---|---|---|
-| `skills/L0`, `L1`, `L2` | Versão Deep Agents das 9 skills do Forge | **Gerada** por conversão a partir de `.claude/skills/` (não editar à mão) |
-| `skills/reviewer/forge-auditor` | Skill orquestradora da auditoria mensal | Escrita **direta** em formato Deep Agents (não tem origem em Claude Code) |
+| `skills/L0`, `L1`, `L2` | Versão Deep Agents das 9 skills do Foundry | **Gerada** por conversão a partir de `.claude/skills/` (não editar à mão) |
+| `skills/reviewer/foundry-auditor` | Skill orquestradora da auditoria mensal | Escrita **direta** em formato Deep Agents (não tem origem em Claude Code) |
 
 ---
 
@@ -41,7 +41,7 @@ reviewer/deepagents/
 - **Deep Agents CLI v0.0.34+** (Python, LangChain)
 - **Provider**: configurável via env var `DEEPAGENTS_MODEL`; default OpenAI direto (F10)
 - **Local de execução**: processo separado no projeto consumidor (ou CI) — não dependência embarcada
-- **Output**: `docs/forge/audits/{YYYY-MM}.md` consumível por humano + por `/acme:audit-monthly` do Forge
+- **Output**: `docs/foundry/audits/{YYYY-MM}.md` consumível por humano + por `/novais-digital:audit-monthly` do Foundry
 
 ---
 
@@ -61,7 +61,7 @@ curl -fsSL https://raw.githubusercontent.com/andersonamaral2/Claude-Code-to-Deep
 deepagents skills list  # deve mostrar: skill-converter
 ```
 
-### 3. Instalar as 10 skills do Forge (este diretório)
+### 3. Instalar as 10 skills do Foundry (este diretório)
 
 Opção A — local-scoped (uma sessão):
 
@@ -75,7 +75,7 @@ deepagents skills list
 # Esperado: skill-converter, company-dna, icp-loader, offerings-loader,
 #           baseline-cost-builder, diagnostic-runner, process-mapper,
 #           artifact-prompt-builder, eval-case-author, shadow-mode-runner,
-#           forge-auditor
+#           foundry-auditor
 ```
 
 Opção B — global (todos os projetos):
@@ -98,14 +98,14 @@ export DEEPAGENTS_MODEL=gpt-4.1-mini   # default; pode ser claude-sonnet-4, etc
 
 ```bash
 # da raiz do projeto consumidor
-deepagents -y -n "Run the forge-auditor skill against this repository for month 2026-04"
+deepagents -y -n "Run the foundry-auditor skill against this repository for month 2026-04"
 ```
 
 Ou via CI workflow (exemplo):
 
 ```yaml
-# .github/workflows/forge-audit.yml
-name: Forge Monthly Audit
+# .github/workflows/foundry-audit.yml
+name: Foundry Monthly Audit
 on:
   schedule:
     - cron: '0 8 1 * *'  # 1º dia útil de cada mês, 08h UTC
@@ -118,13 +118,13 @@ jobs:
       - uses: actions/checkout@v4
       - run: pip install deepagents
       - run: cp -r reviewer/deepagents/skills/* ~/.deepagents/agent/skills/
-      - run: deepagents -y -n "Run forge-auditor for month $(date -d 'last month' +%Y-%m)"
+      - run: deepagents -y -n "Run foundry-auditor for month $(date -d 'last month' +%Y-%m)"
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           DEEPAGENTS_MODEL: gpt-4.1-mini
 ```
 
-A skill `forge-auditor` produz `docs/forge/audits/{YYYY-MM}.md` no formato consumido por `reviewer/output-schema.json`.
+A skill `foundry-auditor` produz `docs/foundry/audits/{YYYY-MM}.md` no formato consumido por `reviewer/output-schema.json`.
 
 ---
 
@@ -153,7 +153,7 @@ Toda conversão deve atualizar `reviewer/deepagents/conversion-log.md` com:
 - Versão do converter
 - Transformações aplicadas
 
-Em **Forge-4** isso será automatizado por hook `manifest-sync` + sub-hook `deepagents-resync`.
+Em **Foundry-4** isso será automatizado por hook `manifest-sync` + sub-hook `deepagents-resync`.
 
 ---
 
@@ -176,10 +176,10 @@ Mais semantic replacements: `CLAUDE.md` → `AGENTS.md`, `.claude/` → `.deepag
 
 ## Modelo de auditoria (esperado)
 
-A skill `forge-auditor` orquestra a auditoria em paralelo via `task` (sub-agents):
+A skill `foundry-auditor` orquestra a auditoria em paralelo via `task` (sub-agents):
 
 ```
-forge-auditor (orchestrator)
+foundry-auditor (orchestrator)
   ├── task: audit C1 (diagnose-before-design)
   ├── task: audit C2 (outcome-first)
   ├── task: audit C3 (cost ≤ 25%)
@@ -190,7 +190,7 @@ forge-auditor (orchestrator)
   └── task: audit C8 (anti-customização — lint regex)
        │
        ↓
-  consolida findings em docs/forge/audits/{YYYY-MM}.md
+  consolida findings em docs/foundry/audits/{YYYY-MM}.md
 ```
 
 Cada sub-task carrega contexto Tier 1 das skills convertidas (`company-dna`, `icp-loader`, `offerings-loader` em formato Deep Agents) para tomar decisões sobre o que conta como conformidade.
@@ -209,4 +209,4 @@ Cada sub-task carrega contexto Tier 1 das skills convertidas (`company-dna`, `ic
 
 | Data | Mudança |
 |---|---|
-| 2026-05-01 | Versão inicial — estrutura criada e 9 skills L0/L1/L2 convertidas + skill orquestradora `forge-auditor`. F17/F18 registradas em `decisions.md`. |
+| 2026-05-01 | Versão inicial — estrutura criada e 9 skills L0/L1/L2 convertidas + skill orquestradora `foundry-auditor`. F17/F18 registradas em `decisions.md`. |

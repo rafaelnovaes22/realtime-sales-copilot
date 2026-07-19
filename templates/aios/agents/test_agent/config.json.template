@@ -9,7 +9,7 @@
   ],
   "tools": [],
   "meta": {
-    "author": "forge",
+    "author": "foundry",
     "version": "0.2.0",
     "tier": "shared",
     "context_isolation": true,

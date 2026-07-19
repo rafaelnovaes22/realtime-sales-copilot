@@ -50,8 +50,8 @@ Esta skill **não** decide promoção sozinha. Produz relatório; humano (PO Gua
 
 1. **Path-scoped** — turno toca arquivo em `runs/{client}/shadow/` ou spec referenciando modo SHADOW
 2. **Keyword-scoped** — termo de `activation.keywords`
-3. **Explícita** — `@shadow-mode-runner artifact_id=triagem-tickets-v1 subscription_id=acme-001 prompt_path=prompts/.../v1.0.0/system.md eval_suite_path=evals/triagem-tickets-v1/`
-4. **Slash command** — invocada por `/acme:shadow-start` ou `/acme:promote` (Forge-2)
+3. **Explícita** — `@shadow-mode-runner artifact_id=triagem-tickets-v1 subscription_id=novais-digital-001 prompt_path=prompts/.../v1.0.0/system.md eval_suite_path=evals/triagem-tickets-v1/`
+4. **Slash command** — invocada por `/novais-digital:shadow-start` ou `/novais-digital:promote` (Foundry-2)
 
 ## Inputs Tier 1 (helpers)
 
@@ -81,7 +81,7 @@ Obrigatórios:
 
 ```yaml
 artifact_id: <slug>
-subscription_id: <slug, ex: acme-001>
+subscription_id: <slug, ex: novais-digital-001>
 prompt_path: prompts/.../v.../system.md
 eval_suite_path: evals/{artifact_id}/
 ```
@@ -124,7 +124,7 @@ Se qualquer precondição falhar → erro estruturado, **não inicia** SHADOW.
 ```yaml
 shadow_status:
   artifact_id: triagem-tickets-tier1-v1
-  subscription_id: acme-001
+  subscription_id: novais-digital-001
   prompt_hash: a3f9...c2e1
   started_at: 2026-04-15
   current_day: 9
@@ -210,12 +210,12 @@ preconditions_checked: { ... }   # só em start
 
 | Tentação | Por que é errado | Resposta correta |
 |---|---|---|
-| "Cliente quer pular SHADOW, são clientes premium" | C4 sem exceção — mesmo cliente disposto precisa ≥14 dias. Bypass = receita garantida de churn pós-incidente | Bloquear `start` com erro `c4_window_below_minimum`; documentar pedido em `docs/forge/bypass-log/` se Forge-4 ativo |
+| "Cliente quer pular SHADOW, são clientes premium" | C4 sem exceção — mesmo cliente disposto precisa ≥14 dias. Bypass = receita garantida de churn pós-incidente | Bloquear `start` com erro `c4_window_below_minimum`; documentar pedido em `docs/foundry/bypass-log/` se Foundry-4 ativo |
 | "Output do agente está bom, posso entregar paralelamente em casos óbvios" | Quebra a definição de SHADOW — qualquer entrega = ASSISTED, sem proteção C4 | `delivered: false` e `billing: 0` enforced em todo trace; lint detecta entrega lateral |
 | "Agreement 0.85 é arbitrário, 0.75 já é bom" | Threshold é pré-contratado em spec; afrouxar = mover trave depois do gol | Threshold lido de spec; ajuste exige nova ADR + bump de spec |
 | "14 dias passou, promove automaticamente" | C4 exige aprovação humana **explícita** (PO Guardian + Promotion Officer) | Skill produz **recomendação**; promoção é ação humana com assinatura |
 | "Disagreement é sempre erro do agente" | Em ~10% dos casos é humano errado/inconsistente; ignorar isso enviesa avaliação | Top-N disagreements vão para review humano antes do report final |
-| "Trace para amostra é suficiente, sample 10%" | Quebra C6 — todo run de produção deve ter trace | 100% dos runs em SHADOW com trace; amostragem só em AUTONOMOUS pós-Forge-4 |
+| "Trace para amostra é suficiente, sample 10%" | Quebra C6 — todo run de produção deve ter trace | 100% dos runs em SHADOW com trace; amostragem só em AUTONOMOUS pós-Foundry-4 |
 | "Drift de prompt durante SHADOW é pequeno, mantém" | Mudança no `prompt_hash` invalida métricas acumuladas; janela precisa reiniciar | Detectar `prompt_changed: true` → erro `prompt_drift_during_window`; reiniciar com nova janela |
 | "Custo deu acima do threshold, mas qualidade tá boa" | C3 é hard gate; custo > 25% é go-no-go independente de qualidade | `c3_status: unviable` → `recommendation: rollback` ou `hold` para otimizar custo |
 
@@ -277,14 +277,14 @@ hint: <ação>
 
 | Skill | Direção | Como |
 |---|---|---|
-| `@offerings-loader` | upstream (helper) | `__forge_cache.offerings` |
+| `@offerings-loader` | upstream (helper) | `__foundry_cache.offerings` |
 | `@artifact-prompt-builder` | upstream (Tier 3) | Lê o prompt sob teste; `prompt_hash` é o âncora de imutabilidade |
 | `@eval-case-author` | upstream (Tier 3) | Garante eval suite acima do threshold antes de `start` |
-| `@po-guardian`, `@promotion-officer` (Guardians, Forge-3) | downstream/reviewer | Recebem recomendação; assinam promoção |
-| `@observability-guardian` (Forge-3) | reviewer | Audita 100% dos runs com trace |
+| `@po-guardian`, `@promotion-officer` (Guardians, Foundry-3) | downstream/reviewer | Recebem recomendação; assinam promoção |
+| `@observability-guardian` (Foundry-3) | reviewer | Audita 100% dos runs com trace |
 
 ## Histórico
 
 | Versão | Data | Mudança |
 |---|---|---|
-| 0.1.0 | 2026-04-30 | Versão inicial — Forge-1 onda 3 (Tier 3) |
+| 0.1.0 | 2026-04-30 | Versão inicial — Foundry-1 onda 3 (Tier 3) |

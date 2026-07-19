@@ -86,7 +86,7 @@ app.post("/api/suggest", async (c) => {
       ? (body.estado as "abertura" | "diagnostico" | "apresentacao" | "objecao" | "fechamento")
       : undefined;
 
-  const tenantId = body.tenant_id ?? "acme-internal";
+  const tenantId = body.tenant_id ?? "novais-digital-internal";
 
   try {
     const result = await run({ buffer: body.buffer, estado, tenantId, closerId: body.closer_id });
@@ -170,7 +170,7 @@ app.post("/api/feedback", async (c) => {
     buffer_excerpt: sanitizePII(body.buffer_excerpt ?? ""),
     latency_ms: body.latency_ms ?? null,
     cost_brl: body.cost_brl ?? null,
-    tenant_id: body.tenant_id ?? "acme-internal",
+    tenant_id: body.tenant_id ?? "novais-digital-internal",
     closer_id: body.closer_id ?? null,
     final_text: finalTextRaw != null ? sanitizePII(finalTextRaw) : null,
     was_edited: wasEdited,

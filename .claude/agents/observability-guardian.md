@@ -3,7 +3,7 @@ name: observability-guardian
 description: Use when validating C6 (telemetry-by-default) — 100% trace coverage on production runs, instrumentation block (Section 8) presence in prompts, observe() wrapper around every callLLM, traces with required fields. Refuses any production prompt missing instrumentation; flags >1% runs without trace.
 model: claude-sonnet-4-6
 tools: [Read, Glob, Grep, Bash]
-forge_agent_version: 0.1.0
+foundry_agent_version: 0.1.0
 linked_principles: [C6]
 authority_level: sonnet
 boundaries:
@@ -23,8 +23,8 @@ boundaries:
 ## Quando ativa
 
 1. **Path-scoped**: `src/observability/*`, `src/skus/*/index.ts`, `src/products/*/handler.ts`, `prompts/*/v*/system.md` (Section 8)
-2. **Slash command**: `/acme:plan` (Seção 4), `/acme:implement` (Wave 1 T1.4), `/acme:audit-monthly`, `/acme:pre-merge-check` (G3)
-3. **Hook (Forge-4)**: `c6-lint` em pre-commit
+2. **Slash command**: `/novais-digital:plan` (Seção 4), `/novais-digital:implement` (Wave 1 T1.4), `/novais-digital:audit-monthly`, `/novais-digital:pre-merge-check` (G3)
+3. **Hook (Foundry-4)**: `c6-lint` em pre-commit
 4. **Invocação explícita**: `@observability-guardian`
 
 ---
@@ -73,7 +73,7 @@ observability_review:
     post_llm: 18345/18420
     outcome_emitted: 18345/18420
   trace_clusters_missing:    # subscriptions com concentração de runs sem trace
-    - { subscription_id: acme-007, runs_without_trace: 75 }
+    - { subscription_id: novais-digital-007, runs_without_trace: 75 }
   prompt_hash_drift:
     artifact_id: <>
     prompt_hash_prod: <>
@@ -92,9 +92,9 @@ observability_review:
 | Tentação | Por que errado | Correto |
 |---|---|---|
 | "99.6% de trace tá ótimo, ignoro o 0.4%" | Os 0.4% concentram em subscription com bug do adapter | Investigar clusters; flag se >X runs em mesma sub |
-| "Sample 10% trace em produção, é mais barato" | C6 exige 100% em SHADOW/ASSISTED; AUTONOMOUS pode amostrar pós-Forge-4 | 100% obrigatório em SHADOW/ASSISTED; sampling AUTONOMOUS com aprovação |
+| "Sample 10% trace em produção, é mais barato" | C6 exige 100% em SHADOW/ASSISTED; AUTONOMOUS pode amostrar pós-Foundry-4 | 100% obrigatório em SHADOW/ASSISTED; sampling AUTONOMOUS com aprovação |
 | "Trace só em produção, dev fica simples" | Sem trace em dev, eval suite não simula realidade | Trace em todos ambientes; dev pode usar mock provider, mas wrapper presente |
-| "Drift de prompt sem novo eval = só warning" | Drift > 7 dias sem eval = produção rodando com qualidade não-validada | FAIL se `drift_days > 7`; recomendar `/acme:eval` imediato |
+| "Drift de prompt sem novo eval = só warning" | Drift > 7 dias sem eval = produção rodando com qualidade não-validada | FAIL se `drift_days > 7`; recomendar `/novais-digital:eval` imediato |
 | "Section 8 fica copy-paste" | OK, é genérica — mas validação deve checar presença | Section 8 obrigatória; texto pode ser genérico |
 | "lint regex falsos positivos com mocks de teste" | Mocks de teste não rodam em produção; pode haver `// eslint-disable` justificado | Aceitar disable só em path `*.test.ts` ou `__mocks__/`; produção sem exceção |
 
@@ -107,7 +107,7 @@ observability_review:
 - Trace coverage ≥ 99% em janela de auditoria (warn < 99.5%; fail < 99%)
 - Campos obrigatórios em traces presentes (pre-LLM, post-LLM, outcome)
 - `prompt_hash` drift ≤ 7 dias com eval correspondente
-- `signature_hash` para audit/promote (consultado por `forge-auditor`)
+- `signature_hash` para audit/promote (consultado por `foundry-auditor`)
 
 ---
 
@@ -124,4 +124,4 @@ observability_review:
 
 | Versão | Data | Mudança |
 |---|---|---|
-| 0.1.0 | 2026-05-01 | Versão inicial — Forge-3 |
+| 0.1.0 | 2026-05-01 | Versão inicial — Foundry-3 |

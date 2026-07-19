@@ -212,7 +212,7 @@ Cada caso deve cobrir:
 | CANONICAL | `pilot-state.md` mostra ≥ 14d em PILOT (crítico) ou ≥ 3d (simples) + acceptance-report assinado | — |
 | DEPRECATED | Substituído + plano de sunset + migration path documentado | — |
 
-> Gate completo no [`/acme:promote`](../.claude/commands/acme/promote.md) com `to_mode` adequado ao project_type.
+> Gate completo no [`/novais-digital:promote`](../.claude/commands/novais-digital/promote.md) com `to_mode` adequado ao project_type.
 
 ---
 
@@ -241,4 +241,4 @@ Toda variação por cliente entra como **configuração**, não código.
 
 | Versão | Data | Mudança |
 |---|---|---|
-| 0.1.0 | 2026-05-08 | Versão inicial — Forge-9 (delivery-type agnostic) |
+| 0.1.0 | 2026-05-08 | Versão inicial — Foundry-9 (delivery-type agnostic) |

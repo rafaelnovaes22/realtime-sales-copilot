@@ -4,11 +4,11 @@
 # When ai_enabled=false (platform), warns instead on delivery-economics file changes.
 
 _get_ai_enabled() {
-  if [ -f "docs/forge/project.json" ]; then
+  if [ -f "docs/foundry/project.json" ]; then
     if command -v jq &>/dev/null; then
-      jq -r '.project.ai_enabled // true' docs/forge/project.json 2>/dev/null || echo "true"
+      jq -r '.project.ai_enabled // true' docs/foundry/project.json 2>/dev/null || echo "true"
     else
-      python3 -c "import json; d=json.load(open('docs/forge/project.json')); print(str(d.get('project',{}).get('ai_enabled',True)).lower())" 2>/dev/null || echo "true"
+      python3 -c "import json; d=json.load(open('docs/foundry/project.json')); print(str(d.get('project',{}).get('ai_enabled',True)).lower())" 2>/dev/null || echo "true"
     fi
   else
     echo "true"
@@ -34,7 +34,7 @@ if [ "$AI_ENABLED" = "false" ]; then
   if [[ "$FILE_PATH" =~ docs/modules/[^/]+/(infra|costs|services)\.(md|yaml|json)$ ]] || \
      [[ "$FILE_PATH" =~ docs/clients/[^/]+/delivery-economics-.+\.md$ ]]; then
     echo "WARN [unit-economics-recalc]: custo de plataforma alterado em '$FILE_PATH'." >&2
-    echo "Recalcule delivery economics: /acme:unit-economics --recalc --type=platform (C3 — platform_margin ≤ 25%)." >&2
+    echo "Recalcule delivery economics: /novais-digital:unit-economics --recalc --type=platform (C3 — platform_margin ≤ 25%)." >&2
     exit 1
   fi
   exit 0
@@ -45,7 +45,7 @@ if [[ "$FILE_PATH" =~ src/skus/[^/]+/prompts/.+\.(ts|js|txt|md)$ ]] || \
    [[ "$FILE_PATH" =~ prompts/.+\.(ts|js|txt|md)$ ]]; then
 
   echo "WARN [unit-economics-recalc]: prompt alterado em '$FILE_PATH'." >&2
-  echo "Recalcule unit economics: /acme:unit-economics --recalc (C3 — custo ≤ 25% do preço)." >&2
+  echo "Recalcule unit economics: /novais-digital:unit-economics --recalc (C3 — custo ≤ 25% do preço)." >&2
   echo "O prompt_hash também mudou — atualize artifact-prompt-builder se necessário." >&2
   exit 1
 fi

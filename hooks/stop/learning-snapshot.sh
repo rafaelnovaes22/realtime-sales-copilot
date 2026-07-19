@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Acme Forge — learning-snapshot hook (Stop)
+# Novais Digital Foundry — learning-snapshot hook (Stop)
 # Captura aprendizados ao fim de cada sessão Claude Code (local ou headless GH Actions).
 # Produz: docs/learnings/{YYYY-MM}/{session-id}.md
 #
 # Princípios: C1 (linkado a artifact real), C6 (source_run_id + trace), C7 (agnóstico), C8 (sem tenant hardcode)
-# Integração: Forge-20 (self-harness loop — Hermes Codex consome estes snapshots via webhook callback)
+# Integração: Foundry-20 (self-harness loop — Hermes Codex consome estes snapshots via webhook callback)
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$REPO_ROOT"
@@ -19,15 +19,15 @@ OUTPUT="$LEARNING_DIR/$SESSION_ID.md"
 # Metadata de contexto
 TIMESTAMP="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 RUN_ID="${GITHUB_RUN_ID:-local}"
-CONSUMER="${FORGE_CONSUMER:-$(basename "$REPO_ROOT")}"
-COMMAND="${FORGE_COMMAND:-unknown}"
-EXIT_CODE="${FORGE_EXIT_CODE:-0}"
+CONSUMER="${FOUNDRY_CONSUMER:-$(basename "$REPO_ROOT")}"
+COMMAND="${FOUNDRY_COMMAND:-unknown}"
+EXIT_CODE="${FOUNDRY_EXIT_CODE:-0}"
 TRACE_ID="${LANGFUSE_TRACE_ID:-local}"
 CONFIDENCE="local"
 
 # Detectar se rodou em SHADOW/AUTONOMOUS (muda confiança do learning)
-if [[ -f "docs/forge/project.json" ]] && command -v node >/dev/null 2>&1; then
-  STAGE=$(node -e "const m=JSON.parse(require('fs').readFileSync('docs/forge/project.json','utf8')); console.log(m.lifecycle_stage||'unknown')" 2>/dev/null || echo "unknown")
+if [[ -f "docs/foundry/project.json" ]] && command -v node >/dev/null 2>&1; then
+  STAGE=$(node -e "const m=JSON.parse(require('fs').readFileSync('docs/foundry/project.json','utf8')); console.log(m.lifecycle_stage||'unknown')" 2>/dev/null || echo "unknown")
   case "$STAGE" in
     SHADOW)     CONFIDENCE="shadow" ;;
     ASSISTED)   CONFIDENCE="assisted" ;;
@@ -39,7 +39,7 @@ fi
 
 # ─── Ler gate report mais recente ────────────────────────────────────
 GATE_SUMMARY=""
-GATE_REPORT_DIR="docs/forge/session-gate-reports"
+GATE_REPORT_DIR="docs/foundry/session-gate-reports"
 if [[ -d "$GATE_REPORT_DIR" ]]; then
   LATEST_GATE=$(ls -t "$GATE_REPORT_DIR"/*.md 2>/dev/null | head -1)
   if [[ -n "$LATEST_GATE" ]]; then

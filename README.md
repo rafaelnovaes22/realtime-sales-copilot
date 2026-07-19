@@ -1,4 +1,4 @@
-# Acme Forja Comercial — Co-pilot de Vendas Consultivas em Tempo Real
+# Novais Digital Forja Comercial — Co-pilot de Vendas Consultivas em Tempo Real
 
 > Status: **aguardando aprovação** — plano completo definido, implementação não iniciada.
 
@@ -81,10 +81,10 @@ realtime-sales-copilot/
 │   ├── tag-corpus.ts
 │   └── build-embeddings.ts
 ├── docs/
-│   ├── forge/        # documentação de governança
+│   ├── foundry/        # documentação de governança
 │   └── adr/          # ADR-001 (stack) e ADR-002 (LGPD/retenção)
 ├── examples/
-│   └── acme-comercial/
+│   └── novais-digital-comercial/
 │       └── constitution-extension.md   # guardrails de domínio
 ├── apps/
 │   ├── api/          # backend Hono + WebSocket
@@ -134,3 +134,9 @@ realtime-sales-copilot/
 - [ ] Texto LGPD aprovado pelo jurídico
 - [ ] Gate de refino: você + closer sênior, ou comitê de 3?
 - [ ] Quem são os 3-5 closers do SHADOW?
+
+## Licença
+
+Copyright (c) 2026 Rafael Novaes.
+
+Licenciado sob [PolyForm Noncommercial License 1.0.0](./LICENSE.md) — leitura, estudo e uso não comercial permitidos; uso comercial requer autorização expressa do autor.

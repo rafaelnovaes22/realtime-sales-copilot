@@ -6,13 +6,13 @@ metadata:
   source-path: .claude/skills/L2/shadow-mode-runner.md
   converter-version: "2.1"
   deep-agents-compat: ">=0.0.34"
-  forge-tier: 3
-  forge-version: "0.1.0"
+  foundry-tier: 3
+  foundry-version: "0.1.0"
   linked-principles: [C4, C6]
   helper-pattern: none
 ---
 
-# Skill: shadow-mode-runner — Tier 3 Operational (Forge)
+# Skill: shadow-mode-runner — Tier 3 Operational (Foundry)
 
 > **applies_when**: `project.ai_enabled = true` — SHADOW mode is an agentic governance pattern (LLM runs in parallel, output never delivered, measures agreement_rate). For platform modules (`ai_enabled=false`), there is no SHADOW; the equivalent lifecycle gate is `STAGING → PILOT`, governed by `platform-pilot-state.template.md` with a minimum observation window (14 days for critical, 7 for standard, 3 for simple) and `platform-acceptance-report.template.md` sign-off before CANONICAL.
 
@@ -211,12 +211,12 @@ requires_human_approval: [po-guardian, promotion-officer]
 
 | Temptation | Why wrong | Correct |
 |---|---|---|
-| Client wants to skip SHADOW (premium) | C4 no exception | Block `start` with `c4_window_below_minimum`; bypass needs `ACME_FORGE_BYPASS=incident` (Forge-4) with audit log |
+| Client wants to skip SHADOW (premium) | C4 no exception | Block `start` with `c4_window_below_minimum`; bypass needs `NOVAIS_FOUNDRY_BYPASS=incident` (Foundry-4) with audit log |
 | Agent output good → deliver in parallel | Any delivery = ASSISTED, no C4 protection | `delivered: false` & `billing: 0` enforced; lint detects side delivery |
 | Agreement 0.85 is arbitrary, lower it | Threshold is pre-contracted in spec | Read from spec; change requires new ADR + bump |
-| 14 days passed, auto-promote | C4 needs explicit human approval | Skill emits **recommendation**; promotion via `/acme:promote` with cross-approval |
+| 14 days passed, auto-promote | C4 needs explicit human approval | Skill emits **recommendation**; promotion via `/novais-digital:promote` with cross-approval |
 | Disagreement is always agent's fault | ~10% are human errors | Top-N go to human review before final report |
-| Sample 10% trace, not all | C6 violation in SHADOW | 100% trace in SHADOW; sampling only AUTONOMOUS post-Forge-4 |
+| Sample 10% trace, not all | C6 violation in SHADOW | 100% trace in SHADOW; sampling only AUTONOMOUS post-Foundry-4 |
 | Prompt changed mid-window — ignore | Invalidates accumulated metrics | Detect `prompt_changed:true` → restart window with new approval |
 | Cost above threshold but quality good | C3 hard gate independent of quality | `c3_status: unviable` → recommendation: `rollback` or `hold` |
 
@@ -257,7 +257,7 @@ requires_human_approval: [po-guardian, promotion-officer]
 ```bash
 deepagents -y
 > Run shadow-mode-runner action=start for artifact triagem-tickets-tier1-v1, \
-  subscription acme-001
+  subscription novais-digital-001
 ```
 
 ### Mode 2 — Daily tick (CI cron)
@@ -269,7 +269,7 @@ deepagents -n -y "Run shadow-mode-runner tick for all active shadow subscription
 ### Mode 3 — Final report (when window expires)
 
 ```bash
-deepagents -n -y "Run shadow-mode-runner report for subscription acme-001"
+deepagents -n -y "Run shadow-mode-runner report for subscription novais-digital-001"
 ```
 
 ---
@@ -283,7 +283,7 @@ deepagents -n -y "Run shadow-mode-runner report for subscription acme-001"
 | `subscription_already_in_higher_mode` | Tried start in ASSISTED/AUTONOMOUS | Use rollback first, then re-shadow |
 | `prompt_drift_during_window` | Prompt hash changed mid-window | Restart with new prompt + new SLA approval |
 | `min_run_count_not_reached` | Low traffic in window | Extend window or increase rollout |
-| `human_approval_attempted_by_skill` | Skill tried to auto-promote | Block; requires `/acme:promote` with cross-approval |
+| `human_approval_attempted_by_skill` | Skill tried to auto-promote | Block; requires `/novais-digital:promote` with cross-approval |
 
 ---
 

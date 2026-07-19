@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Acme Forge — persona-detect.sh (PreToolUse, one-shot, LGPD-safe)
+# Novais Digital Foundry — persona-detect.sh (PreToolUse, one-shot, LGPD-safe)
 #
 # OBJETIVO: detectar persona do operador (vibe/dev/agent) na PRIMEIRA invocação
-# e gravar `.forge-mode` para que outros hooks (friendly-errors, forge-router)
+# e gravar `.foundry-mode` para que outros hooks (friendly-errors, foundry-router)
 # adaptem a saída.
 #
 # LGPD/GDPR: NUNCA lê conteúdo de prompts, arquivos do usuário ou histórico shell.
@@ -10,12 +10,12 @@
 # Logs apenas metadata (não strings de input).
 #
 # COMPORTAMENTO:
-#   - Se `.forge-mode` já existe → exit 0 imediato (no-op idempotente).
-#   - Caso contrário, detecta persona, grava `.forge-mode`, e loga decisão
-#     em `docs/forge/persona-detection.log` para auditabilidade.
+#   - Se `.foundry-mode` já existe → exit 0 imediato (no-op idempotente).
+#   - Caso contrário, detecta persona, grava `.foundry-mode`, e loga decisão
+#     em `docs/foundry/persona-detection.log` para auditabilidade.
 #   - Hook é one-shot por consumidor — após primeira detecção nunca reroda.
 #
-# OVERRIDE: operador pode rodar `bash scripts/forge mode <vibe|dev|agent>` a
+# OVERRIDE: operador pode rodar `bash scripts/foundry mode <vibe|dev|agent>` a
 # qualquer momento para sobrescrever.
 #
 # Princípios: C6 (auditável via log), C7 (sem hardcode de provider),
@@ -23,18 +23,18 @@
 
 set -euo pipefail
 
-MODE_FILE=".forge-mode"
+MODE_FILE=".foundry-mode"
 
 # Idempotência: se já existe, no-op
 if [[ -f "$MODE_FILE" ]]; then
   exit 0
 fi
 
-# Guard: no canônico do Forge (mantenedor) persona-detect não faz sentido
+# Guard: no canônico do Foundry (mantenedor) persona-detect não faz sentido
 # — sempre roda como mantenedor, não como persona de consumer.
-if [[ -f "docs/forge/manifest.json" ]] && command -v node >/dev/null 2>&1; then
+if [[ -f "docs/foundry/manifest.json" ]] && command -v node >/dev/null 2>&1; then
   if node -e "
-    const m=JSON.parse(require('fs').readFileSync('docs/forge/manifest.json','utf8'));
+    const m=JSON.parse(require('fs').readFileSync('docs/foundry/manifest.json','utf8'));
     process.exit(m.framework && m.framework.canonical===true ? 0 : 1);
   " 2>/dev/null; then
     # Estamos no canônico — pular detecção
@@ -65,10 +65,10 @@ SIGNAL_HAS_CLIENTS="false"
 
 # Project signal (declarado no project.json se existir)
 SIGNAL_NON_TECH_STAKEHOLDER="unknown"
-if [[ -f "docs/forge/project.json" ]] && command -v node >/dev/null 2>&1; then
+if [[ -f "docs/foundry/project.json" ]] && command -v node >/dev/null 2>&1; then
   SIGNAL_NON_TECH_STAKEHOLDER=$(node -e "
     try {
-      const p=JSON.parse(require('fs').readFileSync('docs/forge/project.json','utf8'));
+      const p=JSON.parse(require('fs').readFileSync('docs/foundry/project.json','utf8'));
       const v=p.team && p.team.has_non_technical_stakeholder;
       console.log(v===true?'true':v===false?'false':'unknown');
     } catch(e) { console.log('unknown'); }
@@ -110,7 +110,7 @@ elif [[ "$SIGNAL_HAS_CLIENTS" == "true" && "$SIGNAL_HAS_SRC" == "false" ]]; then
 elif [[ "$SIGNAL_HAS_SRC" == "false" && "$SIGNAL_HAS_CLIENTS" == "false" ]]; then
   DETECTED_MODE="dev"
   CONFIDENCE="low"
-  RATIONALE="filesystem mínimo — fallback dev (override via 'forge mode' se incorreto)"
+  RATIONALE="filesystem mínimo — fallback dev (override via 'foundry mode' se incorreto)"
 
 else
   DETECTED_MODE="dev"
@@ -118,12 +118,12 @@ else
   RATIONALE="combinação intermediária de sinais — fallback dev seguro"
 fi
 
-# ─── Escrita do .forge-mode ──────────────────────────────────────────
+# ─── Escrita do .foundry-mode ──────────────────────────────────────────
 echo "$DETECTED_MODE" > "$MODE_FILE"
 
 # ─── Log auditável ───────────────────────────────────────────────────
-mkdir -p docs/forge
-LOG="docs/forge/persona-detection.log"
+mkdir -p docs/foundry
+LOG="docs/foundry/persona-detection.log"
 {
   printf '[%s] detected=%s confidence=%s rationale="%s"\n' \
     "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
@@ -139,7 +139,7 @@ LOG="docs/forge/persona-detection.log"
 # ─── Stdout discreto (não polui sessão) ──────────────────────────────
 # Apenas em TTY interativo e apenas na primeira detecção, mostra um aviso curto
 if [[ "$SIGNAL_TTY" == "true" ]]; then
-  printf '💡 Forge detectou modo "%s" (confiança: %s). Override: bash scripts/forge mode <vibe|dev|agent>\n' \
+  printf '💡 Foundry detectou modo "%s" (confiança: %s). Override: bash scripts/foundry mode <vibe|dev|agent>\n' \
     "$DETECTED_MODE" "$CONFIDENCE" >&2
 fi
 

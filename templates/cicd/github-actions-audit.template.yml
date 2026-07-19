@@ -1,7 +1,7 @@
 # templates/cicd/github-actions-audit.template.yml
 #
 # COMO USAR:
-#   1. Copie para .github/workflows/forge-audit.yml no projeto consumidor
+#   1. Copie para .github/workflows/foundry-audit.yml no projeto consumidor
 #   2. Substitua {PROJECT_NAME} pelo slug do projeto
 #   3. Configure secrets:
 #      - DEEPAGENTS_API_KEY (modelo do reviewer DeepAgent)
@@ -10,14 +10,14 @@
 #
 # O QUE FAZ:
 #   - Roda auditoria mensal na 1ª segunda-feira do mês às 06:00 UTC
-#   - Invoca o reviewer DeepAgent (forge-auditor) para auditar C1-C8
-#   - Salva relatório em docs/forge/audits/{YYYY-MM}.md
+#   - Invoca o reviewer DeepAgent (foundry-auditor) para auditar C1-C8
+#   - Salva relatório em docs/foundry/audits/{YYYY-MM}.md
 #   - Cria GitHub Issue se SLA breach detectado (recomendação de rollback)
 #   - Permite trigger manual para auditoria imediata
 #
 # PRINCÍPIOS: C1 (audit trail), C4 (SLA enforcement), C6 (telemetria)
 
-name: Forge Audit Mensal — {PROJECT_NAME}
+name: Foundry Audit Mensal — {PROJECT_NAME}
 
 on:
   # 1ª segunda-feira do mês às 06:00 UTC
@@ -38,8 +38,8 @@ on:
         type: string
 
 jobs:
-  forge-audit:
-    name: Auditoria Mensal Forge
+  foundry-audit:
+    name: Auditoria Mensal Foundry
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -71,13 +71,13 @@ jobs:
             echo "audit_month=$(date +%Y-%m)" >> $GITHUB_OUTPUT
           fi
 
-      - name: Validar forge-doctor antes da auditoria
+      - name: Validar foundry-doctor antes da auditoria
         run: |
-          bash scripts/forge-doctor.sh || {
-            echo "::warning::forge-doctor encontrou divergências — auditoria continuará mas pode ter resultados incompletos"
+          bash scripts/foundry-doctor.sh || {
+            echo "::warning::foundry-doctor encontrou divergências — auditoria continuará mas pode ter resultados incompletos"
           }
 
-      - name: Rodar auditoria DeepAgent (forge-auditor)
+      - name: Rodar auditoria DeepAgent (foundry-auditor)
         env:
           DEEPAGENTS_API_KEY: ${{ secrets.DEEPAGENTS_API_KEY }}
           DEEPAGENTS_MODEL: ${{ secrets.DEEPAGENTS_MODEL || 'gpt-4o' }}
@@ -86,20 +86,20 @@ jobs:
           AUDIT_MONTH: ${{ steps.set-month.outputs.audit_month }}
           SAMPLE_RATE: ${{ github.event.inputs.sample_rate || '0.05' }}
         run: |
-          # Invocar forge-auditor via deepagents CLI
-          # O skill orquestrador está em reviewer/deepagents/skills/reviewer/forge-auditor/SKILL.md
-          # Saída esperada: docs/forge/audits/$AUDIT_MONTH.md
+          # Invocar foundry-auditor via deepagents CLI
+          # O skill orquestrador está em reviewer/deepagents/skills/reviewer/foundry-auditor/SKILL.md
+          # Saída esperada: docs/foundry/audits/$AUDIT_MONTH.md
 
           if command -v deepagents &> /dev/null; then
             deepagents run \
-              --skill reviewer/deepagents/skills/reviewer/forge-auditor/SKILL.md \
+              --skill reviewer/deepagents/skills/reviewer/foundry-auditor/SKILL.md \
               --input "{\"audit_month\": \"$AUDIT_MONTH\", \"sample_rate\": $SAMPLE_RATE, \"repo_path\": \".\"}" \
-              --output-dir docs/forge/audits/
+              --output-dir docs/foundry/audits/
           else
             echo "::warning::deepagents CLI não disponível — gerar relatório de auditoria manual"
-            echo "Crie docs/forge/audits/$AUDIT_MONTH.md seguindo o schema em reviewer/output-schema.json"
-            mkdir -p docs/forge/audits/
-            cat > "docs/forge/audits/$AUDIT_MONTH.md" << EOF
+            echo "Crie docs/foundry/audits/$AUDIT_MONTH.md seguindo o schema em reviewer/output-schema.json"
+            mkdir -p docs/foundry/audits/
+            cat > "docs/foundry/audits/$AUDIT_MONTH.md" << EOF
           ---
           month: $AUDIT_MONTH
           status: skipped
@@ -114,7 +114,7 @@ jobs:
         id: check-audit
         run: |
           AUDIT_MONTH="${{ steps.set-month.outputs.audit_month }}"
-          REPORT="docs/forge/audits/$AUDIT_MONTH.md"
+          REPORT="docs/foundry/audits/$AUDIT_MONTH.md"
 
           if [ ! -f "$REPORT" ]; then
             echo "::error::Relatório de auditoria não gerado: $REPORT"
@@ -131,13 +131,13 @@ jobs:
 
       - name: Commit relatório de auditoria
         run: |
-          git config user.name "forge-audit[bot]"
-          git config user.email "forge-audit@noreply.github.com"
+          git config user.name "foundry-audit[bot]"
+          git config user.email "foundry-audit@noreply.github.com"
           AUDIT_MONTH="${{ steps.set-month.outputs.audit_month }}"
 
-          git add "docs/forge/audits/$AUDIT_MONTH.md"
+          git add "docs/foundry/audits/$AUDIT_MONTH.md"
           git diff --cached --quiet || \
-            git commit -m "audit($AUDIT_MONTH): relatório mensal Forge — CI automático"
+            git commit -m "audit($AUDIT_MONTH): relatório mensal Foundry — CI automático"
           git push || echo "::warning::Push falhou — revise permissões do GH_TOKEN"
 
       - name: Criar Issue se SLA breach detectado
@@ -151,15 +151,15 @@ jobs:
             await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: `🚨 Forge Audit ${month} — SLA breach detectado`,
-              body: `## Auditoria Mensal Forge — ${month}\n\n**${breach} violação(ões) de SLA detectada(s)**\n\nVer: \`docs/forge/audits/${month}.md\`\n\n### Ações necessárias\n\n- [ ] Revisar relatório em \`docs/forge/audits/${month}.md\`\n- [ ] Avaliar necessidade de rollback com \`/acme:promote rollback\`\n- [ ] Atualizar thresholds C4 se necessário via \`/acme:sla-threshold\`\n\n> Gerado automaticamente por forge-audit CI — {PROJECT_NAME}`,
-              labels: ['forge-audit', 'sla-breach', 'priority:high']
+              title: `🚨 Foundry Audit ${month} — SLA breach detectado`,
+              body: `## Auditoria Mensal Foundry — ${month}\n\n**${breach} violação(ões) de SLA detectada(s)**\n\nVer: \`docs/foundry/audits/${month}.md\`\n\n### Ações necessárias\n\n- [ ] Revisar relatório em \`docs/foundry/audits/${month}.md\`\n- [ ] Avaliar necessidade de rollback com \`/novais-digital:promote rollback\`\n- [ ] Atualizar thresholds C4 se necessário via \`/novais-digital:sla-threshold\`\n\n> Gerado automaticamente por foundry-audit CI — {PROJECT_NAME}`,
+              labels: ['foundry-audit', 'sla-breach', 'priority:high']
             });
 
       - name: Upload relatório de auditoria
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: forge-audit-${{ steps.set-month.outputs.audit_month }}
-          path: docs/forge/audits/
+          name: foundry-audit-${{ steps.set-month.outputs.audit_month }}
+          path: docs/foundry/audits/
           retention-days: 365

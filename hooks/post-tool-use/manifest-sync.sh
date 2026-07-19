@@ -19,12 +19,12 @@ fi
 [ -z "$FILE_PATH" ] && exit 0
 
 # Skip manifest.json itself to avoid loops
-[[ "$FILE_PATH" =~ docs/forge/manifest\.json$ ]] && exit 0
+[[ "$FILE_PATH" =~ docs/foundry/manifest\.json$ ]] && exit 0
 
 # Guard framework artifact paths
 NEEDS_SYNC=false
 if [[ "$FILE_PATH" =~ ^\.claude/(skills|commands|agents)/ ]] || \
-   [[ "$FILE_PATH" =~ ^docs/forge/ ]] || \
+   [[ "$FILE_PATH" =~ ^docs/foundry/ ]] || \
    [[ "$FILE_PATH" =~ ^templates/ ]] || \
    [[ "$FILE_PATH" =~ ^reviewer/deepagents/skills/ ]] || \
    [[ "$FILE_PATH" =~ ^evals/ ]]; then
@@ -34,8 +34,8 @@ fi
 if [ "$NEEDS_SYNC" = "true" ]; then
   # Only warn if this looks like a new file (Write tool) or meaningful change
   if [ "$TOOL" = "Write" ] || [ "$TOOL" = "Edit" ]; then
-    echo "INFO [manifest-sync]: artefato Forge alterado — '$FILE_PATH'." >&2
-    echo "Lembre de atualizar docs/forge/manifest.json (path, version, sha256, description)." >&2
+    echo "INFO [manifest-sync]: artefato Foundry alterado — '$FILE_PATH'." >&2
+    echo "Lembre de atualizar docs/foundry/manifest.json (path, version, sha256, description)." >&2
     echo "Hash: sha256sum '$FILE_PATH' | cut -c1-16" >&2
     # Exit 0 = just inform, do not block or warn
   fi

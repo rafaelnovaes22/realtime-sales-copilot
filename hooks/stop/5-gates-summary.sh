@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # Hook: 5-gates-summary
-# At session end, generates a quick Forge gate health report for the current branch.
+# At session end, generates a quick Foundry gate health report for the current branch.
 
 _get_ai_enabled() {
-  if [ -f "docs/forge/project.json" ]; then
+  if [ -f "docs/foundry/project.json" ]; then
     if command -v jq &>/dev/null; then
-      jq -r '.project.ai_enabled // true' docs/forge/project.json 2>/dev/null || echo "true"
+      jq -r '.project.ai_enabled // true' docs/foundry/project.json 2>/dev/null || echo "true"
     else
-      python3 -c "import json; d=json.load(open('docs/forge/project.json')); print(str(d.get('project',{}).get('ai_enabled',True)).lower())" 2>/dev/null || echo "true"
+      python3 -c "import json; d=json.load(open('docs/foundry/project.json')); print(str(d.get('project',{}).get('ai_enabled',True)).lower())" 2>/dev/null || echo "true"
     fi
   else
     echo "true"
@@ -16,7 +16,7 @@ _get_ai_enabled() {
 
 AI_ENABLED=$(_get_ai_enabled)
 
-REPORT_DIR="docs/forge/session-gate-reports"
+REPORT_DIR="docs/foundry/session-gate-reports"
 mkdir -p "$REPORT_DIR"
 REPORT="$REPORT_DIR/$(date +%Y-%m-%dT%H-%M-%S).md"
 
@@ -26,7 +26,7 @@ WARN=0
 LINES=()
 
 # G1 — manifest.json é JSON válido
-if node -e "JSON.parse(require('fs').readFileSync('docs/forge/manifest.json','utf8'))" 2>/dev/null; then
+if node -e "JSON.parse(require('fs').readFileSync('docs/foundry/manifest.json','utf8'))" 2>/dev/null; then
   LINES+=("| G1 | manifest.json válido | ✅ PASS |")
   PASS=$((PASS+1))
 else
@@ -143,7 +143,7 @@ fi
 
 # Write report
 {
-  printf "# Forge Gate Report — %s\n\n" "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  printf "# Foundry Gate Report — %s\n\n" "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
   printf "Branch: %s\n\n" "$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo 'unknown')"
   printf "| Gate | Check | Status |\n|---|---|---|\n"
   for line in "${LINES[@]}"; do
@@ -154,7 +154,7 @@ fi
 
 # Print summary to stdout (shown in session)
 echo ""
-echo "=== Forge Gate Report ==="
+echo "=== Foundry Gate Report ==="
 for line in "${LINES[@]}"; do
   echo "$line"
 done

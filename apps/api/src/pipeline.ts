@@ -76,7 +76,7 @@ export async function runGraph(input: PipelineInput): Promise<PipelineResult> {
     {
       buffer: input.buffer,
       estadoInput: input.estado,
-      tenantId: input.tenantId ?? "acme-internal",
+      tenantId: input.tenantId ?? "novais-digital-internal",
       closerId: input.closerId,
     },
     { recursionLimit: 8 },

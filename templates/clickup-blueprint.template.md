@@ -164,7 +164,7 @@ npm run clickup:bootstrap -- --workspace={{ ID }} --blueprint=docs/clickup-bluep
 - **Não-destrutivo**: se Space/Lista já existe com nome correto, mantém; só cria o que falta
 - **Loga drift**: ao final, gera relatório de divergências entre blueprint e estado real
 
-### Hook de drift detection (Forge-4)
+### Hook de drift detection (Foundry-4)
 
 Hook mensal compara estado ClickUp real vs blueprint e abre issue em Space 6 se houver divergência > X%.
 

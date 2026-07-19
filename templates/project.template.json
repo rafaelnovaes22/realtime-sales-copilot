@@ -1,6 +1,6 @@
 {
-  "$schema": "https://acme.com.br/forge/project-config-v1.json",
-  "_doc": "Configuração canônica do projeto consumidor. Persistir em docs/forge/project.json no repo do consumidor. Lido pelo reviewer DeepAgent (reviewer/prompt.template.md), pelos commands /acme:* e pelo validation-rules.json antes de aplicar checks. Quando ausente no consumidor, defaults retroativos são project_type='agentic_saas' e ai_enabled=true (compat v0.7.0).",
+  "$schema": "https://novais-digital.com.br/foundry/project-config-v1.json",
+  "_doc": "Configuração canônica do projeto consumidor. Persistir em docs/foundry/project.json no repo do consumidor. Lido pelo reviewer DeepAgent (reviewer/prompt.template.md), pelos commands /novais-digital:* e pelo validation-rules.json antes de aplicar checks. Quando ausente no consumidor, defaults retroativos são project_type='agentic_saas' e ai_enabled=true (compat v0.7.0).",
 
   "project_config_version": "0.1.0",
   "framework_version_required": ">=0.8.0",
@@ -12,7 +12,7 @@
     "type": "agentic_saas | platform | automation | hybrid",
     "ai_enabled": true,
     "_type_doc": {
-      "agentic_saas": "Projeto centrado em agentes de IA com governança de outcome cobrável (default histórico do Forge).",
+      "agentic_saas": "Projeto centrado em agentes de IA com governança de outcome cobrável (default histórico do Foundry).",
       "platform": "Plataforma SaaS/operacional com módulos CRUD/CRM/etc. Outcome = ação operacional verificável (tela/API/dado persistido); IA pode estar ausente ou pontual.",
       "automation": "Automações operacionais determinísticas (jobs, workers, integrações, RPA). Outcome = execução verificável; IA opcional.",
       "hybrid": "Plataforma com módulos agênticos. Convive ai_enabled=true em alguns módulos, false em outros — ver overrides_per_module."
@@ -111,7 +111,7 @@
   "_meta": {
     "created_at": "{{ YYYY-MM-DD }}",
     "last_updated": "{{ YYYY-MM-DD }}",
-    "validated_by_forge_doctor": false,
+    "validated_by_foundry_doctor": false,
     "consumer_repo": "{{ url do repo consumidor }}",
     "notes": "Reviewer DeepAgent lê este arquivo antes de qualquer check. Mudança em project.type ou ai_enabled exige ADR no consumidor + nova auditoria de coerência."
   }

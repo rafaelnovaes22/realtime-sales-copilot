@@ -49,7 +49,7 @@ Esta skill **prefere casos reais** (extraídos de runs humano/agente do mesmo pr
 1. **Path-scoped** — turno toca arquivo em `evals/`, ou `templates/eval-case.template.md`
 2. **Keyword-scoped** — termo de `activation.keywords`
 3. **Explícita** — `@eval-case-author artifact_id=triagem-tickets outcome_category=billing source_mode=real source_run_id=...`
-4. **Slash command** — invocada por `/acme:eval` (Forge-2)
+4. **Slash command** — invocada por `/novais-digital:eval` (Foundry-2)
 
 ## Inputs Tier 1 (helpers)
 
@@ -230,14 +230,14 @@ hint: <ação>
 
 | Skill | Direção | Como |
 |---|---|---|
-| `@offerings-loader` | upstream (helper) | `__forge_cache.offerings` |
+| `@offerings-loader` | upstream (helper) | `__foundry_cache.offerings` |
 | `@process-mapper`, `@diagnostic-runner` | upstream (Tier 2) | Decision points + categorias informam cobertura |
 | `@artifact-prompt-builder` | par-Tier 3 | Consome casos como few-shots |
 | `@shadow-mode-runner` | downstream | Compara output do agente vs gabarito desta suite |
-| `@eval-engineer` (Guardian, Forge-3) | reviewer | Audita qualidade da suite (cobertura, sanitização, real vs synthetic) |
+| `@eval-engineer` (Guardian, Foundry-3) | reviewer | Audita qualidade da suite (cobertura, sanitização, real vs synthetic) |
 
 ## Histórico
 
 | Versão | Data | Mudança |
 |---|---|---|
-| 0.1.0 | 2026-04-30 | Versão inicial — Forge-1 onda 3 (Tier 3) |
+| 0.1.0 | 2026-04-30 | Versão inicial — Foundry-1 onda 3 (Tier 3) |

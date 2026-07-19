@@ -50,7 +50,7 @@ Esta skill **não escolhe modelo**. Ela produz prompt **portável** (C7): o mesm
 1. **Path-scoped** — turno toca arquivo em `prompts/`, `docs/specs/`, ou um dos templates de spec
 2. **Keyword-scoped** — termo de `activation.keywords`
 3. **Explícita** — `@artifact-prompt-builder artifact_id=triagem-tickets-v1 artifact_type=platform-sku spec_path=docs/specs/sku-triagem.md ...`
-4. **Slash command** — invocada por `/acme:plan` ou `/acme:implement` (Forge-2)
+4. **Slash command** — invocada por `/novais-digital:plan` ou `/novais-digital:implement` (Foundry-2)
 
 ## Inputs Tier 1 (helpers)
 
@@ -97,13 +97,13 @@ fewshot_count: <N>  # default: 3
 ## O que faz
 
 1. Valida inputs (paths existem, parseiam, frontmatter consistente)
-2. Carrega `__forge_cache.{dna,offerings}` (helpers L0)
+2. Carrega `__foundry_cache.{dna,offerings}` (helpers L0)
 3. Lê spec, process-map, baseline (Tier 2)
 4. Lê eval-cases (Tier 3) se path fornecido — seleciona few-shots
 5. Compõe prompt em **estrutura canônica de 9 seções** (abaixo)
 6. Calcula `prompt_hash` (sha256 truncado 16) do conteúdo final
 7. Persiste em `prompts/{artifact_id}/v{version}/system.md` com frontmatter de versionamento
-8. Emite handoff para `@unit-economist` (Forge-3 Guardian) recalcular tokens
+8. Emite handoff para `@unit-economist` (Foundry-3 Guardian) recalcular tokens
 
 ## Estrutura canônica do system prompt (9 seções)
 
@@ -114,7 +114,7 @@ fewshot_count: <N>  # default: 3
 {1-3 frases vindas de spec.purpose + dna.purpose alinhado}
 
 ## 2. Contexto da organização (Tier 1, fixo)
-{__forge_cache.dna em forma compacta — purpose, mission, north_star_metric, values}
+{__foundry_cache.dna em forma compacta — purpose, mission, north_star_metric, values}
 
 ## 3. Cláusula de outcome (C2 — não-negociável)
 {spec.outcome_clause ipsis literis}
@@ -155,7 +155,7 @@ artifact_type: <>
 prompt_version: 1.0.0
 prompt_hash: <sha256:16>
 generated_at: 2026-04-30T...
-forge_skill_version: artifact-prompt-builder@0.1.0
+foundry_skill_version: artifact-prompt-builder@0.1.0
 linked_principles: [C2, C5, C6, C7, C8]
 inputs_used:
   spec: { path, hash }
@@ -196,9 +196,9 @@ generated_at: 2026-04-30T...
 |---|---|---|
 | "Vou copiar o prompt de outro SKU parecido e ajustar" | Quebra C8 (anti-customização heroica) e omite cláusula de outcome única | Construir do zero a partir desta spec/process-map; reuso vem via "variante de SKU" no catálogo, não copy-paste |
 | "Cláusula de outcome fica óbvia, abrevio" | Quebra C2 — cláusula é contratual; abreviar = ambiguidade em produção | Copiar `spec.outcome_clause` ipsis literis com 3+3 exemplos |
-| "Vou inserir DNA inline" | Estoura tokens; quebra modelo de helper pattern (cache de Tier 1) | Referenciar `__forge_cache.dna` compacto; provider de runtime injeta cacheado |
+| "Vou inserir DNA inline" | Estoura tokens; quebra modelo de helper pattern (cache de Tier 1) | Referenciar `__foundry_cache.dna` compacto; provider de runtime injeta cacheado |
 | "Sem instrumentação fica mais limpo" | Quebra C6 — sem trace, outcome não conta; reviewer falha auditoria | Seção 8 é obrigatória; verification gate falha sem ela |
-| "If tenant_id == 'acme' usa tom diferente" | Quebra C8 — hardcode por tenant é proibido | Usar `{{tenant.tone_preference}}` resolvido em runtime; configurar no TenantContext |
+| "If tenant_id == 'novais-digital' usa tom diferente" | Quebra C8 — hardcode por tenant é proibido | Usar `{{tenant.tone_preference}}` resolvido em runtime; configurar no TenantContext |
 | "Modelo é Claude, posso usar XML tags Anthropic-only" | Quebra C7 (portability) — prompt fica preso a um provider | Escrever em markdown estruturado universal; XML tags só na camada de adaptação `src/llm/` |
 | "Prompt mudou pouco, mantenho version" | Hash diferente = nova versão; sem bump, drift de unit-economics passa despercebido | Toda mudança de hash dispara `recalc_unit_economics_required: true` e novo `v{x}` |
 | "Few-shots reais com PII estão ok" | Quebra LGPD/privacidade; prompts entram em logs de provedores | Few-shots com PII devem ser sanitizados ou marcados `synthetic: true` em eval-case |
@@ -241,15 +241,15 @@ hint: <ação>
 
 | Skill | Direção | Como |
 |---|---|---|
-| `@company-dna`, `@offerings-loader` | upstream (helpers) | `__forge_cache` |
+| `@company-dna`, `@offerings-loader` | upstream (helpers) | `__foundry_cache` |
 | `@diagnostic-runner`, `@baseline-cost-builder`, `@process-mapper` | upstream (Tier 2) | Lê artefatos persistidos |
 | `@eval-case-author` | par-Tier 3 | Recebe few-shots |
 | `@shadow-mode-runner` | downstream | Consome o prompt construído para SHADOW |
-| `@sku-architect`, `@unit-economist` (Guardians, Forge-3) | reviewer | Validam prompt antes de promover modo |
-| `@code-reviewer-cross` (DeepAgent, Forge-3) | reviewer | Auditoria mensal |
+| `@sku-architect`, `@unit-economist` (Guardians, Foundry-3) | reviewer | Validam prompt antes de promover modo |
+| `@code-reviewer-cross` (DeepAgent, Foundry-3) | reviewer | Auditoria mensal |
 
 ## Histórico
 
 | Versão | Data | Mudança |
 |---|---|---|
-| 0.1.0 | 2026-04-30 | Versão inicial — Forge-1 onda 3 (Tier 3) |
+| 0.1.0 | 2026-04-30 | Versão inicial — Foundry-1 onda 3 (Tier 3) |

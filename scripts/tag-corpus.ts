@@ -133,7 +133,7 @@ async function classifyChunk(chunk: Chunk, attempt = 1): Promise<Chunk["tags"]> 
       user: userContent,
       maxTokens: 200,
       cacheSystem: true,
-      tenantId: "acme-internal",
+      tenantId: "novais-digital-internal",
       traceName: "tag-corpus-classifier",
     });
 

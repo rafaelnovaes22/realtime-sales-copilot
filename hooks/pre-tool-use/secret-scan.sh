@@ -37,13 +37,13 @@ PATTERNS=(
 
 for PATTERN in "${PATTERNS[@]}"; do
   if echo "$CONTENT" | grep -qE "$PATTERN" 2>/dev/null; then
-    if [ -n "${ACME_FORGE_BYPASS:-}" ]; then
-      BYPASS_DIR="docs/forge/bypass-log"
+    if [ -n "${NOVAIS_FOUNDRY_BYPASS:-}" ]; then
+      BYPASS_DIR="docs/foundry/bypass-log"
       mkdir -p "$BYPASS_DIR"
       LOG="$BYPASS_DIR/$(date +%Y-%m-%d).md"
       [ ! -f "$LOG" ] && printf "# Bypass Log — %s\n\n| Timestamp | Hook | File | Reason |\n|---|---|---|---|\n" "$(date +%Y-%m-%d)" > "$LOG"
       printf "| %s | secret-scan | %s | %s |\n" \
-        "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "${FILE_PATH:-stdin}" "$ACME_FORGE_BYPASS" >> "$LOG"
+        "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "${FILE_PATH:-stdin}" "$NOVAIS_FOUNDRY_BYPASS" >> "$LOG"
       exit 0
     fi
     echo "BLOCKED [secret-scan]: possível secret detectado no conteúdo (padrão: $PATTERN)." >&2

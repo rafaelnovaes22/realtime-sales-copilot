@@ -1,7 +1,7 @@
 {
   "version": "2",
   "lastUpdated": "2026-05-20",
-  "description": "Glossário de sanitização de marca. Aplica-se no sanitize.ts entre corpus.raw.json e corpus.clean.json. O guardian regex em runtime usa o campo auditCheck como última camada antes de exibir sugestão ao closer. v2: adaptado para contexto ClientC/Acme (educação executiva).",
+  "description": "Glossário de sanitização de marca. Aplica-se no sanitize.ts entre corpus.raw.json e corpus.clean.json. O guardian regex em runtime usa o campo auditCheck como última camada antes de exibir sugestão ao closer. v2: adaptado para contexto ClientC/Novais Digital (educação executiva).",
   "replacements": {
     "Prudential": "[Seguradora]",
     "Life Planner": "consultor comercial",

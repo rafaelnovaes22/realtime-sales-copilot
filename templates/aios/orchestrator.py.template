@@ -1,10 +1,10 @@
 """
 AIOS Orchestrator — pipeline multiagente TDD-first para o projeto {PROJECT_NAME}.
 
-Gerado a partir de templates/aios/orchestrator.py.template (Forge v0.9.0+).
+Gerado a partir de templates/aios/orchestrator.py.template (Foundry v0.9.0+).
 Lê a lista de módulos de aios/config.yaml — sem hardcode (C8).
 
-Pipeline padrão (TDD-first, Forge v0.9.0+):
+Pipeline padrão (TDD-first, Foundry v0.9.0+):
   spec → schema → test(red) → build(back+front em paralelo) → test(verify) → review
 
 Uso:
@@ -42,7 +42,7 @@ CONFIG_PATH = PROJECT_ROOT / "aios" / "config.yaml"
 def _load_config() -> dict:
     if not CONFIG_PATH.exists():
         print(f"[ERRO] aios/config.yaml não encontrado em {CONFIG_PATH}")
-        print("       Rode /acme:aios-init primeiro ou copie templates/aios/config.yaml.template")
+        print("       Rode /novais-digital:aios-init primeiro ou copie templates/aios/config.yaml.template")
         sys.exit(2)
     with CONFIG_PATH.open("r", encoding="utf-8") as fh:
         return yaml.safe_load(fh) or {}
@@ -224,7 +224,7 @@ def show_status():
 
     if not MODULES_ORDER:
         print("(nenhum módulo declarado em aios/config.yaml → modules:)")
-        print("Rode /acme:aios-init --module <nome> para adicionar.")
+        print("Rode /novais-digital:aios-init --module <nome> para adicionar.")
         return
 
     for mod in MODULES_ORDER:
@@ -295,7 +295,7 @@ def main():
     if requires_kernel and not health_check():
         print(f"[ERRO] Kernel AIOS offline em {AIOS_BASE}.")
         print("       Inicie com: bash .aios-kernel/runtime/launch_kernel.sh")
-        print("       Ou use /acme:aios-status (filesystem-only) para ver progresso sem kernel.")
+        print("       Ou use /novais-digital:aios-status (filesystem-only) para ver progresso sem kernel.")
         sys.exit(2)
 
     if args.command == "spec":

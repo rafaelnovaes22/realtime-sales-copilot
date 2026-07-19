@@ -1,7 +1,7 @@
 # templates/cicd/github-actions-test.template.yml
 #
 # COMO USAR:
-#   1. Copie para .github/workflows/forge-test.yml no projeto consumidor
+#   1. Copie para .github/workflows/foundry-test.yml no projeto consumidor
 #   2. Substitua {PROJECT_NAME} pelo slug do projeto
 #   3. Garanta que aios/config.yaml tem o bloco `test_commands:` preenchido
 #      (install/lint/typecheck/unit/integration/e2e/coverage_report_path)
@@ -19,7 +19,7 @@
 # PRINCÍPIOS: C4 (TDD enforçado — coverage gate), C6 (telemetria — JUnit XML + coverage),
 #             C7 (portável — comandos vêm do config, sem hardcode npm/pytest)
 
-name: Forge Tests — {PROJECT_NAME}
+name: Foundry Tests — {PROJECT_NAME}
 
 on:
   pull_request:
@@ -35,7 +35,7 @@ on:
 
 env:
   # CI propaga estes para o test_agent e para os runners detectarem ambiente
-  FORGE_CI: "true"
+  FOUNDRY_CI: "true"
   NODE_VERSION: "20"
   PYTHON_VERSION: "3.11"
 
@@ -76,7 +76,7 @@ jobs:
           cfg_path = "aios/config.yaml"
           if not os.path.exists(cfg_path):
               print("modules=[]", file=sys.stderr)
-              sys.exit("aios/config.yaml ausente — rode /acme:aios-init")
+              sys.exit("aios/config.yaml ausente — rode /novais-digital:aios-init")
           cfg = yaml.safe_load(open(cfg_path, encoding="utf-8")) or {}
           mods = cfg.get("modules") or []
           input_module = "${{ github.event.inputs.module }}".strip()
@@ -234,9 +234,9 @@ jobs:
       postgres:
         image: postgres:16
         env:
-          POSTGRES_USER: forge_test
-          POSTGRES_PASSWORD: forge_test_pw
-          POSTGRES_DB: forge_test_db
+          POSTGRES_USER: foundry_test
+          POSTGRES_PASSWORD: foundry_test_pw
+          POSTGRES_DB: foundry_test_db
         ports:
           - 5432:5432
         options: >-
@@ -245,7 +245,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     env:
-      DATABASE_URL: postgresql://forge_test:forge_test_pw@localhost:5432/forge_test_db
+      DATABASE_URL: postgresql://foundry_test:foundry_test_pw@localhost:5432/foundry_test_db
       MODULE: ${{ matrix.module.name }}
       TIER: ${{ matrix.module.tier }}
     steps:
@@ -377,7 +377,7 @@ jobs:
             const max_tier = '${{ needs.resolve-config.outputs.max_tier }}';
             const icon = (r) => r === 'success' ? '✅' : (r === 'skipped' ? '⏭️' : (r === 'failure' ? '❌' : '⚠️'));
             const body = [
-              `## Forge Tests — resumo (tier máximo: \`${max_tier}\`)`,
+              `## Foundry Tests — resumo (tier máximo: \`${max_tier}\`)`,
               ``,
               `| Job | Status |`,
               `|---|---|`,

@@ -14,7 +14,7 @@ linked_eval_suite: "evals/{{ sku_code }}/"
 owners:
   po_guardian: ""
   sku_architect: ""
-# Forge-6 — AIOS Server (preencher apenas se o projeto consumidor usa AIOS como camada de implementação)
+# Foundry-6 — AIOS Server (preencher apenas se o projeto consumidor usa AIOS como camada de implementação)
 aios_tier: ""              # A (autônomo) | B (iterativo) | C (Rafael-dirige) | "" (sem AIOS)
 aios_context_boundaries:
   spec_agent: ""           # o que o Spec Agent pode ler (ex: "docs/specs/{module}.md apenas")
@@ -178,7 +178,7 @@ Cada caso usa `templates/eval-case.template.md`.
 | ASSISTED | → AUTONOMOUS | Taxa de aprovação sem edição ≥ {{ Y% }} em ≥ {{ N }} outcomes |
 | AUTONOMOUS | (steady state) | Taxa de erro pós-execução ≤ {{ Z% }} (= 1 − threshold §2) |
 
-> Promoção via `/acme:promote --to=<modo>` (Forge-2). Validação por Promotion Officer (Forge-3).
+> Promoção via `/novais-digital:promote --to=<modo>` (Foundry-2). Validação por Promotion Officer (Foundry-3).
 
 ---
 

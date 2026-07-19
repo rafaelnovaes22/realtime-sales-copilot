@@ -15,13 +15,13 @@ sample_size: {{ N }}
 sample_pct_of_total: {{ X }}
 constitution_version: "0.3.0"
 generated_at: "{{ ISO8601 }}"
-generated_by: "{{ /acme:promote || mantenedor manual }}"
+generated_by: "{{ /novais-digital:promote || mantenedor manual }}"
 version: "0.1.0"
 ---
 
 # Acceptance Report — {{ module_name }}
 
-> Este documento é o **registro formal de aceite humano** que substitui (em projetos `platform` / `automation`) a eval suite + shadow-mode-runner usada em `agentic_saas`. Lido pelo gate C4.platform.3 do reviewer DeepAgent e pelo `/acme:promote` antes de promover para CANONICAL.
+> Este documento é o **registro formal de aceite humano** que substitui (em projetos `platform` / `automation`) a eval suite + shadow-mode-runner usada em `agentic_saas`. Lido pelo gate C4.platform.3 do reviewer DeepAgent e pelo `/novais-digital:promote` antes de promover para CANONICAL.
 
 > Para módulos com `criticality: critical`, exige assinatura do decisor do cliente (`signature_hash`).
 
@@ -145,4 +145,4 @@ version: "0.1.0"
 
 | Versão | Data | Mudança |
 |---|---|---|
-| 0.1.0 | 2026-05-08 | Versão inicial — Forge-9 (delivery-type agnostic) |
+| 0.1.0 | 2026-05-08 | Versão inicial — Foundry-9 (delivery-type agnostic) |

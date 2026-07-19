@@ -75,7 +75,7 @@ export async function buildReport(opts?: {
   };
 }
 
-/** Renderiza o relatório como markdown para docs/forge/learning-reports/. */
+/** Renderiza o relatório como markdown para docs/foundry/learning-reports/. */
 export function renderReportMarkdown(r: LearningReport): string {
   const pct = (x: number) => `${(x * 100).toFixed(0)}%`;
   const lines: string[] = [];

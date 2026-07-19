@@ -90,7 +90,7 @@ Sex       Demo
 | Detecção de gatilho | Regex/keyword | Sem Haiku; zero latência adicional |
 | Gerador de sugestão | Sonnet 4.6 (API) | Qualidade máxima onde importa |
 | Guardian | Regex determinístico | Zero custo, zero latência |
-| Frontend | Next.js + Tailwind | Stack padrão Acme |
+| Frontend | Next.js + Tailwind | Stack padrão Novais Digital |
 | Hosting | Railway (existente) | Sem setup de infra novo |
 
 ## O que esta versão prova

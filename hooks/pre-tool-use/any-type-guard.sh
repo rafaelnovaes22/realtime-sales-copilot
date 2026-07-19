@@ -25,19 +25,19 @@ if [[ "$FILE_PATH" =~ (apps/api/src|src)/.+\.ts$ ]]; then
   # Exclude commented lines
   VIOLATIONS=$(echo "$CONTENT" | grep -vE '^\s*//' | grep -E ':\s*any(\[\]|[^A-Za-z]|$)|\bas\s+any\b|<any>|\(any\)' | head -5)
   if [ -n "$VIOLATIONS" ]; then
-    if [ -n "${ACME_FORGE_BYPASS:-}" ]; then
-      BYPASS_DIR="docs/forge/bypass-log"
+    if [ -n "${NOVAIS_FOUNDRY_BYPASS:-}" ]; then
+      BYPASS_DIR="docs/foundry/bypass-log"
       mkdir -p "$BYPASS_DIR"
       LOG="$BYPASS_DIR/$(date +%Y-%m-%d).md"
       [ ! -f "$LOG" ] && printf "# Bypass Log — %s\n\n| Timestamp | Hook | File | Reason |\n|---|---|---|---|\n" "$(date +%Y-%m-%d)" > "$LOG"
       printf "| %s | any-type-guard | %s | %s |\n" \
-        "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$FILE_PATH" "$ACME_FORGE_BYPASS" >> "$LOG"
+        "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$FILE_PATH" "$NOVAIS_FOUNDRY_BYPASS" >> "$LOG"
       exit 0
     fi
     echo "BLOCKED [any-type-guard]: uso de 'any' detectado em '$FILE_PATH' (viola C7/C8)." >&2
     echo "Violações encontradas:" >&2
     echo "$VIOLATIONS" >&2
-    echo "Use tipos explícitos ou 'unknown'. Para override: ACME_FORGE_BYPASS=<motivo>." >&2
+    echo "Use tipos explícitos ou 'unknown'. Para override: NOVAIS_FOUNDRY_BYPASS=<motivo>." >&2
     exit 2
   fi
 fi

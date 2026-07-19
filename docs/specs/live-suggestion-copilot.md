@@ -10,15 +10,15 @@ project_type: "agentic_saas"
 ai_enabled: true
 artifact_type: "platform-sku"
 lifecycle_stage_initial: "mvp"
-linked_diagnostic: "docs/clients/acme-internal/diagnostic-live-suggestion-copilot.md"
-linked_unit_economics: "docs/clients/acme-internal/delivery-economics-live-suggestion-copilot.md"
-linked_sla: "docs/clients/acme-internal/sla-live-suggestion-copilot.md"
+linked_diagnostic: "docs/clients/novais-digital-internal/diagnostic-live-suggestion-copilot.md"
+linked_unit_economics: "docs/clients/novais-digital-internal/delivery-economics-live-suggestion-copilot.md"
+linked_sla: "docs/clients/novais-digital-internal/sla-live-suggestion-copilot.md"
 linked_eval_suite: "evals/live-suggestion-copilot/"
 linked_cliente_artifacts:
-  - "docs/clients/acme-internal/diagnostic-live-suggestion-copilot.md"
+  - "docs/clients/novais-digital-internal/diagnostic-live-suggestion-copilot.md"
 owners:
-  po_guardian: "Rafael Novaes (Acme)"
-  sku_architect: "Rafael Novaes (Acme)"
+  po_guardian: "Rafael Novaes (Novais Digital)"
+  sku_architect: "Rafael Novaes (Novais Digital)"
 aios_tier: ""
 aios_context_boundaries:
   spec_agent: ""
@@ -60,21 +60,21 @@ c4_thresholds:
   quality_breach_action: "rollback"
   shadow_promotion_gate: "agreement_rate >= 0.70 AND latency_p95 <= 3000 AND brand_leak_rate == 0 AND run_count >= 200 AND window_days >= 14"
   assisted_promotion_gate: "agreement_rate >= 0.80 AND latency_p95 <= 2500 AND brand_leak_rate == 0 AND run_count >= 1000 AND window_days >= 30"
-  sla_approved_by: "Rafael Novaes (Acme — PO Guardian)"
+  sla_approved_by: "Rafael Novaes (Novais Digital — PO Guardian)"
   sla_approved_at: "2026-05-20T00:00:00Z"
   sla_signature_hash: "sha256:b3f1a0e2c9d84b17"
   sla_immutable_during_shadow: true
 created_at: "2026-05-20"
 last_updated: "2026-05-20"
 version: "0.1.1"
-forge_skill_version: "spec-generator@v0.2.0"
-forge_command_version: "sla-threshold@v0.1.0"
+foundry_skill_version: "spec-generator@v0.2.0"
+foundry_command_version: "sla-threshold@v0.1.0"
 ---
 
 # SKU Spec — Co-pilot de sugestões ao vivo para closers consultivos
 
 > **Princípio Constitution C2**: este documento começa pela cláusula contratual de outcome. Stack, prompts e código vêm depois.
-> **Princípio Constitution C1**: nenhum SKU vai além de `status: draft` sem Diagnóstico Fase 0 vinculado. Vínculo: [`diagnostic-live-suggestion-copilot.md`](../clients/acme-internal/diagnostic-live-suggestion-copilot.md).
+> **Princípio Constitution C1**: nenhum SKU vai além de `status: draft` sem Diagnóstico Fase 0 vinculado. Vínculo: [`diagnostic-live-suggestion-copilot.md`](../clients/novais-digital-internal/diagnostic-live-suggestion-copilot.md).
 
 ---
 
@@ -90,7 +90,7 @@ o closer registra explicitamente Aceitar / Refutar / Dispensar OU usa
 a fala no áudio em ≤30s da emissão.
 ```
 
-> Frase ipsis literis copiada de `diagnostic.proposed_outcome.clause`. Legível por advogado e CEO. Mudança aqui exige novo `/acme:diagnose`.
+> Frase ipsis literis copiada de `diagnostic.proposed_outcome.clause`. Legível por advogado e CEO. Mudança aqui exige novo `/novais-digital:diagnose`.
 
 ### 1.2. Três exemplos POSITIVOS (casos que CONTAM)
 
@@ -127,7 +127,7 @@ a fala no áudio em ≤30s da emissão.
 ### 1.6. Aprovação contratual
 
 - [ ] CEO aprovou redação (Rafael — pendente)
-- [ ] Cliente assinou cláusula (Acme é cliente interno — N/A no momento)
+- [ ] Cliente assinou cláusula (Novais Digital é cliente interno — N/A no momento)
 - [ ] Definição passa no teste do "advogado naive" (legível sem jargão técnico)
 - [ ] Texto de consentimento LGPD aprovado (ADR-002 dependente)
 
@@ -150,7 +150,7 @@ a fala no áudio em ≤30s da emissão.
 
 **Threshold agregado** (média ponderada por volume): **70%** em SHADOW, **80%** em ASSISTED, **90%** em AUTONOMOUS.
 
-> Detalhe completo em `docs/clients/acme-internal/sla-live-suggestion-copilot.md` (a criar via `/acme:sla-threshold`).
+> Detalhe completo em `docs/clients/novais-digital-internal/sla-live-suggestion-copilot.md` (a criar via `/novais-digital:sla-threshold`).
 
 ---
 
@@ -170,7 +170,7 @@ a fala no áudio em ≤30s da emissão.
 
 | Tier | O que lê | Path |
 |---|---|---|
-| L0 | DNA Acme, ICP, princípios universais de venda consultiva, corpus sanitizado | `corpus/clean/`, `docs/forge/`, constitution |
+| L0 | DNA Novais Digital, ICP, princípios universais de venda consultiva, corpus sanitizado | `corpus/clean/`, `docs/foundry/`, constitution |
 | L1 | Configuração da corretora (tom, glossário, opt-in LGPD), perfil do closer | `TenantContext.skuConfig.live-suggestion-copilot` (a implementar) |
 | L2 | Buffer de turnos da chamada atual, estado da conversa, gatilhos já emitidos | run-scope em memória (não persistido até consentimento) |
 
@@ -225,13 +225,13 @@ Cada caso usa [`templates/eval-case.template.md`](../../templates/eval-case.temp
 
 ## 6. Unit economics
 
-> Detalhe completo em `docs/clients/acme-internal/delivery-economics-live-suggestion-copilot.md` (a criar via `/acme:unit-economics`). Preview:
+> Detalhe completo em `docs/clients/novais-digital-internal/delivery-economics-live-suggestion-copilot.md` (a criar via `/novais-digital:unit-economics`). Preview:
 
 | Métrica | Valor preliminar |
 |---|---|
 | Tokens médios in/out por sugestão | ~1200 in / ~80 out (com cache) |
 | Custo por sugestão (medido em 2026-05-20) | **R$ 0,0248** |
-| Preço por outcome (sugestão aceita) | TBD — definir em /acme:unit-economics |
+| Preço por outcome (sugestão aceita) | TBD — definir em /novais-digital:unit-economics |
 | Preço de plataforma fixa | TBD R$/closer/mês |
 | **Razão custo/preço** | **TBD%** — gate C3 ≤25% |
 
@@ -247,7 +247,7 @@ Cada caso usa [`templates/eval-case.template.md`](../../templates/eval-case.temp
 | ASSISTED | → AUTONOMOUS | `agreement_rate ≥ 80%` em ≥ 1000 sugestões em ≥ 30 dias; `brand_leak_rate = 0`; CI/CD ativo |
 | AUTONOMOUS | (steady state) | `false_positive_rate ≤ 3%` rolling 7-dias; auditoria mensal verde |
 
-> Promoção via `/acme:promote --to=<modo>`. Validação cross-approval por Promotion Officer + PO Guardian.
+> Promoção via `/novais-digital:promote --to=<modo>`. Validação cross-approval por Promotion Officer + PO Guardian.
 
 **Janela mínima** (C4): 14 dias para módulos `critical` (este SKU é critical).
 
@@ -263,7 +263,7 @@ Cada caso usa [`templates/eval-case.template.md`](../../templates/eval-case.temp
 | `glossario_proibido` | string[] | `[]` (herda do global) | `["produto-x", "marca-y"]` |
 | `gatilhos_ativos` | string[] | `all` | `["esta_caro", "vou_pensar"]` |
 | `latency_target_ms` | int | `3000` | `2500` |
-| `consent_text_lgpd` | string | (default Acme) | string custom aprovada pelo jurídico do tenant |
+| `consent_text_lgpd` | string | (default Novais Digital) | string custom aprovada pelo jurídico do tenant |
 | `closer_profile_seniority` | enum | `"medio"` | `"junior" \| "medio" \| "senior"` |
 
 Tudo isso vive em `TenantContext.skuConfig.live-suggestion-copilot`. Nada de `if (tenantId === '...')` no código (C8).
@@ -286,7 +286,7 @@ Tudo isso vive em `TenantContext.skuConfig.live-suggestion-copilot`. Nada de `if
 
 ## 10. SLA Thresholds — C4 (imutáveis durante SHADOW)
 
-> Definidos via `/acme:sla-threshold` em 2026-05-20. Aprovados por **Rafael Novaes (Acme — PO Guardian)**. Imutáveis durante janela SHADOW ativa — ajuste exige nova janela e nova aprovação.
+> Definidos via `/novais-digital:sla-threshold` em 2026-05-20. Aprovados por **Rafael Novaes (Novais Digital — PO Guardian)**. Imutáveis durante janela SHADOW ativa — ajuste exige nova janela e nova aprovação.
 
 ### Gate SHADOW → ASSISTED
 
@@ -322,7 +322,7 @@ Tudo isso vive em `TenantContext.skuConfig.live-suggestion-copilot`. Nada de `if
 ### Audit trail
 
 ```yaml
-sla_approved_by: "Rafael Novaes (Acme — PO Guardian)"
+sla_approved_by: "Rafael Novaes (Novais Digital — PO Guardian)"
 sla_approved_at: "2026-05-20T00:00:00Z"
 sla_signature_hash: "sha256:b3f1a0e2c9d84b17"
 ```
@@ -334,7 +334,7 @@ sla_signature_hash: "sha256:b3f1a0e2c9d84b17"
 | Versão | Data | Mudança | Autor |
 |---|---|---|---|
 | 0.1.0 | 2026-05-20 | Spec inicial formalizada (retroativa ao MVP) | Rafael Novaes |
-| 0.1.1 | 2026-05-20 | c4_thresholds adicionados via /acme:sla-threshold | Rafael Novaes |
+| 0.1.1 | 2026-05-20 | c4_thresholds adicionados via /novais-digital:sla-threshold | Rafael Novaes |
 
 ---
 
@@ -345,7 +345,7 @@ sla_signature_hash: "sha256:b3f1a0e2c9d84b17"
 - [x] §3 canal e adapter identificados (Deepgram via POC; migração C7 antes de SHADOW)
 - [x] §4 pipeline implementado em [`apps/api/src/`](../../apps/api/src/)
 - [ ] §5 eval suite com ≥30 casos por categoria — **a criar**
-- [ ] §6 unit economics passa regra C3 (≤25%) — **rodar `/acme:unit-economics`**
+- [ ] §6 unit economics passa regra C3 (≤25%) — **rodar `/novais-digital:unit-economics`**
 - [x] §7 gates de promoção configurados
 - [x] §8 configuração por tenant declarada (TenantContext a implementar antes de SHADOW)
 - [x] Diagnóstico Fase 0 vinculado (C1)

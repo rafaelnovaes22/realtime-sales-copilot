@@ -4,11 +4,11 @@
 # Skipped automatically when project.ai_enabled=false (platform uses E2E tests, not LLM evals).
 
 _get_ai_enabled() {
-  if [ -f "docs/forge/project.json" ]; then
+  if [ -f "docs/foundry/project.json" ]; then
     if command -v jq &>/dev/null; then
-      jq -r '.project.ai_enabled // true' docs/forge/project.json 2>/dev/null || echo "true"
+      jq -r '.project.ai_enabled // true' docs/foundry/project.json 2>/dev/null || echo "true"
     else
-      python3 -c "import json; d=json.load(open('docs/forge/project.json')); print(str(d.get('project',{}).get('ai_enabled',True)).lower())" 2>/dev/null || echo "true"
+      python3 -c "import json; d=json.load(open('docs/foundry/project.json')); print(str(d.get('project',{}).get('ai_enabled',True)).lower())" 2>/dev/null || echo "true"
     fi
   else
     echo "true"
@@ -33,7 +33,7 @@ while IFS= read -r -d '' eval_dir; do
 done < <(find evals -type d -name "cases" -print0 2>/dev/null)
 
 if [ "$BELOW_THRESHOLD" = "true" ]; then
-  echo "Execute /acme:eval para adicionar casos faltantes antes de promover." >&2
+  echo "Execute /novais-digital:eval para adicionar casos faltantes antes de promover." >&2
   exit 1
 fi
 

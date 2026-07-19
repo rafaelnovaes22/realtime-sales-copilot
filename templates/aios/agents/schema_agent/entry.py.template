@@ -1,7 +1,7 @@
 """
 Schema Agent — propõe schema de banco para o projeto consumidor.
 
-Gerado a partir de templates/aios/agents/schema_agent/entry.py.template (Forge v0.6.0+).
+Gerado a partir de templates/aios/agents/schema_agent/entry.py.template (Foundry v0.6.0+).
 
 DIFERENÇA-CHAVE vs. agentes anteriores: este é COMPARTILHADO entre módulos
 (não específico) e **agnóstico de stack** — ele lê aios/config.yaml → stack.database

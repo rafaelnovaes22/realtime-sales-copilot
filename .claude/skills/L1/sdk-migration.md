@@ -1,30 +1,30 @@
 ---
 name: sdk-migration
-description: Gerencia migração de SDKs externos, modelos depreciados e atualizações do próprio Forge framework em projetos consumidores. Use quando o Anthropic SDK, Langfuse ou Prisma bumpar uma versão com breaking changes, quando um modelo LLM for depreciado pela Anthropic, ou quando um consumer project precisar sincronizar para uma nova versão do Forge. Adaptado de deprecation-and-migration (agent-skills).
+description: Gerencia migração de SDKs externos, modelos depreciados e atualizações do próprio Foundry framework em projetos consumidores. Use quando o Anthropic SDK, Langfuse ou Prisma bumpar uma versão com breaking changes, quando um modelo LLM for depreciado pela Anthropic, ou quando um consumer project precisar sincronizar para uma nova versão do Foundry. Adaptado de deprecation-and-migration (agent-skills).
 tier: 1
 vocabulary_aliases: [L1, migration, sdk, deprecation, upgrade]
 linked_principles: [C7, C4]
 version: 1.0.0
 activation:
-  keywords: [migração, migration, upgrade, deprecate, SDK, modelo, version, breaking change, Forge update]
+  keywords: [migração, migration, upgrade, deprecate, SDK, modelo, version, breaking change, Foundry update]
   explicit_invocation: "@sdk-migration"
 ---
 
-# SDK Migration (Forge)
+# SDK Migration (Foundry)
 
 ## Visão Geral
 
-Código é um passivo, não um ativo. SDKs evoluem, modelos são depreciados, o próprio Forge bumpa versões. A disciplina de migração no contexto Forge tem uma vantagem estrutural: o princípio C7 já isola todas as dependências externas — SDKs LLM em `src/llm/adapters/`, integrações em `src/integrations/`, infra em `src/infra/`. Isso significa que migrações ficam contidas, não virais.
+Código é um passivo, não um ativo. SDKs evoluem, modelos são depreciados, o próprio Foundry bumpa versões. A disciplina de migração no contexto Foundry tem uma vantagem estrutural: o princípio C7 já isola todas as dependências externas — SDKs LLM em `src/llm/adapters/`, integrações em `src/integrations/`, infra em `src/infra/`. Isso significa que migrações ficam contidas, não virais.
 
 ## Quando Usar
 
 - Anthropic SDK bumpa versão com breaking change (ex.: `messages.create` muda assinatura)
 - Modelo LLM é depreciado pela Anthropic (ex.: `claude-2`, `claude-3-sonnet` removidos do catálogo)
 - Langfuse ou Prisma bumpa versão com breaking change
-- Forge framework bumpa MINOR/MAJOR e consumer project precisa sincronizar
+- Foundry framework bumpa MINOR/MAJOR e consumer project precisa sincronizar
 - Skills ou commands obsoletos acumulando no manifest sem uso
 
-**Quando NÃO usar:** Upgrade de patch sem breaking change (apenas `npm update` e forge-doctor).
+**Quando NÃO usar:** Upgrade de patch sem breaking change (apenas `npm update` e foundry-doctor).
 
 ## A Decisão de Migrar
 
@@ -49,7 +49,7 @@ Antes de iniciar qualquer migração, responda:
    → Migração de modelo exige re-eval. Migração de SDK pode não exigir (C7 isola).
 ```
 
-## Tipos de Migração no Forge
+## Tipos de Migração no Foundry
 
 ### Tipo A: Migração de SDK (Anthropic, Langfuse, Prisma)
 
@@ -69,7 +69,7 @@ Antes de iniciar qualquer migração, responda:
 
 4. Substituir referência no código de negócio (deve ser zero ou mínimo — C7)
 
-5. forge-doctor + commit
+5. foundry-doctor + commit
 ```
 
 **Quando re-eval é obrigatório após migração de SDK:**
@@ -98,28 +98,28 @@ Quando a Anthropic depreca um modelo (ex.: `claude-2` → removido do catálogo)
 4. Atualizar adapters que referenciam o modelo por string
 5. Rodar eval completo — mudança de modelo = re-eval obrigatória
 6. Verificar C3 (custo pode mudar com modelo novo)
-7. commit + forge-doctor
+7. commit + foundry-doctor
 ```
 
 **Red flag:** Se `grep` retorna ocorrências fora de TenantContext e adapters → violação C8. Corrija antes da migração.
 
-### Tipo C: Migração do Forge Framework (MINOR/MAJOR)
+### Tipo C: Migração do Foundry Framework (MINOR/MAJOR)
 
 Quando o repositório `agent-governance-framework` bumpa versão e o consumer precisa sincronizar:
 
 **Para bumps PATCH (ex.: 0.17.0 → 0.17.1):**
 ```bash
-# Copiar arquivos atualizados (scripts/forge-sync.sh cobre isso)
-# Rodar forge-doctor — deve passar sem mudança de comportamento
+# Copiar arquivos atualizados (scripts/foundry-sync.sh cobre isso)
+# Rodar foundry-doctor — deve passar sem mudança de comportamento
 ```
 
 **Para bumps MINOR (nova capability, ex.: 0.17.0 → 0.18.0):**
 ```
 1. Ler CHANGELOG.md da nova versão — identificar novos artefatos
 2. Copiar novos skills/commands/hooks
-3. Atualizar .claude/settings.json _forge_version
-4. Atualizar docs/forge/manifest.json manifest_version + novos artefatos
-5. forge-doctor para verificar consistência
+3. Atualizar .claude/settings.json _foundry_version
+4. Atualizar docs/foundry/manifest.json manifest_version + novos artefatos
+5. foundry-doctor para verificar consistência
 ```
 
 **Para bumps MAJOR (quebra de Constitution, ex.: 0.x → 1.0):**
@@ -144,7 +144,7 @@ Rode o adapter antigo e o novo em paralelo. Roteie via TenantContext:
 
 O SHADOW mode é naturalmente um strangler: output novo não vai para produção enquanto não aprovado.
 
-### Adapter Pattern (O Forge já faz isso)
+### Adapter Pattern (O Foundry já faz isso)
 
 `src/llm/adapters/` é o Adapter Pattern. A migração de SDK fica dentro do adapter. O código de negócio nunca sabe que o SDK mudou.
 
@@ -167,9 +167,9 @@ TenantContext.model pode ser:
 
 Use TenantContext, nunca `if (model === 'claude-3-5-sonnet')` no código de negócio (viola C8).
 
-## Código Zumbi no Forge
+## Código Zumbi no Foundry
 
-Código zumbi no contexto Forge: skills, commands, adapters ou prompts que ninguém usa mas continuam no manifest.
+Código zumbi no contexto Foundry: skills, commands, adapters ou prompts que ninguém usa mas continuam no manifest.
 
 **Sinais:**
 - Skill sem entrada no manifest de nenhum consumer project por 3+ meses
@@ -177,7 +177,7 @@ Código zumbi no contexto Forge: skills, commands, adapters ou prompts que ningu
 - Adapter para modelo que foi depreciado upstream
 - Prompt versão antiga que nenhum SHADOW ativo usa
 
-**Resposta:** Ou atribuir responsável e manter ativamente, ou deprecar com migration guide. Não pode ficar em limbo — acumula confusão e FALSOs POSITIVOS no forge-doctor.
+**Resposta:** Ou atribuir responsável e manter ativamente, ou deprecar com migration guide. Não pode ficar em limbo — acumula confusão e FALSOs POSITIVOS no foundry-doctor.
 
 ## Compulsório vs Advisory
 
@@ -186,13 +186,13 @@ Código zumbi no contexto Forge: skills, commands, adapters ou prompts que ningu
 | **Advisory** | Migração opcional, SDK antigo ainda funciona | Nota no CHANGELOG, prazo frouxo |
 | **Compulsório** | Vulnerabilidade de segurança, modelo depreciado com deadline, breaking change com data anunciada | Deadline explícito, migration guide detalhado, suporte ativo |
 
-Default: advisory. Compulsório requer: migration guide completo + forge-doctor passando + re-eval se modelo mudou.
+Default: advisory. Compulsório requer: migration guide completo + foundry-doctor passando + re-eval se modelo mudou.
 
 ## A Regra do Churn
 
-Se você é o mantenedor do Forge e bumpa uma versão com breaking change, você é responsável por:
+Se você é o mantenedor do Foundry e bumpa uma versão com breaking change, você é responsável por:
 - Entregar migration guide em `CHANGELOG.md` e `INSTALL.md`
-- Atualizar `scripts/forge-sync.sh` para automatizar o que for automável
+- Atualizar `scripts/foundry-sync.sh` para automatizar o que for automável
 - Suportar a versão anterior por pelo menos uma onda (N-1)
 
 Não anuncie breaking change e deixe o consumer resolver sozinho.
@@ -204,8 +204,8 @@ Não anuncie breaking change e deixe o consumer resolver sozinho.
 | "Ainda funciona, por que migrar?" | SDK funcionando com API depreciada acumula débito de segurança. O prazo de remoção da Anthropic não negocia. |
 | "A migração de modelo vai mudar os resultados do eval" | Vai mesmo — é por isso que re-eval é obrigatória. Descubra o impacto antes de ir para produção. |
 | "Posso manter os dois adapters indefinidamente" | Dois adapters fazendo a mesma coisa dobra manutenção, testes e onboarding. |
-| "O Forge vai deprecar esta skill, mas depois" | Planejamento de deprecação começa no design. Skills sem uso ativo devem ter prazo de remoção. |
-| "Os consumers vão migrar por conta própria" | Não vão. Entregar forge-doctor + migration guide + scripts de sync é responsabilidade do mantenedor. |
+| "O Foundry vai deprecar esta skill, mas depois" | Planejamento de deprecação começa no design. Skills sem uso ativo devem ter prazo de remoção. |
+| "Os consumers vão migrar por conta própria" | Não vão. Entregar foundry-doctor + migration guide + scripts de sync é responsabilidade do mantenedor. |
 
 ## Red Flags
 
@@ -213,8 +213,8 @@ Não anuncie breaking change e deixe o consumer resolver sozinho.
 - Modelo hardcoded fora de TenantContext e adapters (viola C8 — impede migração sem re-deploy)
 - Migração de modelo sem re-eval (a mudança de modelo SEMPRE afeta saída)
 - Skills ou commands no manifest sem consumer ativo há 3+ meses
-- Breaking change de Forge sem migration guide no CHANGELOG
-- Consumer project com _forge_version desatualizado há mais de 2 versões MINOR
+- Breaking change de Foundry sem migration guide no CHANGELOG
+- Consumer project com _foundry_version desatualizado há mais de 2 versões MINOR
 
 ## Verificação
 
@@ -223,7 +223,7 @@ Após completar uma migração:
 - [ ] Substituto provado em produção ou SHADOW (não apenas "teoricamente funciona")
 - [ ] Migration guide existe com passos concretos e exemplos
 - [ ] Re-eval rodada se modelo ou comportamento de prompt mudou
-- [ ] forge-doctor passa com 0 FAILs
+- [ ] foundry-doctor passa com 0 FAILs
 - [ ] C3 verificado se custo de inferência pode ter mudado (recalc se necessário)
 - [ ] Código/adapter/skill antigo completamente removido (sem referências órfãs)
 - [ ] Manifest atualizado — sem entradas para artefatos removidos

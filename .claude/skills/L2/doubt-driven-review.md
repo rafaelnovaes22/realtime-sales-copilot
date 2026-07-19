@@ -1,6 +1,6 @@
 ---
 name: doubt-driven-review
-description: Submete cada artefato Forge não-trivial (prompt, spec, eval case, plano técnico) a uma revisão adversarial fresh-context antes de avançar para SHADOW, promote ou merge. Adaptado de doubt-driven-development (agent-skills). Use quando a correção importa mais que a velocidade, em decisões de alto risco (SHADOW start, promote, pre-merge final), ou quando um artefato vai impactar outcome contratual.
+description: Submete cada artefato Foundry não-trivial (prompt, spec, eval case, plano técnico) a uma revisão adversarial fresh-context antes de avançar para SHADOW, promote ou merge. Adaptado de doubt-driven-development (agent-skills). Use quando a correção importa mais que a velocidade, em decisões de alto risco (SHADOW start, promote, pre-merge final), ou quando um artefato vai impactar outcome contratual.
 tier: 2
 vocabulary_aliases: [L2, adversarial-review, doubt-cycle]
 linked_principles: [C2, C4, C6, C7]
@@ -10,23 +10,23 @@ activation:
   explicit_invocation: "@doubt-driven-review"
 requires_helper:
   - skill: artifact-prompt-builder
-    field: __forge_cache.current_prompt
+    field: __foundry_cache.current_prompt
     optional: true
 ---
 
-# Doubt-Driven Review (Forge)
+# Doubt-Driven Review (Foundry)
 
 ## Visão Geral
 
-Uma resposta confiante não é uma resposta correta. Sessões longas acumulam contexto que silenciosamente transforma premissas em "fatos" sem que ninguém perceba. O doubt-driven review é a disciplina de materializar um revisor fresh-context — com viés de **desprovar**, não aprovar — antes que qualquer artefato Forge não-trivial avance no pipeline.
+Uma resposta confiante não é uma resposta correta. Sessões longas acumulam contexto que silenciosamente transforma premissas em "fatos" sem que ninguém perceba. O doubt-driven review é a disciplina de materializar um revisor fresh-context — com viés de **desprovar**, não aprovar — antes que qualquer artefato Foundry não-trivial avance no pipeline.
 
-Isso não é `/acme:pre-merge-check`. O pre-merge-check é um gate final sobre código. Esta skill é uma postura em voo: artefatos não-triviais são cross-examinados enquanto correção de rota ainda é barata.
+Isso não é `/novais-digital:pre-merge-check`. O pre-merge-check é um gate final sobre código. Esta skill é uma postura em voo: artefatos não-triviais são cross-examinados enquanto correção de rota ainda é barata.
 
-**No contexto Forge**, os artefatos-alvo típicos são:
+**No contexto Foundry**, os artefatos-alvo típicos são:
 - `prompts/{id}/v{n}/system.md` — antes de start_shadow
-- `docs/specs/{id}.md` — antes de /acme:plan
-- `evals/{id}/cases/` — antes de /acme:eval
-- `docs/clients/{client}/plan-{id}.md` — antes de /acme:implement
+- `docs/specs/{id}.md` — antes de /novais-digital:plan
+- `evals/{id}/cases/` — antes de /novais-digital:eval
+- `docs/clients/{client}/plan-{id}.md` — antes de /novais-digital:implement
 - Qualquer decisão de arquitetura não-trivial antes de commit
 
 ## Quando Usar
@@ -54,7 +54,7 @@ Se você duvidar de cada keystroke, nada sai. A skill aplica-se apenas a artefat
 
 Esta skill é projetada para o **orquestrador principal**, onde o Step 3 (DUVIDAR) pode spawnar um revisor fresh-context.
 
-- **NÃO adicione esta skill ao frontmatter `skills:` de um Guardian.** Um Guardian que segue o Step 3 spawnaria outro Guardian — o anti-padrão explicitamente proibido em `docs/forge/orchestration-patterns.md`.
+- **NÃO adicione esta skill ao frontmatter `skills:` de um Guardian.** Um Guardian que segue o Step 3 spawnaria outro Guardian — o anti-padrão explicitamente proibido em `docs/foundry/orchestration-patterns.md`.
 - **Se estiver aplicando de dentro de um contexto sub-agente**: a via preferida é subir ao usuário que o doubt-driven não pode rodar aninhado e deixar a sessão principal lidar. Como último recurso, existe um fallback degradado de auto-questionamento — reescreva ARTEFATO + CONTRATO como um fresh-prompt com separador mental explícito e percorra Steps 1–5. Isso **não é revisão fresh-context** (você carrega seu próprio contexto), então sinalize o resultado como degradado.
 
 ## O Processo
@@ -99,7 +99,7 @@ Remova seu raciocínio. Se passar conclusões, receberá validação de suas con
 O prompt do revisor **deve ser adversarial**. O framing decide a resposta.
 
 ```
-Revisão adversarial. Encontre o que está errado com este artefato Forge.
+Revisão adversarial. Encontre o que está errado com este artefato Foundry.
 Assuma que o autor é super-confiante. Procure por:
 - Premissas não declaradas
 - Edge cases não tratados
@@ -151,15 +151,15 @@ Pare quando:
 
 Se após 3 ciclos o revisor ainda surfaça problemas substanciais, o artefato pode não estar pronto. Surface isso ao usuário — três ciclos não resolvidos é informação sobre o artefato, não razão para continuar em loop.
 
-## Integração com Gates do Forge
+## Integração com Gates do Foundry
 
 | Gate | Onde se encaixa o doubt-driven |
 |------|-------------------------------|
-| **G1 pre-merge** | Rodar antes de `/acme:pre-merge-check` em prompts modificados |
+| **G1 pre-merge** | Rodar antes de `/novais-digital:pre-merge-check` em prompts modificados |
 | **Gate 1 promote** | Rodar sobre spec antes de `start_shadow` |
 | **Gate 4 promote** | Rodar sobre eval suite antes de `shadow_to_assisted` |
 | **Gate 5 promote** | Rodar sobre plano técnico antes de `assisted_to_autonomous` |
-| **/acme:implement** | Rodar sobre cada decisão de arquitetura não-trivial na Onda 2 |
+| **/novais-digital:implement** | Rodar sobre cada decisão de arquitetura não-trivial na Onda 2 |
 
 ## Racionalizações Comuns
 
@@ -183,12 +183,12 @@ Se após 3 ciclos o revisor ainda surfaça problemas substanciais, o artefato po
 - **Doubt theater**: em 2+ ciclos onde o revisor surfaçou findings substanciais, zero foram classificados como acionáveis. Você está validando, não duvidando. Pare e escale.
 - Duvidar apenas após commit — isso é `/review`, não doubt-driven
 
-## Interação com Outros Artefatos Forge
+## Interação com Outros Artefatos Foundry
 
-- **`/acme:pre-merge-check`**: complementar. Pre-merge-check é veredicto pós-hoc sobre PR; doubt-driven é postura em voo por artefato.
-- **`/acme:eval`**: quando doubt-driven aplica-se a um eval case, o ciclo RED do TDD (escrever caso que reproduz o problema antes de corrigir) **é** o step de dúvida para afirmações comportamentais.
+- **`/novais-digital:pre-merge-check`**: complementar. Pre-merge-check é veredicto pós-hoc sobre PR; doubt-driven é postura em voo por artefato.
+- **`/novais-digital:eval`**: quando doubt-driven aplica-se a um eval case, o ciclo RED do TDD (escrever caso que reproduz o problema antes de corrigir) **é** o step de dúvida para afirmações comportamentais.
 - **`@artifact-prompt-builder`**: quando um prompt é construído por esta skill L2, rodar doubt-driven antes de passar para shadow-mode-runner.
-- **`docs/forge/orchestration-patterns.md`**: esta skill orquestra da sessão principal. Um Guardian chamando outro Guardian é o anti-padrão B — veja Constraints de Carregamento acima.
+- **`docs/foundry/orchestration-patterns.md`**: esta skill orquestra da sessão principal. Um Guardian chamando outro Guardian é o anti-padrão B — veja Constraints de Carregamento acima.
 
 ## Verificação
 

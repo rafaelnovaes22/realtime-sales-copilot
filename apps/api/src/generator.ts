@@ -41,7 +41,7 @@ export type GenerateOptions = {
   gatilhos: Gatilho[];
   bufferTranscript: string;
   chunks: ScoredChunk[];
-  /** Tenant ID propagado para o trace. C8. Default: "acme-internal". */
+  /** Tenant ID propagado para o trace. C8. Default: "novais-digital-internal". */
   tenantId?: string;
 };
 
@@ -87,7 +87,7 @@ export async function generate(opts: GenerateOptions): Promise<GenerateResult> {
     user: userParts.join("\n\n---\n\n"),
     maxTokens: 150,
     cacheSystem: true,
-    tenantId: opts.tenantId ?? "acme-internal",
+    tenantId: opts.tenantId ?? "novais-digital-internal",
     traceName: "live-suggestion-generator",
   });
 

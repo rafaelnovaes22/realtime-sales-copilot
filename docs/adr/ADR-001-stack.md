@@ -29,10 +29,10 @@ O co-pilot exige captura de áudio ao vivo, STT streaming em PT-BR com diarizaç
 - **Recomendado:** Clerk — integração Next.js nativa, painel de usuários, SSO, suporte a multi-tenant (útil para escalar para corretoras parceiras).
 - **Alternativa:** Supabase Auth — gratuito, integra com Postgres.
 - **Alternativa:** NextAuth — open source, mais controle, mais trabalho de setup.
-- **Decisão pendente:** verificar se Acme já usa algum desses nos outros produtos.
+- **Decisão pendente:** verificar se Novais Digital já usa algum desses nos outros produtos.
 
 ### Hosting
-- **MVP:** Railway (alinhado com infraestrutura atual Acme).
+- **MVP:** Railway (alinhado com infraestrutura atual Novais Digital).
 - **Produção escalonada:** GCP — Cloud Run (API), Cloud SQL (Postgres), GCS (áudios), Pub/Sub (fila de pós-call).
 - **Decisão travada:** Railway no MVP, migração GCP planejada para Step 10.
 

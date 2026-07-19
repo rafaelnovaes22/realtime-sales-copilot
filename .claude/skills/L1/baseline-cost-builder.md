@@ -43,7 +43,7 @@ Mede o **custo humano atual** de um processo específico do cliente e deriva o *
 
 1. **Path-scoped** — turno toca arquivo em `docs/clients/{client}/baseline-cost*.md` ou `docs/clients/{client}/diagnostic.md`
 2. **Keyword-scoped** — conversa menciona termo de `activation.keywords`
-3. **Explícita** — `@baseline-cost-builder client_id=acme process_id=triagem-tickets`
+3. **Explícita** — `@baseline-cost-builder client_id=novais-digital process_id=triagem-tickets`
 4. **Indireta** — chamada por `diagnostic-runner` quando seção "baseline" do roteiro é executada
 
 ## Inputs Tier 1 (via helper pattern)
@@ -53,7 +53,7 @@ Mede o **custo humano atual** de um processo específico do cliente e deriva o *
 | `@offerings-loader` | `offerings` | Verificar se já existe SKU/produto no catálogo cobrindo este processo (evita duplicação) |
 | `@company-dna` | `dna` (opcional) | North-star metric da organização provedora pode influenciar margem-alvo |
 
-> Se `__forge_cache.offerings` vazio → invocar `@offerings-loader` antes; sem catálogo, baseline não tem âncora de comparação.
+> Se `__foundry_cache.offerings` vazio → invocar `@offerings-loader` antes; sem catálogo, baseline não tem âncora de comparação.
 
 ## Inputs Tier 2 (parâmetros da invocação)
 
@@ -99,8 +99,8 @@ Em memória (return value):
 
 ```yaml
 baseline_built: true
-artifact_path: docs/clients/acme/baseline-cost-triagem-tickets-tier1.md
-client_id: acme
+artifact_path: docs/clients/novais-digital/baseline-cost-triagem-tickets-tier1.md
+client_id: novais-digital
 process_id: triagem-tickets-tier1
 human_cost:
   monthly_total: <valor>
@@ -137,7 +137,7 @@ Em disco: arquivo markdown completo seguindo `unit-economics.template.md`, com s
 | "Posso pular `quality_baseline`, é cosmético" | Sem taxa de erro humano, não há comparativo para outcome do agente — quebra C2 | Bloquear sem `error_rate` e `rework_rate` (C1: baseline humano é mandatório) |
 | "Já tem preço definido pelo cliente, só registro" | Preço sem baseline derivado quebra C3; cliente pode estar pagando errado | Calcular `min_price_per_outcome` mesmo se `sla_currently_paid` declarado, e flagar conflito |
 | "Multi-actor confunde, vou agregar como 'equipe'" | Perde rastreabilidade; `unit-economics.template.md` exige granularidade | Manter `actors[]` granular; soma é derivada, não agregada na entrada |
-| "Vou ler eval-cases existentes pra ter referência" | Eval-cases são Tier 3 (run individual); Tier 2 não lê Tier 3 | C5 hard rule: erro estruturado se `__forge_cache` exposto a Tier 3 |
+| "Vou ler eval-cases existentes pra ter referência" | Eval-cases são Tier 3 (run individual); Tier 2 não lê Tier 3 | C5 hard rule: erro estruturado se `__foundry_cache` exposto a Tier 3 |
 
 ## Verification gate
 
@@ -150,7 +150,7 @@ Skill considera-se aplicada **com sucesso** quando:
 - [x] `c3_check.status` ∈ {viable, tight, unviable} com justificativa explícita
 - [x] `data_confidence` declarado (não default silencioso)
 - [x] Nenhuma leitura registrada em paths Tier 3
-- [x] `__forge_cache.offerings` consumido (não re-leu portfolio do disco)
+- [x] `__foundry_cache.offerings` consumido (não re-leu portfolio do disco)
 
 Se algum item falhar → erro estruturado; **não** persiste arquivo parcial.
 
@@ -164,7 +164,7 @@ Esta skill **não pode**:
 
 **Pode** (Tier 2 lê Tier 1 + Tier 2):
 
-- Consumir helpers `__forge_cache.{dna,icp,offerings}`
+- Consumir helpers `__foundry_cache.{dna,icp,offerings}`
 - Ler outros artefatos Tier 2 do mesmo cliente (`diagnostic.md`, outros `baseline-cost-*.md`)
 - Ler templates (`templates/unit-economics.template.md`)
 
@@ -185,13 +185,13 @@ hint: <ação recomendada>
 
 | Skill | Direção | Como |
 |---|---|---|
-| `@offerings-loader` | upstream (helper) | Consume `__forge_cache.offerings` |
+| `@offerings-loader` | upstream (helper) | Consume `__foundry_cache.offerings` |
 | `@diagnostic-runner` | upstream | Chama esta skill na seção "baseline" do roteiro |
 | `@artifact-prompt-builder` (L2) | downstream | Lê `baseline-cost-{process_id}.md` para informar prompt do SKU |
-| `@unit-economist` (Guardian, Forge-3) | reviewer | Audita output desta skill antes de promover modo |
+| `@unit-economist` (Guardian, Foundry-3) | reviewer | Audita output desta skill antes de promover modo |
 
 ## Histórico
 
 | Versão | Data | Mudança |
 |---|---|---|
-| 0.1.0 | 2026-04-30 | Versão inicial — Forge-1 onda 2 (Tier 2) |
+| 0.1.0 | 2026-04-30 | Versão inicial — Foundry-1 onda 2 (Tier 2) |

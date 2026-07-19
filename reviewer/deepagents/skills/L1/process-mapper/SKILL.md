@@ -6,13 +6,13 @@ metadata:
   source-path: .claude/skills/L1/process-mapper.md
   converter-version: "2.1"
   deep-agents-compat: ">=0.0.34"
-  forge-tier: 2
-  forge-version: "0.1.0"
+  foundry-tier: 2
+  foundry-version: "0.1.0"
   linked-principles: [C1, C5, C7]
   helper-pattern: none
 ---
 
-# Skill: process-mapper — Tier 2 Tactical (Forge)
+# Skill: process-mapper — Tier 2 Tactical (Foundry)
 
 Transforms a process description into **agent-ready structured form**: trigger, numbered steps with actor/input/output, decision points with explicit criteria, baseline metrics, and automatable hypotheses. Output is canonical input of `artifact-prompt-builder` (L2) and `eval-case-author` (L2).
 
@@ -22,7 +22,7 @@ Transforms a process description into **agent-ready structured form**: trigger, 
 
 | Tool | Usage |
 |------|-------|
-| `read_file` | Read `__forge_cache.offerings`, diagnostic |
+| `read_file` | Read `__foundry_cache.offerings`, diagnostic |
 | `write_file` | Persist `docs/clients/{client_id}/process-{process_id}.md` |
 | `execute` | Validate steps numbering, decision-point criteria, compute `agent_readiness_score` |
 
@@ -63,7 +63,7 @@ process_id: <>
 process_name: <>
 mapped_at: YYYY-MM-DD
 mapped_by: <skill or human>
-forge_skill_version: process-mapper@0.1.0
+foundry_skill_version: process-mapper@0.1.0
 linked_principles: [C1, C5, C7]
 ---
 
@@ -187,7 +187,7 @@ PY
 
 ```bash
 deepagents -y
-> Map process triagem-tickets-tier1 for client=acme based on this description:
+> Map process triagem-tickets-tier1 for client=novais-digital based on this description:
 > [paste description]
 ```
 

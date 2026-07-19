@@ -23,9 +23,9 @@ activation:
 
 ## Propósito
 
-Carrega o **DNA da organização** consumidora do Forge em formato determinístico e cacheável: propósito, missão, valores, north-star metric, princípios fundadores. Esse contexto é imutável-por-execução: skills Tier 2/3 e agentes downstream consomem via helper pattern em vez de re-lerem o arquivo bruto.
+Carrega o **DNA da organização** consumidora do Foundry em formato determinístico e cacheável: propósito, missão, valores, north-star metric, princípios fundadores. Esse contexto é imutável-por-execução: skills Tier 2/3 e agentes downstream consomem via helper pattern em vez de re-lerem o arquivo bruto.
 
-> Em projetos multi-tenant, o "organização" é a entidade-mãe (provedora do serviço), não o tenant final. DNA por tenant é Tier 2 — use `tenant-context-loader` (Forge-1, escopo Acme-específico).
+> Em projetos multi-tenant, o "organização" é a entidade-mãe (provedora do serviço), não o tenant final. DNA por tenant é Tier 2 — use `tenant-context-loader` (Foundry-1, escopo Novais Digital-específico).
 
 ## Quando ativa
 
@@ -43,9 +43,9 @@ Resolve em ordem de precedência (primeiro encontrado vence):
 | 1 | `docs/dna.md` | raiz canônica do projeto consumidor |
 | 2 | `docs/strategy/dna.md` | projetos com `docs/` por domínio |
 | 3 | `examples/{org}/dna.md` | repo de framework com múltiplos exemplos |
-| 4 | `examples/{org}/portfolio.md` § `DNA` | DNA embutido em portfolio (caso Acme) |
+| 4 | `examples/{org}/portfolio.md` § `DNA` | DNA embutido em portfolio (caso Novais Digital) |
 
-Se nenhum existir, retorna `dna_missing: true` e orienta criar via `/acme:diagnose` (C1: nada começa sem diagnóstico).
+Se nenhum existir, retorna `dna_missing: true` e orienta criar via `/novais-digital:diagnose` (C1: nada começa sem diagnóstico).
 
 ## O que entrega
 
@@ -71,7 +71,7 @@ Quando `dna_missing: true`:
 dna_loaded: false
 dna_missing: true
 checked_paths: [...]
-recommended_action: "Rodar /acme:diagnose ou criar docs/dna.md a partir de templates/diagnostic-spec.template.md"
+recommended_action: "Rodar /novais-digital:diagnose ou criar docs/dna.md a partir de templates/diagnostic-spec.template.md"
 ```
 
 ## Tabela anti-rationalization
@@ -100,11 +100,11 @@ Se algum item falhar → skill retorna erro estruturado e **não** entrega DNA p
 
 Esta skill é **ephemeral-strong**:
 
-1. **Primeira chamada no run** → lê arquivo, parseia, popula cache `__forge_cache.dna`
+1. **Primeira chamada no run** → lê arquivo, parseia, popula cache `__foundry_cache.dna`
 2. **Chamadas subsequentes no mesmo run** → retorna cache; **não** re-lê o arquivo
 3. **Fim do run** → cache descartado (próxima sessão recarrega do disco)
 
-Skills Tier 2/3 que precisem de DNA chamam `@company-dna` e recebem o YAML compacto, não o markdown bruto. Meta documentada em `docs/forge/helper-pattern.md`: redução de ≥ 70% de tokens em prompts L2 vs leitura direta repetida.
+Skills Tier 2/3 que precisem de DNA chamam `@company-dna` e recebem o YAML compacto, não o markdown bruto. Meta documentada em `docs/foundry/helper-pattern.md`: redução de ≥ 70% de tokens em prompts L2 vs leitura direta repetida.
 
 ## C5 hard rule
 
@@ -132,4 +132,4 @@ hint: <ação recomendada>
 
 | Versão | Data | Mudança |
 |---|---|---|
-| 0.1.0 | 2026-04-30 | Versão inicial — Forge-1 onda 1 |
+| 0.1.0 | 2026-04-30 | Versão inicial — Foundry-1 onda 1 |

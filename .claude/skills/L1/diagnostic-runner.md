@@ -40,7 +40,7 @@ parameters_optional:
 
 ## Propósito
 
-Conduz uma **sessão guiada de diagnóstico Fase 0** com o decisor do cliente, produzindo relatório estruturado que satisfaz **C1** (todo agente em produção tem `diagnostic.md` referenciado) e **abre C2** (cláusula de outcome em forma preliminar). É a porta de entrada do pipeline `/acme:diagnose → /spec → ... → /promote`.
+Conduz uma **sessão guiada de diagnóstico Fase 0** com o decisor do cliente, produzindo relatório estruturado que satisfaz **C1** (todo agente em produção tem `diagnostic.md` referenciado) e **abre C2** (cláusula de outcome em forma preliminar). É a porta de entrada do pipeline `/novais-digital:diagnose → /spec → ... → /promote`.
 
 Esta skill **não vende, não arquiteta, não promete tecnologia**. Ela qualifica: vale a pena resolver? cliente cabe no ICP? baseline humano declarado? outcome possível?
 
@@ -48,8 +48,8 @@ Esta skill **não vende, não arquiteta, não promete tecnologia**. Ela qualific
 
 1. **Path-scoped** — turno toca `docs/clients/{client}/diagnostic*.md` ou template
 2. **Keyword-scoped** — termo de `activation.keywords`
-3. **Explícita** — `@diagnostic-runner client_id=acme interlocutor_role=ceo declared_problem="follow-up de propostas se perde"`
-4. **Slash command** — invocada por `/acme:diagnose` (Forge-2)
+3. **Explícita** — `@diagnostic-runner client_id=novais-digital interlocutor_role=ceo declared_problem="follow-up de propostas se perde"`
+4. **Slash command** — invocada por `/novais-digital:diagnose` (Foundry-2)
 
 ## Inputs Tier 1 (via helper pattern)
 
@@ -93,8 +93,8 @@ A skill conduz via prompts ao interlocutor; cada bloco produz uma seção do rel
 | 5 | **Outcome candidato** | "O que conta como 'feito'? Dê 3 exemplos do que conta e 3 do que não conta" | Cláusula preliminar de outcome (C2) |
 | 6 | **Métrica de sucesso** | "Como vamos saber em 90 dias se isto deu certo?" | Métrica + meta + janela |
 | 7 | **Tolerância a erro** | "Quantos % de erro do agente seriam aceitáveis vs humano hoje?" | Threshold de qualidade |
-| 8 | **ICP fit** | (interno — comparar com `__forge_cache.icp`) | Score `fit | edge | out_of_icp` |
-| 9 | **Catálogo fit** | (interno — comparar com `__forge_cache.offerings`) | Existing SKU? variante? novo? |
+| 8 | **ICP fit** | (interno — comparar com `__foundry_cache.icp`) | Score `fit | edge | out_of_icp` |
+| 9 | **Catálogo fit** | (interno — comparar com `__foundry_cache.offerings`) | Existing SKU? variante? novo? |
 | 10 | **Próximos passos** | "Topa pagar o diagnóstico cobrável? prazo?" | GO/NO-GO + valor diagnóstico |
 
 > Bloco 8 e 9 são **internos** — não viram pergunta ao interlocutor; a skill consulta cache Tier 1 e registra resultado.
@@ -112,7 +112,7 @@ icp_fit: fit | edge | out_of_icp
 catalog_fit: existing-sku | variant | new
 go_no_go: go | no-go | needs-paid-diagnostic
 linked_principles: [C1, C2]
-forge_skill_version: diagnostic-runner@0.1.0
+foundry_skill_version: diagnostic-runner@0.1.0
 ---
 ```
 
@@ -120,8 +120,8 @@ forge_skill_version: diagnostic-runner@0.1.0
 
 ```yaml
 diagnostic_run: true
-artifact_path: docs/clients/acme/diagnostic.md
-client_id: acme
+artifact_path: docs/clients/novais-digital/diagnostic.md
+client_id: novais-digital
 session_minutes_actual: <N>
 icp_fit: fit
 catalog_fit: variant
@@ -135,7 +135,7 @@ baseline_inputs_handoff:
   fields_collected: [volume_monthly, actors, hours_per_unit, error_rate, rework_rate]
   fields_missing: []
 go_no_go: go
-next_step: "Invocar @baseline-cost-builder; depois /acme:spec-sku"
+next_step: "Invocar @baseline-cost-builder; depois /novais-digital:spec-sku"
 generated_at: 2026-04-30T...
 ```
 
@@ -161,8 +161,8 @@ Skill considera-se aplicada **com sucesso** quando:
 - [x] `catalog_fit` ∈ {existing-sku, variant, new} declarado
 - [x] `go_no_go` ∈ {go, no-go, needs-paid-diagnostic} com justificativa
 - [x] Arquivo `docs/clients/{client_id}/diagnostic.md` persistido e parseia
-- [x] Frontmatter inclui `forge_skill_version` para rastreabilidade do reviewer
-- [x] `__forge_cache.{dna,icp,offerings}` consumido (não re-leu Tier 1 do disco)
+- [x] Frontmatter inclui `foundry_skill_version` para rastreabilidade do reviewer
+- [x] `__foundry_cache.{dna,icp,offerings}` consumido (não re-leu Tier 1 do disco)
 - [x] Nenhuma leitura Tier 3
 - [x] Tempo total da sessão registrado em `session_minutes_actual`
 
@@ -178,7 +178,7 @@ Esta skill **não pode**:
 
 **Pode**:
 
-- Consumir helpers `__forge_cache.{dna,icp,offerings}`
+- Consumir helpers `__foundry_cache.{dna,icp,offerings}`
 - Ler outros artefatos Tier 2 do mesmo cliente (diagnósticos prévios, outros baselines)
 - Ler templates (`templates/diagnostic-spec.template.md`)
 
@@ -200,13 +200,13 @@ hint: <ação>
 
 | Skill | Direção | Como |
 |---|---|---|
-| `@company-dna`, `@icp-loader`, `@offerings-loader` | upstream (helpers) | Consumidas via `__forge_cache` |
+| `@company-dna`, `@icp-loader`, `@offerings-loader` | upstream (helpers) | Consumidas via `__foundry_cache` |
 | `@baseline-cost-builder` | downstream | Recebe handoff dos campos coletados no Bloco 3 |
 | `@process-mapper` | downstream | Recebe handoff do problema declarado para mapear processo as-is |
-| `/acme:spec-sku` (Forge-2) | downstream | Lê `diagnostic.md` para gerar spec |
-| `@po-guardian` (Forge-3) | reviewer | Valida cláusula de outcome antes de virar contrato |
+| `/novais-digital:spec-sku` (Foundry-2) | downstream | Lê `diagnostic.md` para gerar spec |
+| `@po-guardian` (Foundry-3) | reviewer | Valida cláusula de outcome antes de virar contrato |
 
-## Critério de pronto explícito (do roadmap Forge-1)
+## Critério de pronto explícito (do roadmap Foundry-1)
 
 > "Skill `diagnostic-runner` em sessão simulada produz relatório Fase 0 estruturado em ≤ 10 min."
 
@@ -216,4 +216,4 @@ A skill é compatível com sessões longas (90 min com CEO) **e** sessões rápi
 
 | Versão | Data | Mudança |
 |---|---|---|
-| 0.1.0 | 2026-04-30 | Versão inicial — Forge-1 onda 2 (Tier 2) |
+| 0.1.0 | 2026-04-30 | Versão inicial — Foundry-1 onda 2 (Tier 2) |

@@ -1,6 +1,6 @@
-# Acme Forge — Hooks Runtime
+# Novais Digital Foundry — Hooks Runtime
 
-> Forge-4: hooks de governança para projetos consumidores do Acme Forge.
+> Foundry-4: hooks de governança para projetos consumidores do Novais Digital Foundry.
 
 ---
 
@@ -14,8 +14,8 @@
 | `any-type-guard` | PreToolUse | Edit/Write | Bloqueia `any` em `src/skus/**` e `src/agents/**` |
 | `langfuse-trace-check` | PostToolUse | Edit/Write | Avisa quando chamadas LLM não têm trace Langfuse (C6) |
 | `unit-economics-recalc` | PostToolUse | Edit/Write | Avisa quando prompts mudam e recalc C3 é necessário |
-| `manifest-sync` | PostToolUse | Edit/Write | Avisa quando artefatos Forge mudam sem update de manifest |
-| `5-gates-summary` | Stop | Fim de sessão | Gera relatório dos 5 gates Forge da branch atual |
+| `manifest-sync` | PostToolUse | Edit/Write | Avisa quando artefatos Foundry mudam sem update de manifest |
+| `5-gates-summary` | Stop | Fim de sessão | Gera relatório dos 5 gates Foundry da branch atual |
 | `eval-suite-fresh` | Stop | Fim de sessão | Avisa se eval suites têm menos de 30 casos (C4) |
 
 ---
@@ -44,7 +44,7 @@ hooks/
 
 ## Instalação no projeto consumidor
 
-Os hooks são referenciados em `.claude/settings.json` (já pré-configurado no Forge). Para ativá-los no projeto consumidor, copie a seção `hooks` do `settings.json` do Forge para o seu projeto.
+Os hooks são referenciados em `.claude/settings.json` (já pré-configurado no Foundry). Para ativá-los no projeto consumidor, copie a seção `hooks` do `settings.json` do Foundry para o seu projeto.
 
 **Requisitos:**
 - Bash 4+ (macOS: `brew install bash`; Windows: Git Bash ou WSL)
@@ -60,10 +60,10 @@ Para situações de incidente onde um hook precisa ser temporariamente ignorado:
 ```bash
 # Em .claude/settings.local.json (gitignored)
 # OU como variável de ambiente na sessão:
-export ACME_FORGE_BYPASS="incident-2026-05-01-prod-down"
+export NOVAIS_FOUNDRY_BYPASS="incident-2026-05-01-prod-down"
 ```
 
-Todo bypass é **automaticamente auditado** em `docs/forge/bypass-log/YYYY-MM-DD.md`.
+Todo bypass é **automaticamente auditado** em `docs/foundry/bypass-log/YYYY-MM-DD.md`.
 
 **Nenhum bypass apaga o rastro de auditoria.**
 
@@ -82,7 +82,7 @@ Todo bypass é **automaticamente auditado** em `docs/forge/bypass-log/YYYY-MM-DD
 ## Scan de segurança de skills (CI/PR)
 
 ```bash
-# Escaneia todas as skills do Forge
+# Escaneia todas as skills do Foundry
 bash hooks/scripts/skill-security-scan.sh
 
 # Escaneia uma pasta específica
@@ -98,7 +98,7 @@ Checks: S1 (secrets), S2 (URLs hardcoded), S3 (comandos destrutivos), S4 (bypass
 
 ## Bypass log format
 
-`docs/forge/bypass-log/YYYY-MM-DD.md`:
+`docs/foundry/bypass-log/YYYY-MM-DD.md`:
 
 ```markdown
 # Bypass Log — 2026-05-01

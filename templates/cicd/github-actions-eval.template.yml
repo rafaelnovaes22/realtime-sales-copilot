@@ -1,7 +1,7 @@
 # templates/cicd/github-actions-eval.template.yml
 #
 # COMO USAR:
-#   1. Copie para .github/workflows/forge-eval.yml no projeto consumidor
+#   1. Copie para .github/workflows/foundry-eval.yml no projeto consumidor
 #   2. Substitua {PROJECT_NAME} pelo slug do projeto
 #   3. Configure secrets:
 #      - ANTHROPIC_API_KEY (modelo para rodar eval)
@@ -16,7 +16,7 @@
 #
 # PRINCÍPIOS: C4 (SHADOW enforçado por dados), C6 (telemetria), C7 (portável)
 
-name: Forge Eval Suite — {PROJECT_NAME}
+name: Foundry Eval Suite — {PROJECT_NAME}
 
 on:
   pull_request:
@@ -104,7 +104,7 @@ jobs:
           cases_dir="evals/$artifact/cases"
 
           if [ ! -d "$cases_dir" ]; then
-            echo "::error::$cases_dir não existe — rode /acme:eval para criar"
+            echo "::error::$cases_dir não existe — rode /novais-digital:eval para criar"
             exit 2
           fi
 
@@ -141,7 +141,7 @@ jobs:
               --fail-on-regression "${{ github.event.inputs.fail_on_regression || 'true' }}"
           else
             echo "::warning::scripts/eval-runner.py não encontrado — implemente o runner de eval"
-            echo "::warning::Consulte docs/forge/eval-runner-contract.md para a interface esperada"
+            echo "::warning::Consulte docs/foundry/eval-runner-contract.md para a interface esperada"
             # Não falha CI por ausência do runner — WARN apenas
           fi
 

@@ -6,13 +6,13 @@ metadata:
   source-path: .claude/skills/L2/artifact-prompt-builder.md
   converter-version: "2.1"
   deep-agents-compat: ">=0.0.34"
-  forge-tier: 3
-  forge-version: "0.1.0"
+  foundry-tier: 3
+  foundry-version: "0.1.0"
   linked-principles: [C2, C5, C6, C7, C8]
   helper-pattern: none
 ---
 
-# Skill: artifact-prompt-builder — Tier 3 Operational (Forge)
+# Skill: artifact-prompt-builder — Tier 3 Operational (Foundry)
 
 > **applies_when**: `project.ai_enabled = true` — This skill builds LLM system prompts and is only applicable to agentic artifacts. For platform modules (`ai_enabled=false`), there are no prompts to build; use `platform-module-spec.template.md` and `acceptance-report.template.md` instead.
 
@@ -65,7 +65,7 @@ command -v sha256sum >/dev/null 2>&1 || command -v shasum >/dev/null 2>&1 || {
 {1-3 sentences from spec.purpose aligned with dna.purpose}
 
 ## 2. Contexto da organização (Tier 1, fixed)
-{__forge_cache.dna compact form}
+{__foundry_cache.dna compact form}
 
 ## 3. Cláusula de outcome (C2 — non-negotiable)
 {spec.outcome_clause LITERAL}
@@ -106,7 +106,7 @@ artifact_type: <>
 prompt_version: 1.0.0
 prompt_hash: <sha256:16>
 generated_at: <ISO-8601>
-forge_skill_version: artifact-prompt-builder@0.1.0
+foundry_skill_version: artifact-prompt-builder@0.1.0
 linked_principles: [C2, C5, C6, C7, C8]
 inputs_used:
   spec: { path, hash }
@@ -143,7 +143,7 @@ grep -E "(tenant_id|tenantId|tenantName)\s*===?\s*['\"]" \
   exit 8
 }
 # Detect literal tenant names in plain prose (heuristic: known clients)
-# (Optional — depends on examples/acme/clients list)
+# (Optional — depends on examples/novais-digital/clients list)
 echo "OK"
 ```
 
@@ -155,9 +155,9 @@ echo "OK"
 |---|---|---|
 | Copy from "similar" SKU | C8 + omits unique outcome clause | Build from this spec; reuse via "variant" in catalog |
 | Abbreviate outcome clause | C2 is contractual | Copy `spec.outcome_clause` verbatim with 3+3 examples |
-| Inline DNA into prompt body | Blows tokens; defeats helper | Reference `__forge_cache.dna`; runtime injects |
+| Inline DNA into prompt body | Blows tokens; defeats helper | Reference `__foundry_cache.dna`; runtime injects |
 | Skip instrumentation section | C6 violation | Section 8 mandatory; verification gate fails without |
-| `if tenant_id == 'acme'` | C8 violation | `{{tenant.tone_preference}}` via TenantContext |
+| `if tenant_id == 'novais-digital'` | C8 violation | `{{tenant.tone_preference}}` via TenantContext |
 | XML tags Anthropic-only | C7 violation | Universal markdown; provider-specific in `src/llm/adapters/` |
 | Same hash, no version bump | Drift hides recalc | Any hash change → new `v{x}` + `recalc_unit_economics_required: true` |
 | Real fewshots with PII | LGPD/privacy risk | Sanitize or mark `synthetic: true` in eval-case |
@@ -186,7 +186,7 @@ echo "OK"
 ```bash
 deepagents -y
 > Build prompt for artifact triagem-tickets-tier1-v1, type platform-sku, \
-  using docs/specs/triagem-tickets.md and docs/clients/acme/process-triagem.md
+  using docs/specs/triagem-tickets.md and docs/clients/novais-digital/process-triagem.md
 ```
 
 ### Mode 2 — One-shot
@@ -194,14 +194,14 @@ deepagents -y
 ```bash
 deepagents -n -y "Run artifact-prompt-builder for artifact_id=triagem-tickets-tier1-v1 \
   artifact_type=platform-sku spec_path=docs/specs/triagem-tickets.md \
-  process_map_path=docs/clients/acme/process-triagem.md \
-  baseline_cost_path=docs/clients/acme/baseline-cost-triagem.md"
+  process_map_path=docs/clients/novais-digital/process-triagem.md \
+  baseline_cost_path=docs/clients/novais-digital/baseline-cost-triagem.md"
 ```
 
-### Mode 3 — In CI as part of /acme:implement
+### Mode 3 — In CI as part of /novais-digital:implement
 
 ```bash
-# Wave 2 of /acme:implement invokes this skill
+# Wave 2 of /novais-digital:implement invokes this skill
 deepagents -n -y "Run artifact-prompt-builder using config in .deepagents/cache/build-config.json"
 ```
 
@@ -211,7 +211,7 @@ deepagents -n -y "Run artifact-prompt-builder using config in .deepagents/cache/
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| `spec_outcome_clause_missing` | Spec lacks `c2_validation: pass` | Re-run `/acme:spec` |
+| `spec_outcome_clause_missing` | Spec lacks `c2_validation: pass` | Re-run `/novais-digital:spec` |
 | `process_map_below_readiness` | `agent_readiness_score < 0.5` | Re-run `process-mapper` with more data |
 | `tenant_hardcode_detected` | Lint regex matched | Replace literal with `{{tenant.field}}` |
 | `instrumentation_section_missing` | Section 8 absent | Regenerate from template; never skip |

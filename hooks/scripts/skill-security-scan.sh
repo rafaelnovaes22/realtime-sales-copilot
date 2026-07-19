@@ -55,7 +55,7 @@ scan_file() {
   fi
 
   # S4 — bypass sem documentação
-  BYPASS=$(grep -nE 'ACME_FORGE_BYPASS|--force|--no-verify|skipValidation' "$file" 2>/dev/null | \
+  BYPASS=$(grep -nE 'NOVAIS_FOUNDRY_BYPASS|--force|--no-verify|skipValidation' "$file" 2>/dev/null | \
     grep -v '#\|//\|<!--\|bypass.*doc\|bypass.*log' | head -3 || echo "")
   if [ -n "$BYPASS" ]; then
     echo "  ⚠️  S4 WARN: Referência a bypass sem documentação em '$file':" >&2

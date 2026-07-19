@@ -13,7 +13,7 @@ version: "0.1.0"
 # Unit Economics — {{ sku_code }}
 
 > **Princípio Constitution C3**: custo de inferência ≤ 25% do preço do outcome. Hard gate.
-> Este documento é **regenerado** quando prompts mudam (hook `unit-economics-recalc`, Forge-4).
+> Este documento é **regenerado** quando prompts mudam (hook `unit-economics-recalc`, Foundry-4).
 
 ---
 
@@ -175,7 +175,7 @@ Este documento é **regenerado** quando:
 - Câmbio USD/BRL muda > 5%
 - Auditoria mensal detecta drift > 15%
 
-Hook responsável: `unit-economics-recalc` (Forge-4).
+Hook responsável: `unit-economics-recalc` (Foundry-4).
 
 ---
 

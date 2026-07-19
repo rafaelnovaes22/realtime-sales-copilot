@@ -1,14 +1,14 @@
 """
 Spec Agent — converte descrição de módulo em spec executável.
 
-Gerado a partir de templates/aios/agents/spec_agent/entry.py.template (Forge v0.6.0+).
+Gerado a partir de templates/aios/agents/spec_agent/entry.py.template (Foundry v0.6.0+).
 
 C5 (three-tier): isolamento de contexto declarado em LEIA APENAS / NÃO LEIA.
 C6 (telemetry):  send_request envolto em langfuse.trace() → generation.end().
 C7 (portability): este SYSTEM_PROMPT funciona standalone em Claude Code (sem kernel AIOS).
 C8 (anti-heroic): tenantId em task_input, nunca hardcoded; project_name lido de config.
 
-Substituições aplicadas pelo /acme:aios-init:
+Substituições aplicadas pelo /novais-digital:aios-init:
   {PROJECT_NAME}   → nome do projeto consumidor
   {MODULE}         → nome do módulo (kebab-case)
   {TIER}           → A | B | C

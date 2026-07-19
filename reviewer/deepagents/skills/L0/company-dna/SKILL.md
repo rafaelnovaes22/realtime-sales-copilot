@@ -1,20 +1,20 @@
 ---
 name: company-dna
-description: "Loads and exposes the organization's DNA (purpose, mission, values, north-star) in compact YAML for Tier 1 strategic context. Caches under __forge_cache.dna for downstream skills."
+description: "Loads and exposes the organization's DNA (purpose, mission, values, north-star) in compact YAML for Tier 1 strategic context. Caches under __foundry_cache.dna for downstream skills."
 metadata:
   converted-from: claude-code
   source-path: .claude/skills/L0/company-dna.md
   converter-version: "2.1"
   deep-agents-compat: ">=0.0.34"
-  forge-tier: 1
-  forge-version: "0.1.0"
+  foundry-tier: 1
+  foundry-version: "0.1.0"
   linked-principles: [C5, C7]
   helper-pattern: bmad
 ---
 
-# Skill: company-dna — Tier 1 Strategic (Forge)
+# Skill: company-dna — Tier 1 Strategic (Foundry)
 
-Loads the organization's **DNA** in deterministic, cacheable form for downstream skills (Tier 2/3) and the `forge-auditor` reviewer.
+Loads the organization's **DNA** in deterministic, cacheable form for downstream skills (Tier 2/3) and the `foundry-auditor` reviewer.
 
 > Tier 1 hard rule (C5): **does not** read Tier 2/3 paths. Output is YAML compact (≤ 600 tokens), not raw markdown.
 
@@ -26,7 +26,7 @@ Loads the organization's **DNA** in deterministic, cacheable form for downstream
 |------|---------------------|
 | `glob` | Find conventional DNA paths (`docs/dna.md`, `examples/*/dna.md`, etc) |
 | `read_file` | Read the resolved DNA file |
-| `write_file` | Persist `__forge_cache.dna` to `.deepagents/cache/dna.yaml` |
+| `write_file` | Persist `__foundry_cache.dna` to `.deepagents/cache/dna.yaml` |
 | `execute` | Validate parsed YAML against required fields |
 
 ---
@@ -67,7 +67,7 @@ Precedence (first match wins):
 1. `docs/dna.md`
 2. `docs/strategy/dna.md`
 3. `examples/*/dna.md` (multi-org repos)
-4. `examples/*/portfolio.md` § `DNA` (Acme-style embedded)
+4. `examples/*/portfolio.md` § `DNA` (Novais Digital-style embedded)
 
 Use `glob`:
 
@@ -84,7 +84,7 @@ If no match → return:
 dna_loaded: false
 dna_missing: true
 checked_paths: [...]
-recommended_action: "Run /acme:diagnose or create docs/dna.md from templates/diagnostic-spec.template.md"
+recommended_action: "Run /novais-digital:diagnose or create docs/dna.md from templates/diagnostic-spec.template.md"
 ```
 
 ---
@@ -207,8 +207,8 @@ deepagents -n -y "Run company-dna skill and print the YAML output"
 ```bash
 # In a wrapper script
 deepagents -n -y "Run company-dna skill" > .deepagents/cache/dna.yaml
-deepagents -n -y "Run forge-auditor skill for month 2026-04" \
-  # forge-auditor reads .deepagents/cache/dna.yaml as Tier 1 context
+deepagents -n -y "Run foundry-auditor skill for month 2026-04" \
+  # foundry-auditor reads .deepagents/cache/dna.yaml as Tier 1 context
 ```
 
 ---
@@ -217,7 +217,7 @@ deepagents -n -y "Run forge-auditor skill for month 2026-04" \
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
-| `dna_missing: true` | No `docs/dna.md` or equivalent | Run `/acme:diagnose` or create from template |
+| `dna_missing: true` | No `docs/dna.md` or equivalent | Run `/novais-digital:diagnose` or create from template |
 | `dna_outdated` | `last_reviewed` > 365 days | Trigger DNA review with stakeholders |
 | `dna_malformed` | Required field absent | Compare against `templates/diagnostic-spec.template.md` |
 | `multiple_dna_found` | Multiple paths match | Consolidate to one canonical location |

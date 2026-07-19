@@ -1,0 +1,89 @@
+{
+  "$schema": "https://novais-digital.com.br/foundry/manifest-v1.json",
+  "manifest_version": "0.21.0",
+  "framework": {
+    "name": "Novais Digital Foundry",
+    "framework_version_required": "0.21.0",
+    "constitution_version": "0.3.0",
+    "constitution_path": ".claude/CONSTITUTION.md",
+    "last_synced_at": "2026-05-19",
+    "canonical_repo": "https://github.com/novais-digital/agent-governance-framework"
+  },
+  "project": {
+    "name": "realtime-sales-copilot",
+    "type": "agentic_saas",
+    "ai_enabled": true,
+    "owner": "Novais Digital",
+    "description": "Co-pilot de IA para closers de vendas consultivas em tempo real (captura → STT → detector → Sonnet 4.6 → guardian → card)."
+  },
+  "modules": [
+    {
+      "id": "live-suggestion-copilot",
+      "type": "agentic-skill",
+      "ai_enabled": true,
+      "lifecycle_state": "DRAFT",
+      "criticality": "critical",
+      "diagnostic_path": "docs/clients/novais-digital-internal/diagnostic-live-suggestion-copilot.md",
+      "diagnostic_status": "retroactive_partial",
+      "diagnostic_gates_open": [
+        "interview_2_3_seniors_closers",
+        "analyze_10_call_recordings",
+        "langsmith_activation_real_account",
+        "spec_via_novais_spec",
+        "unit_economics_via_novais_unit_economics",
+        "lgpd_text_legal_approval"
+      ],
+      "diagnostic_gates_closed": [
+        "llm_abstraction_c7",
+        "langsmith_instrumentation_c6"
+      ]
+    }
+  ],
+  "integrations": {
+    "_doc": "Integrações declaradas explicitamente. Reviewer/Foundry-Doctor usa essa lista para decidir checks aplicáveis (ex: hermes, langsmith, deepgram).",
+    "langsmith": {
+      "declared": true,
+      "implemented": true,
+      "active_in_dev": false,
+      "note": "Wrapper observe() em src/observability/trace.ts integrado em TODOS os adapters (Gemini + Anthropic + fallback). Ativação condicionada a LANGCHAIN_API_KEY no .env — no-op silencioso quando ausente. Antes de SHADOW, criar conta + ativar + validar trace_coverage >= 99% por 7 dias.",
+      "instrumentation_points": [
+        "src/llm/adapters/gemini.ts via observe()",
+        "src/llm/adapters/anthropic.ts via observe()"
+      ]
+    },
+    "deepgram": {
+      "declared": true,
+      "implemented": true,
+      "models": ["nova-3", "nova-2"],
+      "language": "pt-BR"
+    },
+    "vertex": {
+      "declared": true,
+      "implemented": true,
+      "role": "primary",
+      "sdk": "@google/genai (vertexai:true)",
+      "models": ["gemini-2.5-flash"],
+      "note": "Provider primário (D011). Auth via ADC (gcloud local / GOOGLE_APPLICATION_CREDENTIALS no Railway / Workload Identity no GCP). Único import do SDK Google em src/llm/adapters/gemini.ts (C7). Requer GCP_PROJECT + GCP_LOCATION."
+    },
+    "anthropic": {
+      "declared": true,
+      "implemented": true,
+      "role": "fallback",
+      "models": ["claude-sonnet-4-6", "claude-haiku-4-5-20251001"],
+      "note": "Fallback de portabilidade (C7) via FallbackProvider quando Gemini/Vertex falha."
+    },
+    "langgraph": {
+      "declared": true,
+      "implemented": true,
+      "sdk": "@langchain/langgraph",
+      "note": "Orquestração do pipeline de objeções (StateGraph) em apps/api/src/graph/. Só orquestra — nenhum node importa SDK de provider; chamadas LLM passam por src/llm (D010/D011)."
+    }
+  },
+  "artifacts": {
+    "_doc": "Em consumer mode, este bloco é opcional. Reviewer DeepAgent não exige inventário completo de artefatos canônicos (eles vivem no Foundry canônico). Listar apenas artefatos próprios do projeto."
+  },
+  "_meta": {
+    "created_at": "2026-05-19",
+    "last_updated": "2026-06-26"
+  }
+}

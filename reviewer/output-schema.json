@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://acme.com.br/forge/reviewer-output-v1.json",
-  "title": "Acme Forge Reviewer — Monthly Audit Output Schema",
+  "$id": "https://novais-digital.com.br/foundry/reviewer-output-v1.json",
+  "title": "Novais Digital Foundry Reviewer — Monthly Audit Output Schema",
   "description": "JSON schema do output do reviewer DeepAgent. Versão 0.2.0.",
   "type": "object",
   "required": [

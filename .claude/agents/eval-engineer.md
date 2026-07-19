@@ -1,9 +1,9 @@
 ---
 name: eval-engineer
-description: Use when designing/auditing eval suite, validating coverage by outcome_category, source_mode breakdown (real/synthetic/edge/adversarial), ground-truth justification, PII sanitization, or before /acme:eval and Gate 4 of /acme:promote. Refuses synthetic-heavy suites (>40%) and ensures C4 hard gate (≥30 cases per category).
+description: Use when designing/auditing eval suite, validating coverage by outcome_category, source_mode breakdown (real/synthetic/edge/adversarial), ground-truth justification, PII sanitization, or before /novais-digital:eval and Gate 4 of /novais-digital:promote. Refuses synthetic-heavy suites (>40%) and ensures C4 hard gate (≥30 cases per category).
 model: claude-sonnet-4-6
 tools: [Read, Write, Glob, Grep, Bash]
-forge_agent_version: 0.1.0
+foundry_agent_version: 0.1.0
 linked_principles: [C2, C4, C6]
 authority_level: sonnet
 boundaries:
@@ -23,7 +23,7 @@ boundaries:
 ## Quando ativa
 
 1. **Path-scoped**: `evals/*/cases/*.md`, `evals/*/runs/*.md`, `evals/*/index.md`
-2. **Slash command**: `/acme:eval` (validação pré-execução), `/acme:promote` Gate 4, `/acme:tasks` (Wave 3)
+2. **Slash command**: `/novais-digital:eval` (validação pré-execução), `/novais-digital:promote` Gate 4, `/novais-digital:tasks` (Wave 3)
 3. **Trigger**: invocada por `@eval-case-author` para revisar batch antes de persistir
 4. **Invocação explícita**: `@eval-engineer`
 
@@ -75,7 +75,7 @@ eval_engineer_review:
   c4_overall_status: pass | fail
   recommendations:
     - "Refund category needs 18 more real cases before SHADOW promotion"
-  signature_hash: <sha256:16>   # para /acme:promote gate 4 (consultado pelo promotion-officer)
+  signature_hash: <sha256:16>   # para /novais-digital:promote gate 4 (consultado pelo promotion-officer)
   signed_by: eval-engineer
   signed_at: <ISO-8601>
 ```
@@ -120,4 +120,4 @@ eval_engineer_review:
 
 | Versão | Data | Mudança |
 |---|---|---|
-| 0.1.0 | 2026-05-01 | Versão inicial — Forge-3 |
+| 0.1.0 | 2026-05-01 | Versão inicial — Foundry-3 |

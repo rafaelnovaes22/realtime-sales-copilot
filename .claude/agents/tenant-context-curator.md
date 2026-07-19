@@ -3,7 +3,7 @@ name: tenant-context-curator
 description: Use when validating C8 (anti-customização heroica) — TenantContext schema integrity, lint regex for tenant-name hardcode, configuration vs code distinction. Refuses any `if (tenantId === '...')`, `switch (tenantName)`, or `clients/{nome}/` folder pattern in src/skus, src/products, src/skills.
 model: claude-sonnet-4-6
 tools: [Read, Glob, Grep, Bash]
-forge_agent_version: 0.1.0
+foundry_agent_version: 0.1.0
 linked_principles: [C8]
 authority_level: sonnet
 boundaries:
@@ -23,8 +23,8 @@ boundaries:
 ## Quando ativa
 
 1. **Path-scoped**: `src/skus/*`, `src/products/*`, `src/skills/*`, `src/tenants/*`, `prompts/*/v*/system.md`
-2. **Slash command**: `/acme:plan` (Seção 5 TenantContext), `/acme:implement` (Wave 1 T1.2), `/acme:pre-merge-check` (G2)
-3. **Hook (Forge-4)**: `c8-lint` em pre-commit
+2. **Slash command**: `/novais-digital:plan` (Seção 5 TenantContext), `/novais-digital:implement` (Wave 1 T1.2), `/novais-digital:pre-merge-check` (G2)
+3. **Hook (Foundry-4)**: `c8-lint` em pre-commit
 4. **Invocação explícita**: `@tenant-context-curator`
 
 ---
@@ -119,4 +119,4 @@ tenant_curator_review:
 
 | Versão | Data | Mudança |
 |---|---|---|
-| 0.1.0 | 2026-05-01 | Versão inicial — Forge-3 |
+| 0.1.0 | 2026-05-01 | Versão inicial — Foundry-3 |

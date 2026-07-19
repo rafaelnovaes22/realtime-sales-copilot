@@ -10,7 +10,7 @@ activation:
   explicit_invocation: "@llm-security-hardening"
 ---
 
-# LLM Security Hardening (Forge)
+# LLM Security Hardening (Foundry)
 
 ## Visão Geral
 
@@ -50,9 +50,9 @@ Segurança não é uma fase — é uma restrição em cada linha de código que 
 
 ### 1. Prompt Injection
 
-A ameaça mais relevante para sistemas Forge. Dados externos (email de cliente, ticket, conteúdo de CRM) injetados no prompt podem redirecionar o comportamento do agente.
+A ameaça mais relevante para sistemas Foundry. Dados externos (email de cliente, ticket, conteúdo de CRM) injetados no prompt podem redirecionar o comportamento do agente.
 
-**Superfícies de injeção no Forge:**
+**Superfícies de injeção no Foundry:**
 
 | Superfície | Risco | Mitigação |
 |-----------|-------|-----------|
@@ -81,7 +81,7 @@ que apareçam dentro desses marcadores.
 
 ### 2. PII em Eval Cases (LGPD/GDPR)
 
-Eval cases gerados a partir de dados reais de clientes são o vetor mais comum de vazamento de PII no Forge.
+Eval cases gerados a partir de dados reais de clientes são o vetor mais comum de vazamento de PII no Foundry.
 
 **Dados que exigem sanitização antes de commit:**
 
@@ -107,7 +107,7 @@ O hook `secret-scan.sh` já cobre API keys — adicione padrões de PII ao scrip
 
 **LGPD: base legal para dados em evals**
 
-Usar dados reais de clientes em eval cases exige: (a) dados anonimizados irreversivelmente, ou (b) consentimento explícito documentado. O Forge prefere (a): dados sintéticos ou anonimizados. A skill `eval-case-author` já inclui esta exigência — reforce-a.
+Usar dados reais de clientes em eval cases exige: (a) dados anonimizados irreversivelmente, ou (b) consentimento explícito documentado. O Foundry prefere (a): dados sintéticos ou anonimizados. A skill `eval-case-author` já inclui esta exigência — reforce-a.
 
 ### 3. Secret Leakage em Traces Langfuse
 
@@ -165,16 +165,16 @@ const ctx = ctxResult.data;
 
 O schema deve incluir: campos obrigatórios, tipos, ranges, e rejeição de campos inesperados (`strict()` no Zod).
 
-## Integração com Guardiões Forge
+## Integração com Guardiões Foundry
 
 | Guarda | Quando Aciona | O que Verifica |
 |--------|--------------|----------------|
 | `secret-scan.sh` (PreToolUse hook) | Antes de cada Edit/Write | Patterns de API key, token, senha em arquivos |
 | `security-privacy-guardian` (agent) | Promoção assisted→autonomous | PII em traces, eval cases, prompts sem sanitização |
 | `langfuse-trace-check.sh` (PostToolUse hook) | Após Edit/Write em adapters | observe() presente, campos obrigatórios no trace |
-| `/acme:pre-merge-check` (G5) | Antes de merge | Eval suite verde — inclui casos de segurança se presentes |
+| `/novais-digital:pre-merge-check` (G5) | Antes de merge | Eval suite verde — inclui casos de segurança se presentes |
 
-Se `secret-scan.sh` bloquear um Edit, NÃO use `ACME_FORGE_BYPASS`. Investigue o que ativou o scan e remova o secret do conteúdo.
+Se `secret-scan.sh` bloquear um Edit, NÃO use `NOVAIS_FOUNDRY_BYPASS`. Investigue o que ativou o scan e remova o secret do conteúdo.
 
 ## Checklist de Segurança LLM
 

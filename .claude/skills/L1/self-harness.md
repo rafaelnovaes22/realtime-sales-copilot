@@ -3,10 +3,10 @@ name: self-harness
 tier: L1
 version: "1.0.0"
 description: >
-  Ensina o pattern de self-harness (loop fechado de aprendizado) do Acme Forge.
-  Cada agente criado com o Forge pode aprender com os dados do projeto do cliente,
+  Ensina o pattern de self-harness (loop fechado de aprendizado) do Novais Digital Foundry.
+  Cada agente criado com o Foundry pode aprender com os dados do projeto do cliente,
   acumulando memória entre sessões sem violar C5/C6/C7/C8.
-  Implementado no Forge-20. Orquestrado pelo Hermes Learning Loop (Railway/Codex).
+  Implementado no Foundry-20. Orquestrado pelo Hermes Learning Loop (Railway/Codex).
 linked_principles:
   - C1  # learning vinculado a diagnostic real
   - C5  # soul/memory em Tier 1/2 de dados, não em código
@@ -14,7 +14,7 @@ linked_principles:
   - C7  # portabilidade: fatos em markdown agnóstico
   - C8  # anti-hardcode: sem lógica por tenant no código
 use_when:
-  - Ao bootstrapar um novo projeto consumer no Forge
+  - Ao bootstrapar um novo projeto consumer no Foundry
   - Ao ativar aprendizado em projeto existente (retroativo)
   - Ao entender como o loop de aprendizado funciona end-to-end
   - Ao depurar por que um agente não está "lembrando" de sessões anteriores
@@ -22,26 +22,26 @@ use_when:
 
 # Self-Harness Pattern
 
-O **self-harness** é o mecanismo pelo qual agentes construídos com o Acme Forge aprendem com os dados do projeto do cliente e melhoram de sessão para sessão.
+O **self-harness** é o mecanismo pelo qual agentes construídos com o Novais Digital Foundry aprendem com os dados do projeto do cliente e melhoram de sessão para sessão.
 
 ## Os 5 pilares (herança do Hermes Agent)
 
-| Pilar | No Forge | Arquivo |
+| Pilar | No Foundry | Arquivo |
 |---|---|---|
 | **SOUL** | Identidade durável do agente para o projeto | `docs/clients/{id}/agent-soul.md` |
 | **MEMORY** | Fatos aprendidos do cliente | `docs/clients/{id}/agent-memory.md` |
 | **SKILLS** | Procedimentos específicos do projeto | `docs/clients/{id}/learned-skills/*.md` |
 | **LOOP** | Snapshot → Hermes/Codex → PR → próxima sessão | `hooks/stop/learning-snapshot.sh` + `templates/hermes/learning-loop.md` |
-| **CRONS** | (via Hermes Railway) — `/acme:audit-monthly` agendado | configurado no Hermes dashboard |
+| **CRONS** | (via Hermes Railway) — `/novais-digital:audit-monthly` agendado | configurado no Hermes dashboard |
 
 ## Arquitetura do loop completo
 
 ```
 SessionStart hook
-  └─ forge-context.sh carrega agent-soul.md + agent-memory.md
+  └─ foundry-context.sh carrega agent-soul.md + agent-memory.md
        ↓ contexto injetado no sistema
   
-Execução da sessão (/acme:implement, etc.)
+Execução da sessão (/novais-digital:implement, etc.)
   └─ Agente tem acesso aos fatos aprendidos anteriormente
   
 Stop hook
@@ -62,7 +62,7 @@ PR merged
        ↓ próxima sessão
        
 SessionStart hook (loop fecha)
-  └─ forge-context.sh carrega o agent-memory.md ATUALIZADO
+  └─ foundry-context.sh carrega o agent-memory.md ATUALIZADO
 ```
 
 ## Como bootstrapar o self-harness em um novo projeto
@@ -104,12 +104,12 @@ Bootstrap recomendado — fatos para extrair do `diagnostic.md`:
 
 ### Passo 3: Verificar que hooks estão registrados
 
-O `forge-context.sh` já está configurado para carregar soul + memory automaticamente se os arquivos existirem. Verificar em `.claude/settings.json`:
+O `foundry-context.sh` já está configurado para carregar soul + memory automaticamente se os arquivos existirem. Verificar em `.claude/settings.json`:
 
 ```json
 {
   "hooks": {
-    "SessionStart": [{"hooks": [{"type": "command", "command": "bash hooks/session-start/forge-context.sh"}]}],
+    "SessionStart": [{"hooks": [{"type": "command", "command": "bash hooks/session-start/foundry-context.sh"}]}],
     "Stop": [{"hooks": [{"type": "command", "command": "bash hooks/stop/learning-snapshot.sh"}]}]
   }
 }
@@ -182,14 +182,14 @@ Sem esta etapa, o loop funciona de forma **semi-automática**: snapshots são ge
 # 1. Verificar se agent-soul.md existe
 ls docs/clients/*/agent-soul.md
 
-# 2. Verificar se forge-context.sh está no SessionStart hook
+# 2. Verificar se foundry-context.sh está no SessionStart hook
 grep -A5 "SessionStart" .claude/settings.json
 
 # 3. Verificar se learning snapshots estão sendo gerados
 ls docs/learnings/$(date +%Y-%m)/
 
-# 4. Verificar se forge-context.sh encontra os arquivos
-bash hooks/session-start/forge-context.sh | jq '.message' | grep -i "soul\|memory"
+# 4. Verificar se foundry-context.sh encontra os arquivos
+bash hooks/session-start/foundry-context.sh | jq '.message' | grep -i "soul\|memory"
 ```
 
 **Problema**: Snapshots gerados mas fatos não persistidos
@@ -202,5 +202,5 @@ grep -A5 "Stop" .claude/settings.json
 ls -t docs/learnings/*/*.md | head -1 | xargs cat
 
 # 3. Se Hermes não está ativo, rodar learning-curator manualmente:
-# /acme:learn {client_id}
+# /novais-digital:learn {client_id}
 ```

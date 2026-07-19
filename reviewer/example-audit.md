@@ -4,14 +4,14 @@ audit_period: "2026-05"
 reviewer: "deepagent-gpt-5.5"
 constitution_version: "0.2.0"
 manifest_version: "0.2.0"
-project: "acme-governanca-ia (exemplo fictício para gabarito)"
+project: "novais-digital-governanca-ia (exemplo fictício para gabarito)"
 artifacts_audited: 17
 outcomes_sampled: 47
 overall_status: "warn"
 version: "0.1.0"
 ---
 
-# Auditoria Mensal — acme-governanca-ia — 2026-05 (EXEMPLO/GABARITO)
+# Auditoria Mensal — novais-digital-governanca-ia — 2026-05 (EXEMPLO/GABARITO)
 
 > ⚠️ Este é um **exemplo sintético** para servir de gabarito de output. Dados ilustrativos, não reais.
 > Mostra como o reviewer deve estruturar o relatório seguindo `templates/monthly-audit.template.md` + `reviewer/output-schema.json`.
@@ -205,7 +205,7 @@ Amostra de 47 outcomes (8.5% do mês), distribuídos por categoria:
 | `lead-qualificado-B` | 18 | 89% | ✅ acima do threshold 85% |
 | `inconclusivo` | 8 | 75% | ⚠️ abaixo do threshold 80% — investigar |
 | `não-comercial` | 6 | 100% | ✅ |
-| `analise-financeira-mensal` (Acme Fin) | 3 | 67% | ⚠️ amostra pequena, mas baixo |
+| `analise-financeira-mensal` (Novais Digital Fin) | 3 | 67% | ⚠️ amostra pequena, mas baixo |
 
 Detalhamento de discordâncias significativas:
 - Outcome `out_a8f3b2`: agente classificou como `lead-qualificado-B`, gabarito humano `inconclusivo`. Razão: BANT incompleto em "Authority"
@@ -255,7 +255,7 @@ Detalhamento de discordâncias significativas:
 | P1 | Investigar mudança de prompt em `triagem-comercial-whatsapp` que subiu custo 18% (issue AUD-001) | Recupera margem; evita razão > 25% |
 | P2 | Adicionar 5+ casos de eval para categoria `inconclusivo` no SKU de triagem | Aumenta confiança de promoção e cobertura de auditoria |
 | P3 | Refatorar imports do `Anthropic.Tool` para `src/llm/types.ts` (issue AUD-003) | Reduz vazamento de SDK em SKUs |
-| P3 | Investigar possível alucinação em outcome `out_fin_001` do Acme Fin | Identifica padrão se houver |
+| P3 | Investigar possível alucinação em outcome `out_fin_001` do Novais Digital Fin | Identifica padrão se houver |
 
 ---
 

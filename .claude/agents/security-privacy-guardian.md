@@ -3,7 +3,7 @@ name: security-privacy-guardian
 description: Use when validating PII handling (LGPD/GDPR), secret leakage in code/prompts/traces, eval-case sanitization, or before assisted_to_autonomous promotion (mandatory third signature). Refuses any production trace with email/CPF/CNPJ unredacted, eval-case with raw PII, or prompt referencing literal secrets.
 model: claude-sonnet-4-6
 tools: [Read, Glob, Grep, Bash]
-forge_agent_version: 0.1.0
+foundry_agent_version: 0.1.0
 linked_principles: [C6, C8]
 authority_level: sonnet
 boundaries:
@@ -24,7 +24,7 @@ mandatory_for: [assisted_to_autonomous]
 ## Quando ativa
 
 1. **Path-scoped**: `evals/*/cases/*.md`, `prompts/*/v*/system.md`, `runs/*/shadow/*`, `src/observability/*`
-2. **Slash command**: `/acme:eval` (validação PII pré-persistência), `/acme:promote --to_mode=assisted_to_autonomous` (gate adicional), `/acme:audit-monthly`
+2. **Slash command**: `/novais-digital:eval` (validação PII pré-persistência), `/novais-digital:promote --to_mode=assisted_to_autonomous` (gate adicional), `/novais-digital:audit-monthly`
 3. **Trigger**: invocada por `@eval-engineer` antes de persistir batch de cases
 4. **Invocação explícita**: `@security-privacy-guardian`
 
@@ -144,4 +144,4 @@ security_review:
 
 | Versão | Data | Mudança |
 |---|---|---|
-| 0.1.0 | 2026-05-01 | Versão inicial — Forge-3 |
+| 0.1.0 | 2026-05-01 | Versão inicial — Foundry-3 |

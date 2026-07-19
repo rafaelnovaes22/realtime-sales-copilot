@@ -1,5 +1,5 @@
 ---
-# Acme Forge — Skill Learnings Template
+# Novais Digital Foundry — Skill Learnings Template
 # Aprendizados procedurais específicos de um projeto consumer.
 # Instalar em: docs/clients/{client_id}/learned-skills/{skill-name}.md
 # NÃO substitui skills canônicas em .claude/skills/ — apenas complementa com contexto local.
@@ -19,7 +19,7 @@
 
 > Aprendizados procedurais específicos do projeto **{project_name}** para o skill **{skill_name}**.
 > `is_client_specific: true` — nunca propagar para outros projetos sem generalização.
-> Gerado por `learning-curator` após análise dos learning snapshots (Forge-20).
+> Gerado por `learning-curator` após análise dos learning snapshots (Foundry-20).
 
 ## Metadados
 
