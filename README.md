@@ -139,4 +139,4 @@ realtime-sales-copilot/
 
 Copyright (c) 2026 Rafael Novaes.
 
-Licenciado sob [PolyForm Noncommercial License 1.0.0](./LICENSE.md) — leitura, estudo e uso não comercial permitidos; uso comercial requer autorização expressa do autor.
+Licenciado sob [MIT License](./LICENSE) — © 2026 Rafael Novaes.
