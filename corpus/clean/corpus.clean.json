@@ -262,17 +262,17 @@
     "sanitized": true,
     "sanitizationLog": [
       {
-        "from": "Opening Interview",
+        "from": "Abertura Acme",
         "to": "abertura de reunião",
         "count": 1
       },
       {
-        "from": "Fact and Feeling Finding",
+        "from": "Diagnóstico Profundo Acme",
         "to": "investigação aprofundada",
         "count": 1
       },
       {
-        "from": "Fact Finding",
+        "from": "Mapa de Fatos Acme",
         "to": "investigação de fatos",
         "count": 1
       }
@@ -2015,7 +2015,7 @@
     "sanitized": true,
     "sanitizationLog": [
       {
-        "from": "Opening Interview",
+        "from": "Abertura Acme",
         "to": "abertura de reunião",
         "count": 1
       }
@@ -2046,7 +2046,7 @@
     "sanitized": true,
     "sanitizationLog": [
       {
-        "from": "Opening Interview",
+        "from": "Abertura Acme",
         "to": "abertura de reunião",
         "count": 1
       }
@@ -2076,12 +2076,12 @@
     "sanitized": true,
     "sanitizationLog": [
       {
-        "from": "Opening Interview",
+        "from": "Abertura Acme",
         "to": "abertura de reunião",
         "count": 1
       },
       {
-        "from": "Opening Interview",
+        "from": "Abertura Acme",
         "to": "abertura de reunião",
         "count": 1
       }
@@ -2112,7 +2112,7 @@
     "sanitized": true,
     "sanitizationLog": [
       {
-        "from": "Opening Interview",
+        "from": "Abertura Acme",
         "to": "abertura de reunião",
         "count": 1
       }
@@ -2142,7 +2142,7 @@
     "sanitized": true,
     "sanitizationLog": [
       {
-        "from": "Opening Interview",
+        "from": "Abertura Acme",
         "to": "abertura de reunião",
         "count": 1
       }
@@ -2173,7 +2173,7 @@
     "sanitized": true,
     "sanitizationLog": [
       {
-        "from": "Opening Interview",
+        "from": "Abertura Acme",
         "to": "abertura de reunião",
         "count": 1
       }
@@ -2203,7 +2203,7 @@
     "sanitized": true,
     "sanitizationLog": [
       {
-        "from": "Opening Interview",
+        "from": "Abertura Acme",
         "to": "abertura de reunião",
         "count": 1
       }
@@ -2232,7 +2232,7 @@
     "sanitized": true,
     "sanitizationLog": [
       {
-        "from": "Opening Interview",
+        "from": "Abertura Acme",
         "to": "abertura de reunião",
         "count": 1
       }
@@ -5860,7 +5860,7 @@
     "sanitized": true,
     "sanitizationLog": [
       {
-        "from": "Prudential",
+        "from": "AcmeSeguros",
         "to": "[Seguradora]",
         "count": 1
       }
@@ -5891,7 +5891,7 @@
     "sanitized": true,
     "sanitizationLog": [
       {
-        "from": "Prudential",
+        "from": "AcmeSeguros",
         "to": "[Seguradora]",
         "count": 1
       }
@@ -5923,7 +5923,7 @@
     "sanitized": true,
     "sanitizationLog": [
       {
-        "from": "Prudential",
+        "from": "AcmeSeguros",
         "to": "[Seguradora]",
         "count": 1
       }
@@ -5954,7 +5954,7 @@
     "sanitized": true,
     "sanitizationLog": [
       {
-        "from": "Prudential",
+        "from": "AcmeSeguros",
         "to": "[Seguradora]",
         "count": 1
       }
@@ -5989,7 +5989,7 @@
     "sanitized": true,
     "sanitizationLog": [
       {
-        "from": "Prudential",
+        "from": "AcmeSeguros",
         "to": "[Seguradora]",
         "count": 1
       }
@@ -6020,7 +6020,7 @@
     "sanitized": true,
     "sanitizationLog": [
       {
-        "from": "Prudential",
+        "from": "AcmeSeguros",
         "to": "[Seguradora]",
         "count": 1
       }
@@ -6050,7 +6050,7 @@
     "sanitized": true,
     "sanitizationLog": [
       {
-        "from": "Prudential",
+        "from": "AcmeSeguros",
         "to": "[Seguradora]",
         "count": 1
       }
@@ -6080,7 +6080,7 @@
     "sanitized": true,
     "sanitizationLog": [
       {
-        "from": "Prudential",
+        "from": "AcmeSeguros",
         "to": "[Seguradora]",
         "count": 1
       }
@@ -6884,7 +6884,7 @@
     "sanitized": true,
     "sanitizationLog": [
       {
-        "from": "Life Planner",
+        "from": "Acme Advisor",
         "to": "consultor comercial",
         "count": 1
       }
@@ -9405,7 +9405,7 @@
     "sanitized": true,
     "sanitizationLog": [
       {
-        "from": "placed",
+        "from": "implantação Acme",
         "to": "implantação",
         "count": 1
       }
@@ -9435,12 +9435,12 @@
     "sanitized": true,
     "sanitizationLog": [
       {
-        "from": "placed policies",
+        "from": "apólices Acme implantadas",
         "to": "apólices implantadas",
         "count": 1
       },
       {
-        "from": "placed",
+        "from": "implantação Acme",
         "to": "implantação",
         "count": 2
       }
@@ -9588,7 +9588,7 @@
     "sanitized": true,
     "sanitizationLog": [
       {
-        "from": "placed policies",
+        "from": "apólices Acme implantadas",
         "to": "apólices implantadas",
         "count": 1
       }
@@ -9641,7 +9641,7 @@
     "sanitized": true,
     "sanitizationLog": [
       {
-        "from": "placed",
+        "from": "implantação Acme",
         "to": "implantação",
         "count": 2
       }
@@ -9726,7 +9726,7 @@
     "sanitized": true,
     "sanitizationLog": [
       {
-        "from": "placed",
+        "from": "implantação Acme",
         "to": "implantação",
         "count": 1
       }
@@ -9783,7 +9783,7 @@
     "sanitized": true,
     "sanitizationLog": [
       {
-        "from": "placed",
+        "from": "implantação Acme",
         "to": "implantação",
         "count": 1
       }
@@ -10031,7 +10031,7 @@
     "sanitized": true,
     "sanitizationLog": [
       {
-        "from": "placed",
+        "from": "implantação Acme",
         "to": "implantação",
         "count": 1
       }
@@ -10060,7 +10060,7 @@
     "sanitized": true,
     "sanitizationLog": [
       {
-        "from": "placed policies",
+        "from": "apólices Acme implantadas",
         "to": "apólices implantadas",
         "count": 1
       }
@@ -10693,7 +10693,7 @@
     "sanitized": true,
     "sanitizationLog": [
       {
-        "from": "Opening Interview",
+        "from": "Abertura Acme",
         "to": "abertura de reunião",
         "count": 1
       }
@@ -10724,7 +10724,7 @@
     "sanitized": true,
     "sanitizationLog": [
       {
-        "from": "Opening Interview",
+        "from": "Abertura Acme",
         "to": "abertura de reunião",
         "count": 1
       }
@@ -10754,7 +10754,7 @@
     "sanitized": true,
     "sanitizationLog": [
       {
-        "from": "Opening Interview",
+        "from": "Abertura Acme",
         "to": "abertura de reunião",
         "count": 1
       }
@@ -10784,7 +10784,7 @@
     "sanitized": true,
     "sanitizationLog": [
       {
-        "from": "Opening Interview",
+        "from": "Abertura Acme",
         "to": "abertura de reunião",
         "count": 1
       }
@@ -10814,7 +10814,7 @@
     "sanitized": true,
     "sanitizationLog": [
       {
-        "from": "Opening Interview",
+        "from": "Abertura Acme",
         "to": "abertura de reunião",
         "count": 1
       }
@@ -10844,7 +10844,7 @@
     "sanitized": true,
     "sanitizationLog": [
       {
-        "from": "Opening Interview",
+        "from": "Abertura Acme",
         "to": "abertura de reunião",
         "count": 1
       }
@@ -10875,7 +10875,7 @@
     "sanitized": true,
     "sanitizationLog": [
       {
-        "from": "Opening Interview",
+        "from": "Abertura Acme",
         "to": "abertura de reunião",
         "count": 1
       }

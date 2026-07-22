@@ -7,8 +7,8 @@ Aplica-se a todos os agentes deste projeto.
 
 ### PROIBIDO em toda sugestão emitida ao closer
 
-- Citar nome de seguradora, corretora ou marca proprietária de terceiros
-- Usar os termos: Life Planner, TS1, MFA, W1 Academy, 3W+, MFB, Clube 3W+
+- Citar nome de empresa, produto ou marca proprietária de terceiros
+- Usar termos proprietários listados no `brand-glossary.json` (ex. fictícios: Acme Advisor, FQ1, IND1, Acme Academy)
 - Referenciar a fonte do material ("conforme a Aula 01", "no Cenário 32", etc.)
 - Prometer rentabilidade, retorno financeiro ou desempenho de produto
 - Comparar produtos específicos de concorrentes
@@ -30,16 +30,18 @@ Aplica-se a todos os agentes deste projeto.
 - Consentimento registrado em banco com timestamp
 - Opt-out disponível durante toda a chamada
 
-## Terminologia canônica (substitutos de marca)
+## Terminologia canônica (substitutos de marca — exemplos fictícios)
 
-| Evitar | Usar |
+> Substitua pelos termos proprietários do seu corpus real; a lista canônica vive em `corpus/glossary/brand-glossary.json`.
+
+| Evitar (exemplo) | Usar |
 |---|---|
-| Life Planner | consultor de proteção financeira |
-| Corretora Franqueada | canal de distribuição consultivo |
-| TS1 | formulário de qualificação técnica |
-| MFA | processo de indicação formalizada |
-| W1 Academy | academia de treinamento |
-| 3W+ / MFB | programa de reconhecimento |
+| Acme Advisor | consultor comercial |
+| Corretora Parceira Acme | canal de distribuição consultivo |
+| FQ1 | formulário de qualificação técnica |
+| IND1 | processo de indicação formalizada |
+| Acme Academy | academia de treinamento |
+| Clube Acme Elite | programa de reconhecimento |
 
 ## Camadas de proteção contra leakage de marca
 

@@ -2,7 +2,7 @@
 #
 # COMO USAR:
 #   1. Copie para .github/workflows/foundry-validate.yml no projeto consumidor
-#   2. Substitua {PROJECT_NAME} pelo slug do projeto (ex: school-platform-edix)
+#   2. Substitua {PROJECT_NAME} pelo slug do projeto (ex: school-platform-demo)
 #   3. Substitua {FOUNDRY_ROOT} pelo caminho do Foundry relativo ao repo (ex: foundry/ ou .claude/foundry/)
 #   4. Configure secrets: FOUNDRY_BYPASS_TOKEN (opcional, para bypass auditado)
 #

@@ -1,14 +1,15 @@
 /**
- * 18 gatilhos — cobre dois contextos de venda:
- *   • Educação executiva (ClientC): programas, mentoria, imersão
- *   • B2B tech/IA (Novais Digital): co-pilot, Aicfo, SchoolPlatform, Social
+ * 18 gatilhos de objeção para venda consultiva B2B (produto de referência:
+ * SaaS de gestão comercial). Dois grupos:
+ *   • Universais: valem para qualquer venda consultiva
+ *   • B2B SaaS/tech: preço, timing, concorrente, autoridade, garantia, adoção
  *
  * Cobertura ampla > precisão cirúrgica — falsos positivos são filtrados
  * pelo retriever (que só puxa chunks associados ao gatilho).
  */
 
 export const GATILHOS = [
-  // Universais (servem ambos os contextos)
+  // Universais (qualquer venda consultiva)
   "vou_pensar",
   "esta_caro",
   "vou_falar_com_esposa",
@@ -18,12 +19,12 @@ export const GATILHOS = [
   "me_manda_whatsapp",
   "vou_pesquisar_mais",
   "nao_funciona_pra_mim",
-  // Educação executiva (ClientC)
-  "ja_fiz_curso",
-  "proxima_turma",
-  "online_nao_funciona",
   "prefiro_investir",
-  // B2B tech/IA (Novais Digital)
+  // B2B SaaS (concorrente, orçamento, garantia)
+  "ja_usamos_outra_ferramenta",
+  "sem_orcamento_agora",
+  "quero_garantia",
+  // B2B tech/IA (adoção e implementação)
   "ia_nao_funciona",
   "precisa_do_ti",
   "dados_sensiveis",
@@ -63,21 +64,21 @@ export const GATILHO_PATTERNS: Record<Gatilho, RegExp> = {
   nao_funciona_pra_mim:
     /\b(meu neg[óo]cio [ée] diferente|isso n[ãa]o (se aplica|funciona) (pra|para) (mim|n[óo]s)|meu caso [ée] (diferente|espec[íi]fico|outro)|n[ãa]o [ée] (pra|para) (mim|n[óo]s)|minha (realidade|situa[çc][ãa]o|opera[çc][ãa]o) [ée] diferente|nossa empresa [ée] muito espec[íi]fica)\b/i,
 
-  // ── Educação executiva (ClientC) ──────────────────────────────────────────────
-
-  ja_fiz_curso:
-    /\b(j[áa] fiz (um |uma )?(curso|treinamento|mentoria|capacita[çc][ãa]o|imers[ãa]o)|j[áa] estudei (isso|sobre isso|esse assunto)|j[áa] tenho (um |uma )?(curso|mentoria|coach)|j[áa] passei por (isso|treinamento))\b/i,
-
-  proxima_turma:
-    /\b(na pr[óo]xima turma|pr[óo]xima (edi[çc][ãa]o|vers[ãa]o|turma)|quando abrir (de novo|outra turma)|me chama quando|avisa quando tiver|entro (na pr[óo]xima|depois))\b/i,
-
-  online_nao_funciona:
-    /\b(curso online (n[ãa]o funciona|eu n[ãa]o consigo|n[ãa]o aprendo)|n[ãa]o consigo (aprender|focar|estudar) online|presencial (funciona mais|[ée] melhor)|online n[ãa]o [ée] pra mim|prefiro presencial)\b/i,
-
   prefiro_investir:
     /\b(prefiro investir|melhor investir|invisto (em outra coisa|por conta)|deixar (o dinheiro )?(rendendo|investido)|aplico (em )?(cdb|fundo|tesouro)|esse dinheiro (rende|renderia) mais)\b/i,
 
-  // ── B2B tech/IA (Novais Digital) ─────────────────────────────────────────────────
+  // ── B2B SaaS (concorrente, orçamento, garantia) ───────────────────────────
+
+  ja_usamos_outra_ferramenta:
+    /\b(j[áa] (usamos|temos|trabalhamos com|uso|tenho) (um |uma |outro |outra )?(crm|sistema|ferramenta|plataforma|planilha|solu[çc][ãa]o)|(fazemos|faz|fa[çc]o|controlamos|resolvemos|resolve) (tudo )?(no excel|em planilha)|estamos (bem )?atendidos (com|pela))\b/i,
+
+  sem_orcamento_agora:
+    /\b(n[ãa]o (temos|tenho) (or[çc]amento|verba|budget)|sem (or[çc]amento|verba|budget)|or[çc]amento (fechado|congelado|estourado|s[óo] (no )?ano que vem)|verba (acabou|congelada|cortada)|s[óo] no pr[óo]ximo (ano|trimestre|semestre)|ano que vem a gente (v[êe]|conversa|fala))\b/i,
+
+  quero_garantia:
+    /\b(tem garantia|qual (a |[ée] a )?garantia|e se n[ãa]o (funcionar|der certo|entregar)|garante (o )?(resultado|retorno)|quem (me )?garante|posso cancelar (se|quando|a qualquer)|e se (eu|a gente) (n[ãa]o gostar|quiser sair))\b/i,
+
+  // ── B2B tech/IA (adoção e implementação) ──────────────────────────────────
 
   ia_nao_funciona:
     /\b(j[áa] tentamos? (ia|intelig[êe]ncia artificial|automa[çc][ãa]o)|ia (n[ãa]o funciona|[ée] muito promessa|n[ãa]o entregou|decepcionou)|n[ãa]o acredito (em ia|nessa tecnologia)|intelig[êe]ncia artificial (n[ãa]o|ainda n[ãa]o) (funciona|resolve)|chatgpt n[ãa]o (serviu|funcionou|resolveu))\b/i,

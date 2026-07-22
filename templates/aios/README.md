@@ -18,7 +18,7 @@ Conjunto de **boilerplates físicos** dos 6 agentes especializados que compõem 
 | `test_agent` | ❌ compartilhado | **TDD-first (v0.9.0+)** — modo `red` gera testes ANTES do build; modo `verify` revisa cobertura após build. Materializa arquivos físicos em `tests/{module}/{unit,integration,e2e}/` |
 | `review_agent` | ❌ compartilhado | Revisa output contra spec + checklist Constitution + **gate TDD** (RED→GREEN + coverage por tier) |
 
-> **Não é cópia do SchoolPlatform/EDIX**. Os SYSTEM_PROMPTs aqui são **neutros e parametrizados**. O `schema_agent`, em particular, **não cravam Prisma/Postgres** — ele lê o `aios/config.yaml` do projeto consumidor para descobrir a stack desejada e adapta a proposta.
+> **Não é cópia do SchoolPlatform**. Os SYSTEM_PROMPTs aqui são **neutros e parametrizados**. O `schema_agent`, em particular, **não cravam Prisma/Postgres** — ele lê o `aios/config.yaml` do projeto consumidor para descobrir a stack desejada e adapta a proposta.
 
 ---
 
@@ -152,12 +152,12 @@ O `_MockTrace` é fallback aceitável **apenas em desenvolvimento local** (sem `
 
 ---
 
-## Diferenças vs. implementação de referência (SchoolPlatform/EDIX)
+## Diferenças vs. implementação de referência (SchoolPlatform)
 
 | Aspecto | SchoolPlatform | Templates Foundry |
 |---|---|---|
-| SYSTEM_PROMPT | "Você é o X do projeto EDIX" | "Você é o X do projeto **{PROJECT_NAME}**" |
-| Caminhos de contexto | `funcionalidades-edix.md` cravado | `docs/specs/{module}.md` (única fonte) |
+| SYSTEM_PROMPT | "Você é o X do projeto AcmeEdu" | "Você é o X do projeto **{PROJECT_NAME}**" |
+| Caminhos de contexto | `funcionalidades-do-projeto.md` cravado | `docs/specs/{module}.md` (única fonte) |
 | Stack | Next.js 15 + Prisma + Postgres + Vitest cravados | Lidos de `aios/config.yaml` → `stack.*` |
 | Lista de módulos | Hardcoded em `orchestrator.py` (15 módulos cravados) | Lida de `aios/config.yaml` → `modules:` |
 | Telemetria | Sem Langfuse | `langfuse.trace() → generation.end()` em **todos** os agentes (C6) |

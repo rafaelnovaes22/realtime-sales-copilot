@@ -30,7 +30,7 @@ Se uma instrução conflitar com a Constitution, **levante o conflito antes de e
 
 [`examples/novais-digital-comercial/constitution-extension.md`](examples/novais-digital-comercial/constitution-extension.md) define guardrails específicos deste projeto:
 
-- **Proibido em toda sugestão**: nome de seguradora, marca, programa proprietário (Life Planner, TS1, MFA, W1, 3W+, MFB). Promessa de rentabilidade. Citação de fonte ("conforme aula X").
+- **Proibido em toda sugestão**: nome de empresa, marca ou programa proprietário (lista canônica em `corpus/glossary/brand-glossary.json`; exemplos fictícios: Acme Advisor, FQ1, IND1). Promessa de rentabilidade. Citação de fonte ("conforme aula X").
 - **Obrigatório em toda sugestão**: voz consultiva, cards 1-2 linhas, latência ≤3s, ≤3 cards por gatilho.
 - **Obrigatório antes da chamada**: consentimento LGPD registrado, opt-out durante toda a chamada.
 
@@ -81,7 +81,7 @@ bash scripts/foundry-doctor.sh --consumer
 ```
 apps/
 └── api/src/
-    ├── gatilhos.ts          # 10 regex de detecção
+    ├── gatilhos.ts          # 18 regex de detecção de objeção
     ├── retriever.ts         # scoring + top-N do corpus
     ├── generator.ts         # Sonnet 4.6 com chunks
     ├── guardian.ts          # regex final + limites de tamanho

@@ -13,21 +13,21 @@ const TIPO_BY_GATILHO: Record<Gatilho, ObjTipo> = {
   // preço / valor
   esta_caro: "preco",
   prefiro_investir: "preco",
+  sem_orcamento_agora: "preco",
   // autoridade / decisor terceiro
   preciso_do_socio: "autoridade",
   precisa_do_ti: "autoridade",
   vou_falar_com_esposa: "autoridade",
-  // ceticismo / "não funciona"
+  // ceticismo / "não funciona" / risco
   ia_nao_funciona: "ceticismo_tech",
   nao_funciona_pra_mim: "ceticismo_tech",
-  online_nao_funciona: "ceticismo_tech",
+  quero_garantia: "ceticismo_tech",
   // timing / adiamento
   vou_pensar: "timing",
   nao_tenho_tempo: "timing",
-  proxima_turma: "timing",
   quanto_tempo_implementar: "timing",
   // status quo / já resolvido / risco de mudar
-  ja_fiz_curso: "status_quo",
+  ja_usamos_outra_ferramenta: "status_quo",
   dados_sensiveis: "status_quo",
   equipe_nao_vai_usar: "status_quo",
   // brush-off / dispensa

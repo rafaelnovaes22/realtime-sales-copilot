@@ -82,8 +82,8 @@ Para cada trecho, retorne três classificações:
    - pos_call: follow-up, revisão, recomendações pós-venda
    - meta: regra de processo, gestão, KPI (não aplicável a fala ao vivo)
 
-2. **gatilho** — objeções/gatilhos do cliente que o trecho ajuda a tratar. O co-pilot
-   atende dois contextos de venda; escolha os gatilhos aplicáveis (pode ser de ambos):
+2. **gatilho** — objeções/gatilhos do cliente que o trecho ajuda a tratar.
+   Escolha os gatilhos aplicáveis:
 
    Universais (servem qualquer venda consultiva):
    - vou_pensar: cliente adia a decisão ("vou pensar", "preciso pensar")
@@ -95,14 +95,14 @@ Para cada trecho, retorne três classificações:
    - me_manda_whatsapp: pede contato por mensagem em vez de decidir
    - vou_pesquisar_mais: quer comparar/pesquisar outras opções
    - nao_funciona_pra_mim: "meu caso/negócio é diferente/específico"
-
-   Educação executiva (mentoria, imersão, bootcamp):
-   - ja_fiz_curso: já participou de curso/treinamento parecido
-   - proxima_turma: quer entrar na próxima turma/edição
-   - online_nao_funciona: rejeita formato online, prefere presencial
    - prefiro_investir: prefere alocar o dinheiro em investimento financeiro
 
-   B2B tech/IA (co-pilot, gestão com IA, plataforma):
+   B2B SaaS (concorrente, orçamento, garantia):
+   - ja_usamos_outra_ferramenta: já tem CRM/sistema/planilha e está "atendido"
+   - sem_orcamento_agora: sem verba/orçamento neste ciclo
+   - quero_garantia: pede garantia de resultado, teme não funcionar
+
+   B2B tech/IA (adoção e implementação):
    - ia_nao_funciona: ceticismo com IA ("já tentamos", "não entregou")
    - precisa_do_ti: precisa validar/aprovar com TI/CTO
    - dados_sensiveis: preocupação com privacidade/compliance/LGPD

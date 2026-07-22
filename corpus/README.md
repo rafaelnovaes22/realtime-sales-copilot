@@ -30,4 +30,4 @@ Os MDs fonte derivam de material proprietário de capacitação comercial. Mesmo
 
 O arquivo `50_treinamentos_completos_adicionais_novos_assuntos.md` foi reduzido a `glossary/taxonomia-50-temas.json` por ser template repetitivo (decisão equivalente a D002).
 
-Os arquivos `resumo_executivo_*`, `dossie_*` e `prudential_scribd_*` são metadocumentos de pesquisa, **não entram no corpus**.
+Os arquivos `resumo_executivo_*` e `dossie_*` são metadocumentos de pesquisa, **não entram no corpus**.

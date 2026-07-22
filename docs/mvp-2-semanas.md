@@ -70,7 +70,7 @@ Qua-Qui   Testes ao vivo
 
 Sex       Demo
           • Página estável, link compartilhável
-          • Pronto para demonstrar para a CEO e closers
+          • Pronto para demonstrar para o decisor e closers
 ```
 
 ## Gate de validação (fim da semana 2)

@@ -340,7 +340,7 @@ sla_signature_hash: "sha256:b3f1a0e2c9d84b17"
 
 ## Checklist de pronto (gate G1 — Spec & Economics)
 
-- [x] §1 cláusula contratual completa (C2) — pendente assinatura CEO + LGPD
+- [x] §1 cláusula contratual completa (C2) — pendente assinatura do decisor + LGPD
 - [x] §2 categorias e thresholds definidos (10 categorias)
 - [x] §3 canal e adapter identificados (Deepgram via POC; migração C7 antes de SHADOW)
 - [x] §4 pipeline implementado em [`apps/api/src/`](../../apps/api/src/)

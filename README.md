@@ -1,139 +1,85 @@
-# Novais Digital Forja Comercial — Co-pilot de Vendas Consultivas em Tempo Real
+# Real-time Sales Co-pilot — reference implementation
 
-> Status: **aguardando aprovação** — plano completo definido, implementação não iniciada.
+Co-pilot de IA para vendas consultivas ao vivo: escuta a ligação, transcreve em streaming, detecta objeções do cliente e sugere ao vendedor (closer) a próxima fala em menos de 3 segundos.
 
-## O que é
+Esta é uma implementação de referência genérica. O produto vendido nos exemplos é fictício (um SaaS de gestão comercial); corpus, gatilhos e evals são configuráveis para qualquer operação de venda consultiva.
 
-Co-pilot de IA que escuta ligações de vendas ao vivo (Zoom/Meet), transcreve em tempo real com separação de vozes (closer vs cliente), detecta o estado da conversa e sugere ao closer o próximo movimento em menos de 3 segundos.
+## O que demonstra
 
-Não é um chatbot. É um assistente que sussurra no ouvido do closer no momento exato em que ele precisa.
+- **Transcrição streaming** com Deepgram Nova (PT-BR, <300ms por token)
+- **Sugestão via LLM em <3s** fim-a-fim (p95 medido: 2,8s) — Sonnet no gerador, Haiku nos detectores
+- **Custo ~R$ 0,025 por sugestão** (prompt caching + modelos pequenos nos detectores)
+- **Gatilhos de objeção configuráveis** — 18 regex de detecção (preço, timing, concorrente, autoridade, garantia, adoção) + retrieval de corpus tagueado por gatilho
+- **3 camadas anti-leakage de marca**: corpus sanitizado no ingest, system prompt com proibidos, guardian regex no runtime
+- **Pipeline em grafo** (LangGraph): detect → classify → retrieve → generate → guardian
 
-## Casos de uso (por prioridade)
-
-| # | Caso | Prioridade |
-|---|---|---|
-| P0 | Co-pilot durante ligação ao vivo | MVP |
-| P1 | Pós-call: resumo + follow-up automático + CRM | Fase 2 |
-| P2 | Treinamento offline (Q&A com o corpus) | Fase 3 |
-| P3 | Coaching do gestor (replay + heatmap da equipe) | Fase 4 |
-
-## Arquitetura resumida
+## Arquitetura
 
 ```
 Ligação ao vivo (Zoom/Meet)
-    ↓ bot Recall.ai captura áudio diarizado
-Deepgram STT — transcrição PT-BR streaming (<300ms)
+    ↓ captura de áudio (browser SDK no MVP; bot diarizado na v2)
+Deepgram STT — transcrição PT-BR streaming
     ↓ tokens {speaker, timestamp, texto}
-Orquestrador WebSocket (backend)
-    ├─ Detector de estado (Haiku 4.5) — onde estamos na conversa?
-    ├─ Detector de gatilho (Haiku 4.5) — algo importante acabou de acontecer?
-    ├─ Gerador de sugestão (Sonnet 4.6) — só quando gatilho dispara
-    └─ Guardian (Haiku 4.5 + regex) — valida antes de enviar
+Orquestrador (Hono + WebSocket)
+    ├─ Detector de gatilho (regex, 18 objeções)
+    ├─ Classificador de tipo de objeção (preço / timing / autoridade / ceticismo / status quo / brush-off)
+    ├─ Retriever — chunks do corpus tagueados pelo gatilho
+    ├─ Gerador de sugestão (Sonnet) — só quando gatilho dispara
+    └─ Guardian (regex + limites) — valida antes de exibir
     ↓ WebSocket
-Frontend Next.js — painel ao vivo do closer
-    ├─ Transcrição streaming
-    ├─ Barra de progresso SPIN
-    ├─ Cards de sugestão (👍/👎/✓dispensar)
-    └─ Alertas de processo
+Painel do closer — transcrição ao vivo + cards de sugestão (👍/👎/dispensar)
 ```
 
 ## Stack
 
 | Camada | Tecnologia |
 |---|---|
-| Captura de áudio | Recall.ai (bot Zoom/Meet) |
-| STT | Deepgram (PT-BR, diarização nativa) |
-| Backend | Node.js + Hono + TypeScript |
-| Frontend | Next.js 14+ (App Router) + Tailwind + shadcn/ui |
-| Banco de dados | Postgres + pgvector |
-| Observabilidade | Langfuse |
-| Hosting | Railway → GCP (migração planejada) |
-| Modelos | Sonnet 4.6 (sugestões) + Haiku 4.5 (detectores + guardian) |
+| STT | Deepgram (PT-BR, streaming) |
+| Backend | Node.js 20+ · TypeScript · Hono · WebSocket |
+| Orquestração | LangGraph |
+| LLM | Claude Sonnet (gerador) + Haiku (tagger/detectores), com abstração de provider (`src/llm/`) |
+| Banco | Postgres (feedback e aprendizado contínuo) |
+| Observabilidade | LangSmith (opcional, via `LANGCHAIN_API_KEY`) |
 
-## Custo estimado por ligação
+## Como rodar
 
-~R$ 6-7 por ligação de 60 minutos (STT + LLM + infra).
+Pré-requisitos: Node 20+, chaves de API (Deepgram e Anthropic ou Vertex AI).
 
-## Restrições críticas
+```bash
+npm install
+cp .env.example .env        # preencha DEEPGRAM_API_KEY e ANTHROPIC_API_KEY (ou GCP_*)
 
-- Zero referências a marcas proprietárias nas sugestões (3 camadas de proteção: corpus sanitizado + system prompt + guardian regex)
-- Consentimento LGPD explícito obrigatório antes de toda chamada
-- Latência fim-a-fim ≤ 3s (gatilho → sugestão na tela do closer)
-- Sugestões curtas (1-2 linhas por card)
-- Aprovação humana obrigatória antes de qualquer mudança em produção (self-harness com gate)
+# Smoke tests
+npm run test:deepgram       # valida STT PT-BR
+npm run test:pipeline       # pipeline end-to-end com cenários sintéticos, mede latência
 
-## Lifecycle (agent-governance-framework)
+# POC web (transcrição + sugestões ao vivo no browser)
+npm run dev:poc             # http://localhost:3000
 
-`SHADOW` (3-5 closers em paralelo) → `ASSISTED` (closer aceita/recusa) → `AUTONOMOUS` (sugestões otimizadas continuamente)
+# Pipeline de corpus (a partir de markdowns próprios em corpus/source/)
+npm run corpus              # ingest → sanitize (brand-glossary) → tag (LLM)
 
-## Estrutura do repositório
-
-```
-realtime-sales-copilot/
-├── corpus/
-│   ├── raw/          # JSONs pós-ingest, pré-sanitização
-│   └── clean/        # corpus.clean.json (brand-free, tagged, embeddings)
-├── evals/
-│   └── v1/           # 50 cenários de ligação para CI
-├── scripts/
-│   ├── ingest.ts
-│   ├── sanitize.ts
-│   ├── tag-corpus.ts
-│   └── build-embeddings.ts
-├── docs/
-│   ├── foundry/        # documentação de governança
-│   └── adr/          # ADR-001 (stack) e ADR-002 (LGPD/retenção)
-├── examples/
-│   └── novais-digital-comercial/
-│       └── constitution-extension.md   # guardrails de domínio
-├── apps/
-│   ├── api/          # backend Hono + WebSocket
-│   ├── web/          # frontend Next.js
-│   └── worker/       # jobs pós-call, eval noturno, self-harness
-└── .github/
-    └── workflows/    # eval-suite.yml + deploy.yml
+# Validação
+npm run typecheck
 ```
 
-## Roadmap
+## Adaptando para a sua operação
 
-### MVP — 2 semanas (foco: sugestão ao vivo)
+1. **Corpus**: coloque seu material de treinamento (markdown) em `corpus/source/` e rode `npm run corpus`. A sanitização usa `corpus/glossary/brand-glossary.json` — troque as entradas fictícias (`Acme*`) pelos seus termos proprietários.
+2. **Gatilhos**: edite os regex em `apps/api/src/gatilhos.ts` e o mapeamento gatilho → tipo de objeção em `apps/api/src/graph/nodes/objecao-tipo.ts`.
+3. **Prompt**: o system prompt do gerador é versionado em `prompts/live-suggestion-copilot/`.
+4. **Evals**: 50 casos com rubrica LLM-as-judge em `evals/live-suggestion-copilot/cases/` servem de modelo para os seus cenários.
 
-| Semana | O que é feito | Entrega |
-|---|---|---|
-| 1 | Corpus limpo + pipeline de sugestão + transcrição ao vivo | Motor funcionando end-to-end |
-| 2 | Frontend (painel do closer) + testes com closers reais | Demo pronta para a CEO |
+## Governança
 
-→ Detalhes: [docs/mvp-2-semanas.md](docs/mvp-2-semanas.md)
-→ Interface: [docs/interface-closer.md](docs/interface-closer.md)
+O repositório é operado pelo framework **Novais Digital Foundry** (constitution, ADRs, eval gates, lifecycle SHADOW → ASSISTED → AUTONOMOUS). Ver `docs/foundry/` e `.claude/CONSTITUTION.md`.
 
-### Versão completa — +4 semanas após MVP aprovado
+Restrições de produto que o pipeline garante:
 
-| Fase | Semanas | Entrega |
-|---|---|---|
-| Infraestrutura (Recall.ai, diarização, auth, DB) | 3-4 | Produto pronto para produção |
-| Pós-call automático + CRM | 1 | Follow-up ≤1h após ligação |
-| Self-harness + aprendizado contínuo | 2-3 | Sistema que melhora sozinho |
-| AUTONOMOUS + coaching do gestor | contínuo | Produto governado em produção |
-
-→ Roadmap completo: [docs/roadmap.md](docs/roadmap.md)
-
-## Decisões travadas
-
-1. Co-pilot em tempo real é P0; Q&A offline é subproduto (P2)
-2. Sanitização de marcas no ingest, terminologia genérica de mercado
-3. Claude Agent SDK + Hono + WebSocket + Next.js
-4. Railway como hosting inicial, migração GCP no Step 10
-5. Sonnet 4.6 no gerador, Haiku 4.5 nos detectores e guardian
-
-## Decisões pendentes (Step 0)
-
-- [ ] Captura: Recall.ai vs extensão Chrome vs combinação?
-- [ ] STT: Deepgram vs AssemblyAI vs Whisper self-host?
-- [ ] Auth: NextAuth vs Clerk vs Supabase Auth?
-- [ ] CRM alvo do pós-call (qual ferramenta os closers usam hoje?)
-- [ ] Texto LGPD aprovado pelo jurídico
-- [ ] Gate de refino: você + closer sênior, ou comitê de 3?
-- [ ] Quem são os 3-5 closers do SHADOW?
+- Sugestões de 1-2 linhas (≤280 chars), no máximo 3 cards por gatilho
+- Zero citação de marca/termo proprietário (gate duro do guardian)
+- Latência fim-a-fim ≤3s do gatilho ao card
+- Consentimento LGPD registrado antes de toda chamada
 
 ## Licença
 

@@ -351,7 +351,7 @@ Se um hook bloquear: NÃO bypass. Resolva a causa raiz e tente novamente.
 > - C3 será apertado: Imagen 4 custa ~$0.04/img × 7 slides = $0.28/carrossel
 >
 > ▶️ **Próximo passo:**
-> Executar `/novais-digital:diagnose carrossel-agent --outcome="gerar carrossel de 7 slides no tom the CEO"`
+> Executar `/novais-digital:diagnose carrossel-agent --outcome="gerar carrossel de 7 slides no tom da marca"`
 >
 > 📊 **Outputs:**
 > - `docs/foundry/sku/carrossel-agent/diagnostic.md`
